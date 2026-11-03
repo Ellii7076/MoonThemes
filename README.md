@@ -51,4 +51,6 @@
 
 ## Авторы
 
-Сделала [moonnsy](https://github.com/moonnsy). Шрифт QR Comic в теме Годжо идёт со своей лицензией: `assets/gojo/fonts/QrComic-license.txt`.
+Сделала [moonnsy](https://github.com/moonnsy), телеграм-канал: [t.me/moonnsypic](https://t.me/moonnsypic).
+
+Шрифт QR Comic в теме Годжо идёт со своей лицензией: `assets/gojo/fonts/QrComic-license.txt`.
