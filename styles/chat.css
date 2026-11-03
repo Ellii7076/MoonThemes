@@ -1,0 +1,768 @@
+/* ── Chat screen = SillyTavern's #sheld ────────────────────────────────── */
+
+body.dc-on #sheld {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    margin: 0 !important;
+    z-index: 1700 !important;
+    display: flex !important;
+    flex-direction: column;
+    background: var(--dc-bg);
+    transform: translate3d(0, 0, 0);
+    transition: transform var(--dc-dur) var(--dc-ease);
+    will-change: transform;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Parked off-screen but still rendered: the slide back in is then pure
+   compositing instead of repainting the whole chat on its first frame. */
+body.dc-on[data-dc-screen="home"] #sheld {
+    transform: translate3d(100%, 0, 0);
+    pointer-events: none;
+    box-shadow: none;
+    transition: transform var(--dc-dur) var(--dc-ease), box-shadow 0s linear var(--dc-dur);
+}
+
+/* While dragging, src/shell.js sets the transform inline every frame. */
+body.dc-on.dc-dragging #sheld {
+    pointer-events: none;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+
+body.dc-on .dc-chat-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: calc(var(--dc-head-h) + var(--dc-safe-top));
+    padding: var(--dc-safe-top) 6px 0 4px;
+    background: var(--dc-bg);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+    position: relative;
+    z-index: 40;
+    user-select: none;
+}
+
+body.dc-on .dc-icon-btn {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--dc-icon);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+body.dc-on .dc-icon-btn:active {
+    background: var(--dc-bg-card);
+}
+
+body.dc-on .dc-back {
+    color: var(--dc-text);
+    font-size: 21px;
+}
+
+body.dc-on .dc-chat-peer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 0 1 auto;
+    height: 44px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 12px;
+    background: none;
+    color: var(--dc-text);
+    cursor: pointer;
+}
+
+body.dc-on .dc-chat-peer:active {
+    background: var(--dc-bg-card);
+}
+
+body.dc-on .dc-chat-avatar {
+    width: 34px;
+    height: 34px;
+}
+
+body.dc-on .dc-chat-avatar .dc-status {
+    width: 14px;
+    height: 14px;
+    border-width: 3px;
+}
+
+body.dc-on .dc-chat-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+body.dc-on .dc-chat-chevron {
+    font-size: 12px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-chat-spacer {
+    flex: 1 1 auto;
+}
+
+/* ── Message list ──────────────────────────────────────────────────────── */
+
+body.dc-on #chat {
+    flex: 1 1 auto !important;
+    max-height: none !important;
+    min-height: 0;
+    padding: 6px 0 12px !important;
+    margin: 0 !important;
+    background: var(--dc-bg) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    text-shadow: none !important;
+    overscroll-behavior: contain;
+}
+
+body.dc-on #chat .mes {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    margin: 0 !important;
+    padding: 14px 16px 2px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: background-color 0.18s ease;
+}
+
+body.dc-on #chat .mes.dc-cont {
+    padding-top: 1px !important;
+}
+
+body.dc-on #chat .mes.dc-holding,
+body.dc-on #chat .mes.dc-pressed {
+    background: rgba(255, 255, 255, 0.045) !important;
+}
+
+/* Avatar column. */
+body.dc-on #chat .mesAvatarWrapper {
+    flex: 0 0 40px;
+    width: 40px;
+    padding: 0 !important;
+    margin: 2px 0 0 !important;
+}
+
+body.dc-on #chat .mes .avatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    overflow: hidden;
+    box-shadow: none !important;
+    border: 0 !important;
+}
+
+body.dc-on #chat .mes .avatar img {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+body.dc-on #chat .mes.dc-cont .mesAvatarWrapper {
+    height: 0;
+    visibility: hidden;
+}
+
+body.dc-on #chat .mesIDDisplay,
+body.dc-on #chat .mes_timer,
+body.dc-on #chat .tokenCounterDisplay,
+body.dc-on #chat .mes .timestamp,
+body.dc-on #chat .mes .timestamp-icon,
+body.dc-on #chat .mes .mes_buttons {
+    display: none !important;
+}
+
+/* Name row. */
+body.dc-on #chat .mes_block {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 !important;
+}
+
+body.dc-on #chat .mes .ch_name {
+    min-height: 0;
+    margin: 0 0 1px;
+    align-items: baseline;
+}
+
+body.dc-on #chat .mes.dc-cont .ch_name {
+    display: none;
+}
+
+/* A continued message still needs its row while being edited. */
+body.dc-on #chat .mes.dc-cont:has(.edit_textarea) .ch_name {
+    display: flex;
+}
+
+body.dc-on #chat .mes .name_text {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.375;
+    color: var(--dc-text);
+}
+
+body.dc-on #chat .dc-ts {
+    margin-left: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dc-text-muted);
+    white-space: nowrap;
+}
+
+/* Text. */
+body.dc-on #chat .mes_text {
+    padding: 0 !important;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--SmartThemeBodyColor);
+}
+
+/* Rich text. Colours come from the theme's pickers (main / italics / quotes /
+   links); the shapes are Discord's. */
+body.dc-on #chat .mes_text em,
+body.dc-on #chat .mes_text i:not([class*="fa-"]) {
+    color: var(--SmartThemeEmColor);
+}
+
+html[data-dc-italic="straight"] body.dc-on #chat .mes_text em,
+html[data-dc-italic="straight"] body.dc-on #chat .mes_text i:not([class*="fa-"]),
+html[data-dc-italic="straight"] body.dc-on #chat .mes_reasoning em {
+    font-style: normal;
+}
+
+body.dc-on #chat .mes_text q {
+    color: var(--SmartThemeQuoteColor);
+}
+
+body.dc-on #chat .mes_text strong,
+body.dc-on #chat .mes_text b {
+    font-weight: 700;
+    color: inherit;
+}
+
+body.dc-on #chat .mes_text u {
+    text-decoration-color: var(--SmartThemeUnderlineColor);
+    text-underline-offset: 3px;
+}
+
+body.dc-on #chat .mes_text del {
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #chat .mes_text h1,
+body.dc-on #chat .mes_text h2,
+body.dc-on #chat .mes_text h3 {
+    margin: 10px 0 4px;
+    font-family: var(--dc-font-name);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--dc-text);
+}
+
+body.dc-on #chat .mes_text h1 { font-size: 1.5em; }
+body.dc-on #chat .mes_text h2 { font-size: 1.25em; }
+body.dc-on #chat .mes_text h3 { font-size: 1.1em; }
+
+body.dc-on #chat .mes_text hr {
+    margin: 10px 0;
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+body.dc-on #chat .mes_text ul,
+body.dc-on #chat .mes_text ol {
+    margin: 4px 0;
+    padding-left: 22px;
+}
+
+body.dc-on #chat .mes_text li::marker {
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #chat .mes_text p {
+    margin: 0 0 6px;
+}
+
+body.dc-on #chat .mes_text p:last-child {
+    margin-bottom: 0;
+}
+
+body.dc-on #chat .mes_text a {
+    color: var(--dc-link);
+}
+
+body.dc-on #chat .mes_text blockquote {
+    margin: 4px 0;
+    padding: 0 0 0 12px;
+    border-left: 4px solid var(--dc-handle);
+    border-radius: 4px 0 0 4px;
+}
+
+body.dc-on #chat .mes_text code {
+    padding: 1px 5px;
+    border: 1px solid var(--dc-bg-code-line);
+    border-radius: 4px;
+    background: var(--dc-bg-code);
+    /* The theme's text colour: a light theme's code box is light too. */
+    color: var(--dc-text);
+    font-family: Consolas, 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.875em;
+}
+
+body.dc-on #chat .mes_text pre {
+    margin: 6px 0;
+    padding: 8px 10px;
+    border: 1px solid var(--dc-bg-code-line);
+    border-radius: 6px;
+    background: var(--dc-bg-code);
+}
+
+body.dc-on #chat .mes_text pre code {
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+body.dc-on #chat .mes_text img,
+body.dc-on #chat .mes_media_wrapper img {
+    border-radius: 8px;
+}
+
+/* Reasoning block as a Discord embed. */
+body.dc-on #chat .mes_reasoning_details {
+    margin: 4px 0 6px;
+    border-left: 4px solid var(--dc-blurple);
+    border-radius: 4px;
+    background: var(--dc-bg-code);
+    padding: 6px 10px;
+}
+
+body.dc-on #chat .mes_reasoning_header {
+    color: var(--dc-text-muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Edit mode. */
+body.dc-on #chat .edit_textarea {
+    margin-top: 4px;
+    padding: 10px 12px;
+    border: 0 !important;
+    border-radius: 10px;
+    background: var(--dc-bg-raised) !important;
+    color: var(--dc-text);
+    font-size: 16px;
+    line-height: 1.375;
+}
+
+body.dc-on #chat .mes_edit_buttons {
+    gap: 4px;
+}
+
+body.dc-on #chat .mes_edit_buttons .menu_button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 8px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+body.dc-on #chat .mes_edit_buttons .mes_edit_done {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+/* ── Swipes, drawn as a Discord reaction chip ──────────────────────────── */
+
+/* ST hides inactive arrows with opacity:0 !important, which our opacity:1
+   below cannot override — so visibility stays ST's call. */
+body.dc-on:not(.hideAllSwipeButtons) #chat .mes.last_mes:not([is_user="true"]),
+body.dc-on.swipeAllMessages #chat .mes.swipes_visible {
+    padding-bottom: 38px !important;
+}
+
+/* While generating ST hides the arrows (hideAllSwipeButtons) but keeps the
+   counter: it keeps its room under the text and moves to the arrows' place. */
+body.dc-on.hideAllSwipeButtons #chat .mes.last_mes:not([is_user="true"]):has(.swipes-counter:not(:empty, [hidden])) {
+    padding-bottom: 38px !important;
+}
+
+body.dc-on.hideAllSwipeButtons #chat .mes .swipeRightBlock {
+    left: 68px;
+}
+
+body.dc-on #chat .mes.swipes_visible .swipe_left {
+    display: flex;
+}
+
+body.dc-on #chat .mes .swipe_left,
+body.dc-on #chat .mes .swipeRightBlock {
+    position: absolute;
+    bottom: 6px;
+    top: auto;
+    right: auto;
+}
+
+body.dc-on #chat .mes .swipe_left {
+    left: 68px;
+}
+
+body.dc-on #chat .mes .swipeRightBlock {
+    left: 98px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+}
+
+body.dc-on #chat .mes .swipe_left,
+body.dc-on #chat .mes .swipe_right {
+    width: 28px;
+    height: 26px;
+    border-radius: 8px;
+    background: var(--dc-bg-card);
+    border: 1px solid transparent;
+    color: var(--dc-text-muted);
+    font-size: 12px;
+    opacity: 1;
+    pointer-events: auto;
+    transition: background-color 0.15s ease, transform 0.12s var(--dc-ease);
+}
+
+body.dc-on #chat .mes .swipe_left:active,
+body.dc-on #chat .mes .swipe_right:active {
+    transform: scale(0.9);
+    border-color: var(--dc-blurple);
+    background: color-mix(in srgb, var(--dc-blurple) 15%, transparent);
+}
+
+body.dc-on #chat .mes .swipes-counter {
+    height: 26px;
+    min-width: 0;
+    margin: 0;
+    padding: 0 8px;
+    border-radius: 8px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    font-size: 13px;
+    font-weight: 600;
+    align-items: center;
+    opacity: 1;
+}
+
+/* No swipes (your own messages, or while ST hides them during a
+   generation) leaves the counter empty — without this it showed up as a
+   stray grey pill next to the text. */
+body.dc-on #chat .mes .swipes-counter:is(:empty, [hidden]) {
+    display: none !important;
+}
+
+/* ── Day divider ───────────────────────────────────────────────────────── */
+
+body.dc-on #chat .dc-day {
+    display: flex;
+    align-self: stretch;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 16px 4px;
+    color: var(--dc-text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    user-select: none;
+}
+
+body.dc-on #chat .dc-day::before,
+body.dc-on #chat .dc-day::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Typing indicator above the composer ───────────────────────────────── */
+
+body.dc-on .dc-typing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 0;
+    padding: 0 18px;
+    overflow: hidden;
+    font-size: 13px;
+    color: var(--dc-text-normal);
+    opacity: 0;
+    transition: height 0.2s var(--dc-ease), opacity 0.2s ease;
+}
+
+body.dc-on.dc-generating .dc-typing {
+    height: 22px;
+    opacity: 1;
+}
+
+body.dc-on .dc-typing b {
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on .dc-typing-dots {
+    display: inline-flex;
+    gap: 3px;
+    margin-right: 2px;
+}
+
+body.dc-on .dc-typing-dots i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dc-text-normal);
+    animation: dc-typing 1.2s infinite ease-in-out;
+}
+
+body.dc-on .dc-typing-dots i:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+body.dc-on .dc-typing-dots i:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes dc-typing {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+}
+
+/* ── Wide layout: avatar and name share a row, text runs edge to edge ──── */
+
+html[data-dc-layout="wide"] body.dc-on #chat .mes {
+    display: block;
+    position: relative;
+    padding: 14px 14px 2px !important;
+}
+
+html[data-dc-layout="wide"] body.dc-on #chat .mes.dc-cont {
+    padding-top: 2px !important;
+}
+
+html[data-dc-layout="wide"] body.dc-on #chat .mesAvatarWrapper {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    width: 36px;
+    margin: 0 !important;
+    z-index: 1;
+}
+
+html[data-dc-layout="wide"] body.dc-on #chat .mes .avatar,
+html[data-dc-layout="wide"] body.dc-on #chat .mes .avatar img {
+    width: 36px !important;
+    height: 36px !important;
+}
+
+html[data-dc-layout="wide"] body.dc-on #chat .mes .ch_name {
+    min-height: 36px;
+    padding-left: 46px;
+    margin-bottom: 4px;
+    align-items: center;
+}
+
+html[data-dc-layout="wide"] body.dc-on #chat .mes .swipe_left {
+    left: 14px;
+}
+
+html[data-dc-layout="wide"] body.dc-on #chat .mes .swipeRightBlock {
+    left: 44px;
+}
+
+/* ── Delete mode ───────────────────────────────────────────────────────────
+ * ST marks the tapped message and everything after it with .selected;
+ * body.dc-deleting comes from src/messages.js. Chosen messages get a red
+ * wash, a red edge and a round red check; the bar under the chat says how
+ * many will go. */
+
+body.dc-on.dc-deleting #chat .mes {
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.dc-on.dc-deleting #chat .mes.selected {
+    background-color: rgba(242, 63, 67, 0.13) !important;
+    box-shadow: inset 3px 0 0 var(--dc-red);
+}
+
+/* The rest of the chat steps back a little so the choice reads at once. */
+body.dc-on.dc-deleting.dc-del-picked #chat .mes:not(.selected) {
+    opacity: 0.6;
+}
+
+body.dc-on.dc-deleting #chat .mes .mes_buttons,
+body.dc-on.dc-deleting #chat .mes .swipe_left,
+body.dc-on.dc-deleting #chat .mes .swipe_right,
+body.dc-on.dc-deleting #chat .mes .swipes-counter {
+    visibility: hidden;
+}
+
+body.dc-on #chat .mes > input.del_checkbox {
+    -webkit-appearance: none;
+    appearance: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    place-content: center;
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    padding: 0;
+    border: 2px solid var(--dc-text-dim);
+    border-radius: 50%;
+    outline: 0;
+    background: var(--dc-bg);
+    box-shadow: none;
+    filter: none;
+    opacity: 1;
+    transform: none;
+    overflow: visible;
+    pointer-events: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* ST draws its tick with a clip-path; keep the shape, make it white and
+   centred, and let it pop in. */
+body.dc-on #chat .mes > input.del_checkbox::before {
+    width: 12px;
+    height: 12px;
+    box-shadow: inset 1em 1em #fff;
+    transform: scale(0);
+    transform-origin: center;
+    transition: transform 0.2s var(--dc-spring);
+}
+
+body.dc-on #chat .mes > input.del_checkbox:checked {
+    border-color: var(--dc-red);
+    background: var(--dc-red);
+}
+
+body.dc-on #chat .mes > input.del_checkbox:checked::before {
+    transform: scale(1);
+}
+
+/* The name row makes room for the check. */
+body.dc-on.dc-deleting #chat .mes .ch_name {
+    padding-right: 34px;
+}
+
+/* The bar that replaces the composer. */
+body.dc-on #dialogue_del_mes[style*="block"] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: auto;
+    margin: 0;
+    padding: 12px 14px calc(var(--dc-safe-bottom) + 12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--dc-bg);
+    text-align: left;
+}
+
+body.dc-on #dialogue_del_mes::before {
+    content: 'Нажми на сообщение — удалится оно и всё, что ниже';
+    grid-column: 1 / -1;
+    font-family: var(--dc-font);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #dialogue_del_mes:not([data-dc-count="0"]):not([data-dc-count=""])::before {
+    content: 'Будет удалено сообщений: ' attr(data-dc-count);
+    color: #f2b8b9;
+}
+
+body.dc-on #dialogue_del_mes .menu_button {
+    /* ST pins these two to display: inline-block by id. */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+    min-height: 44px;
+    margin: 0;
+    border: 0;
+    border-radius: 22px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-family: var(--dc-font);
+    font-size: 15px;
+    font-weight: 800;
+    filter: none;
+    opacity: 1;
+    transition: opacity 0.15s ease, transform 0.15s var(--dc-ease);
+}
+
+body.dc-on #dialogue_del_mes .menu_button:active {
+    transform: scale(0.97);
+}
+
+body.dc-on #dialogue_del_mes #dialogue_del_mes_ok {
+    background: var(--dc-red);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #dialogue_del_mes[data-dc-count="0"] #dialogue_del_mes_ok {
+    opacity: 0.45;
+}

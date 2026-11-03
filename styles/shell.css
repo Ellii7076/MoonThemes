@@ -1,0 +1,937 @@
+/* ── SillyTavern chrome we replace ─────────────────────────────────────── */
+
+body.dc-on #top-bar,
+body.dc-on #sheldheader,
+body.dc-on #bg1,
+body.dc-on #bg_custom,
+body.dc-on #top-settings-holder .drawer-toggle {
+    display: none !important;
+}
+
+/* The drawers keep living where ST put them; flattening their wrappers
+   lets each panel be positioned against the viewport on its own. */
+body.dc-on #top-settings-holder,
+body.dc-on #top-settings-holder > .drawer {
+    display: contents !important;
+}
+
+/* ── Home screen ───────────────────────────────────────────────────────── */
+
+body.dc-on #dc-home {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    display: flex;
+    background: var(--dc-bg-lowest);
+    transform: translateX(0);
+    transition: transform var(--dc-dur) var(--dc-ease);
+    will-change: transform;
+    user-select: none;
+}
+
+/* Dim the home screen while the chat covers it. */
+body.dc-on #dc-home::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dc-dur) var(--dc-ease);
+    z-index: 50;
+}
+
+body.dc-on[data-dc-screen="chat"] #dc-home {
+    transform: translateX(-28%);
+}
+
+body.dc-on[data-dc-screen="chat"] #dc-home::after {
+    opacity: 0.55;
+}
+
+body.dc-on.dc-dragging #dc-home,
+body.dc-on.dc-dragging #dc-home::after,
+body.dc-on.dc-dragging #sheld {
+    transition: none !important;
+}
+
+/* The dim is a real element (.dc-home-dim, added by src/shell.js) rather
+   than ::after, so a drag can set its opacity inline every frame. */
+body.dc-on #dc-home:has(> .dc-home-dim)::after {
+    display: none;
+}
+
+body.dc-on .dc-home-dim {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dc-dur) var(--dc-ease);
+    will-change: opacity;
+}
+
+body.dc-on[data-dc-screen="chat"] .dc-home-dim {
+    opacity: 0.55;
+}
+
+body.dc-on.dc-dragging .dc-home-dim {
+    transition: none;
+}
+
+/* ── Rail ──────────────────────────────────────────────────────────────── */
+
+body.dc-on .dc-rail {
+    flex: 0 0 var(--dc-rail-w);
+    width: var(--dc-rail-w);
+    height: 100%;
+    overflow: hidden;
+}
+
+body.dc-on .dc-rail-scroll {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding: calc(var(--dc-safe-top) + 8px) 0 calc(var(--dc-userbar-h) + var(--dc-safe-bottom) + 24px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+body.dc-on .dc-rail-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+body.dc-on .dc-rail-item {
+    position: relative;
+    width: 100%;
+    height: 56px;
+    flex: 0 0 56px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+body.dc-on .dc-rail-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    color: var(--dc-text-normal);
+    background: var(--dc-bg-raised);
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease,
+        border-radius 0.22s var(--dc-ease),
+        transform 0.16s var(--dc-ease);
+}
+
+body.dc-on .dc-rail-item:active .dc-rail-icon {
+    transform: scale(0.9);
+}
+
+body.dc-on .dc-rail-item.active .dc-rail-icon,
+body.dc-on[data-dc-panel=""] .dc-rail-dm .dc-rail-icon {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+    border-radius: 16px;
+}
+
+body.dc-on .dc-rail-dm .dc-rail-icon {
+    font-size: 21px;
+}
+
+body.dc-on .dc-rail-add .dc-rail-icon {
+    color: var(--dc-green);
+    font-size: 20px;
+}
+
+body.dc-on .dc-rail-add:active .dc-rail-icon {
+    background: var(--dc-green);
+    color: var(--dc-on-accent, #fff);
+}
+
+/* The white pill on the left edge: tall for the current server. */
+body.dc-on .dc-rail-pill {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 4px;
+    height: 0;
+    margin-top: 0;
+    border-radius: 0 4px 4px 0;
+    background: #fff;
+    transform: translateY(-50%);
+    transition: height 0.28s var(--dc-spring);
+}
+
+body.dc-on .dc-rail-item.active .dc-rail-pill,
+body.dc-on[data-dc-panel=""] .dc-rail-dm .dc-rail-pill {
+    height: 40px;
+}
+
+@media (hover: hover) {
+    body.dc-on .dc-rail-item:not(.active):hover .dc-rail-pill {
+        height: 20px;
+    }
+
+    body.dc-on .dc-rail-item:not(.active):hover .dc-rail-icon {
+        background: var(--dc-blurple);
+        color: var(--dc-on-accent, #fff);
+    }
+
+    body.dc-on .dc-rail-add:hover .dc-rail-icon {
+        background: var(--dc-green) !important;
+    }
+}
+
+body.dc-on .dc-rail-sep {
+    width: 32px;
+    height: 2px;
+    flex: 0 0 2px;
+    border-radius: 1px;
+    background: var(--dc-bg-card);
+    margin: 4px 0 6px;
+}
+
+/* ── Panel ─────────────────────────────────────────────────────────────── */
+
+body.dc-on .dc-panel {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-top: calc(var(--dc-safe-top) + 8px);
+    background: var(--dc-bg);
+    border-top-left-radius: 18px;
+    overflow: hidden;
+}
+
+body.dc-on .dc-dm {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.16s ease, transform 0.22s var(--dc-ease);
+}
+
+body.dc-on:not([data-dc-panel=""]) .dc-dm {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+}
+
+body.dc-on .dc-dm-head {
+    padding: 14px 16px 10px;
+    flex: 0 0 auto;
+}
+
+body.dc-on .dc-dm-head h1 {
+    margin: 0 0 14px;
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: var(--dc-text);
+    letter-spacing: -0.01em;
+}
+
+body.dc-on .dc-dm-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+body.dc-on .dc-round,
+body.dc-on .dc-pillbtn {
+    height: 40px;
+    border: 0;
+    border-radius: 20px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.15s var(--dc-ease);
+}
+
+body.dc-on .dc-round {
+    width: 40px;
+    flex: 0 0 40px;
+    font-size: 17px;
+}
+
+body.dc-on .dc-pillbtn {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+    padding: 0 16px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+body.dc-on .dc-round:active,
+body.dc-on .dc-pillbtn:active {
+    background: var(--dc-bg-press);
+    transform: scale(0.96);
+}
+
+body.dc-on .dc-round.dc-blurple {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on .dc-round.dc-blurple:active {
+    background: var(--dc-blurple-press);
+}
+
+body.dc-on .dc-dm-searchbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 0;
+    margin-top: 0;
+    padding: 0 14px;
+    border-radius: 10px;
+    background: var(--dc-bg-lowest);
+    color: var(--dc-text-muted);
+    overflow: hidden;
+    opacity: 0;
+    transition: height 0.22s var(--dc-ease), margin 0.22s var(--dc-ease), opacity 0.18s ease;
+}
+
+body.dc-on #dc-home.dc-searching .dc-dm-searchbar {
+    height: 40px;
+    margin-top: 10px;
+    opacity: 1;
+}
+
+body.dc-on .dc-dm-searchbar input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: var(--dc-text);
+    font: inherit;
+    font-size: 15px;
+}
+
+/* ── Recent chats ──────────────────────────────────────────────────────── */
+
+body.dc-on .dc-dm-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px 8px calc(var(--dc-userbar-h) + var(--dc-safe-bottom) + 24px);
+    overscroll-behavior: contain;
+}
+
+body.dc-on .dc-dm-item {
+    position: relative;
+    margin: 0 0 2px;
+    border-radius: 14px;
+    transition: background-color 0.12s ease, transform 0.15s var(--dc-ease);
+    animation: dc-row-in 0.28s var(--dc-ease) both;
+}
+
+body.dc-on .dc-dm-item[hidden] {
+    display: none;
+}
+
+body.dc-on .dc-dm-item.active {
+    background: var(--dc-bg-raised);
+}
+
+body.dc-on .dc-dm-item:active,
+body.dc-on .dc-dm-item.dc-holding,
+body.dc-on .dc-dm-item.dc-pressed {
+    background: var(--dc-bg-press);
+}
+
+body.dc-on .dc-dm-item.dc-holding {
+    transform: scale(0.985);
+}
+
+body.dc-on .dc-dm-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+}
+
+body.dc-on .dc-dm-pin {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--dc-text-muted);
+    transform: rotate(35deg);
+}
+
+/* Start Page tags under the preview line. */
+body.dc-on .dc-dm-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+body.dc-on .dc-dm-tag,
+body.dc-on .dc-chip {
+    --dc-tag: var(--dc-text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+body.dc-on .dc-dm-tag {
+    padding: 1px 8px;
+    font-size: 11.5px;
+    color: var(--dc-tag);
+    background: color-mix(in srgb, var(--dc-tag) 16%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dc-tag) 35%, transparent);
+}
+
+/* Note sticker + the note itself, collapsed until tapped. */
+body.dc-on .dc-dm-item[data-note="1"] .dc-dm-sub {
+    padding-right: 30px;
+}
+
+body.dc-on .dc-dm-note-btn {
+    position: absolute;
+    right: 8px;
+    top: 30px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--dc-yellow);
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.18s var(--dc-spring), background-color 0.15s ease;
+}
+
+body.dc-on .dc-dm-note-btn:active {
+    background: var(--dc-bg-card);
+}
+
+body.dc-on .dc-dm-item.note-open .dc-dm-note-btn {
+    transform: rotate(-12deg) scale(1.1);
+}
+
+body.dc-on .dc-dm-note {
+    display: none;
+    margin: -2px 10px 10px 66px;
+    padding: 8px 10px;
+    border-left: 3px solid var(--dc-yellow);
+    border-radius: 4px 10px 10px 4px;
+    background: rgba(240, 178, 50, 0.08);
+    color: var(--dc-text-normal);
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+body.dc-on .dc-dm-item.note-open .dc-dm-note {
+    display: block;
+    animation: dc-row-in 0.22s var(--dc-ease);
+}
+
+/* Filter chips under the search field. */
+body.dc-on .dc-dm-filters {
+    display: none;
+    gap: 6px;
+    margin: 0 -16px;
+    padding: 10px 16px 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+body.dc-on .dc-dm-filters::-webkit-scrollbar {
+    display: none;
+}
+
+body.dc-on #dc-home.dc-searching .dc-dm-filters,
+body.dc-on #dc-home.dc-filtered .dc-dm-filters {
+    display: flex;
+}
+
+body.dc-on .dc-dm-filters:empty {
+    display: none !important;
+}
+
+body.dc-on .dc-chip {
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 14px;
+    border: 0;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s var(--dc-ease);
+}
+
+body.dc-on .dc-chip[style] {
+    color: var(--dc-tag);
+}
+
+body.dc-on .dc-chip:active {
+    transform: scale(0.95);
+}
+
+body.dc-on .dc-chip.active {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on .dc-chip.active[style] {
+    background: var(--dc-tag);
+}
+
+body.dc-on .dc-round.active {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+@keyframes dc-row-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+body.dc-on .dc-dm-avatar,
+body.dc-on .dc-userbar-avatar,
+body.dc-on .dc-chat-avatar {
+    position: relative;
+    flex: 0 0 auto;
+    border-radius: 50%;
+}
+
+body.dc-on .dc-dm-avatar {
+    width: 44px;
+    height: 44px;
+}
+
+body.dc-on .dc-dm-avatar > img,
+body.dc-on .dc-userbar-avatar > img,
+body.dc-on .dc-chat-avatar > img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    background: var(--dc-bg-card);
+}
+
+/* Group DM: two avatars, offset like Discord's stacked pair. */
+body.dc-on .dc-av-group {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+body.dc-on .dc-av-group img {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--dc-bg-card);
+}
+
+body.dc-on .dc-av-group img:first-child {
+    left: 0;
+    top: 0;
+}
+
+body.dc-on .dc-av-group img:nth-child(2) {
+    right: 0;
+    bottom: 0;
+    box-shadow: 0 0 0 3px var(--dc-bg);
+}
+
+body.dc-on .dc-dm-item.active .dc-av-group img:nth-child(2) {
+    box-shadow: 0 0 0 3px var(--dc-bg-raised);
+}
+
+/* Presence dot. */
+body.dc-on .dc-status {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid var(--dc-bg);
+    background: var(--dc-bg);
+    display: none;
+}
+
+body.dc-on .dc-status::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2.5px var(--dc-status-off);
+}
+
+body.dc-on .dc-status.dc-online {
+    display: block;
+    background: var(--dc-green);
+}
+
+body.dc-on .dc-status.dc-online::after {
+    box-shadow: none;
+}
+
+body.dc-on .dc-dm-item.active .dc-status {
+    border-color: var(--dc-bg-raised);
+}
+
+body.dc-on .dc-dm-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+body.dc-on .dc-dm-top {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+body.dc-on .dc-dm-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dc-text);
+}
+
+body.dc-on .dc-dm-file {
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on .dc-dm-time {
+    flex: 0 0 auto;
+    font-size: 13px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-dm-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--dc-text-muted);
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+body.dc-on .dc-empty i {
+    font-size: 42px;
+    color: var(--dc-bg-press);
+}
+
+/* ── Server header (shown while a drawer is open) ──────────────────────── */
+
+body.dc-on .dc-server-head {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: var(--dc-head-h);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--dc-line);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dc-text);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease;
+}
+
+body.dc-on:not([data-dc-panel=""]) .dc-server-head {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+body.dc-on .dc-server-icon {
+    font-size: 16px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-server-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.dc-on .dc-server-chevron {
+    font-size: 12px;
+    color: var(--dc-text-muted);
+}
+
+/* ── User bar ──────────────────────────────────────────────────────────── */
+
+body.dc-on .dc-userbar {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: calc(var(--dc-safe-bottom) + 8px);
+    height: var(--dc-userbar-h);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px 0 10px;
+    border-radius: 20px;
+    background: var(--dc-bg-float);
+    border: 1px solid var(--dc-line);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+body.dc-on .dc-userbar-avatar {
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+}
+
+body.dc-on .dc-userbar .dc-status {
+    display: block;
+    border-color: var(--dc-bg-float);
+    background: var(--dc-bg-float);
+}
+
+body.dc-on .dc-userbar .dc-status.dc-online {
+    background: var(--dc-green);
+}
+
+body.dc-on .dc-userbar-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    cursor: pointer;
+}
+
+body.dc-on .dc-userbar-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on .dc-userbar-nick {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.dc-on .dc-userbar-name > i {
+    font-size: 11px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-tag {
+    flex: 0 0 auto;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--dc-bg-card);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dc-text-normal);
+    letter-spacing: 0.02em;
+}
+
+body.dc-on .dc-tag:empty {
+    display: none;
+}
+
+body.dc-on .dc-userbar-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-userbar-bell {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--dc-text-muted);
+    font-size: 19px;
+    cursor: pointer;
+}
+
+body.dc-on .dc-userbar-bell:active {
+    background: var(--dc-bg-card);
+}
+
+/* ── Full-screen panels (phone) ────────────────────────────────────────── */
+
+body.dc-on .dc-rail {
+    transition: flex-basis var(--dc-dur) var(--dc-ease), width var(--dc-dur) var(--dc-ease), opacity 0.2s ease;
+}
+
+body.dc-on .dc-panel {
+    transition: margin var(--dc-dur) var(--dc-ease), border-radius var(--dc-dur) var(--dc-ease);
+}
+
+body.dc-on .dc-userbar {
+    transition: transform var(--dc-dur) var(--dc-ease), opacity 0.2s ease;
+}
+
+body.dc-on .dc-server-back {
+    display: none;
+}
+
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on:not([data-dc-panel=""]) {
+    --dc-drawer-left: 0px;
+    --dc-drawer-top: calc(var(--dc-safe-top) + var(--dc-head-h));
+    --dc-drawer-bottom: 0px;
+}
+
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on:not([data-dc-panel=""]) .dc-rail {
+    flex-basis: 0;
+    width: 0;
+    opacity: 0;
+}
+
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on:not([data-dc-panel=""]) .dc-panel {
+    margin-top: var(--dc-safe-top);
+    border-top-left-radius: 0;
+}
+
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on:not([data-dc-panel=""]) .dc-userbar {
+    transform: translateY(calc(100% + 24px));
+    opacity: 0;
+    pointer-events: none;
+}
+
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on .dc-server-back {
+    display: flex;
+    margin-left: -12px;
+    color: var(--dc-text);
+}
+
+/* Full-screen panels slide in from the right, like a pushed screen. */
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on #top-settings-holder .drawer-content:not(#dc-x) {
+    transform: translate3d(28px, 0, 0);
+}
+
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on #top-settings-holder .drawer-content.openDrawer.dc-shown:not(#dc-x) {
+    transform: none;
+}
+
+/* The rail and panel edges change under the drawer: snap them instead of
+   animating width / margin (layout on every frame of the whole list). */
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on .dc-rail,
+html[data-dc-fullpanels="on"]:not([data-dc-desk="on"]) body.dc-on .dc-panel {
+    transition: none;
+}
+
+/* Loading placeholders for the chat list. */
+body.dc-on .dc-skel {
+    height: 60px;
+    margin: 0 0 2px;
+    border-radius: 14px;
+    background:
+        radial-gradient(circle 22px at 32px 30px, var(--dc-bg-card) 21px, transparent 22px),
+        linear-gradient(var(--dc-bg-card), var(--dc-bg-card)) 66px 16px / 45% 12px no-repeat,
+        linear-gradient(var(--dc-bg-raised), var(--dc-bg-raised)) 66px 36px / 65% 10px no-repeat;
+    animation: dc-skel 1.2s ease-in-out infinite;
+}
+
+body.dc-on .dc-skel:nth-child(2n) {
+    animation-delay: 0.15s;
+}
+
+@keyframes dc-skel {
+    50% {
+        opacity: 0.45;
+    }
+}
+
+body.dc-on .dc-chip-icon {
+    width: 32px;
+    padding: 0;
+    justify-content: center;
+}
+
+/* A narrow list: the pill's label gives way before the round buttons do. */
+body.dc-on .dc-pillbtn > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Title row: "Сообщения" and the house button (back to "Главная"). */
+body.dc-on .dc-dm-titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+body.dc-on .dc-dm-titlebar h1 {
+    margin: 0 !important;
+}
+
+body.dc-on .dc-dm-home {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+    font-size: 15px;
+}

@@ -1,0 +1,33 @@
+/* Discord Mobile — stylesheet entry. Everything is scoped under body.dc-on so
+   switching the extension off leaves SillyTavern untouched. */
+@import url('tokens.css?v=0.5.3');
+@import url('shell.css?v=0.5.3');
+@import url('drawers.css?v=0.5.3');
+@import url('chat.css?v=0.5.3');
+@import url('composer.css?v=0.5.3');
+@import url('sheet.css?v=0.5.3');
+@import url('panel-preset.css?v=0.5.3');
+@import url('panel-api.css?v=0.5.3');
+@import url('panel-forms.css?v=0.5.3');
+@import url('panel-format.css?v=0.5.3');
+@import url('panel-wi.css?v=0.5.3');
+@import url('panel-bg.css?v=0.5.3');
+@import url('panel-ext.css?v=0.5.3');
+@import url('panel-persona.css?v=0.5.3');
+@import url('panel-chars.css?v=0.5.3');
+@import url('panel-user.css?v=0.5.3');
+@import url('toasts.css?v=0.5.3');
+@import url('desktop.css?v=0.5.3');
+@import url('welcome.css?v=0.5.3');
+@import url('floating.css?v=0.5.3');
+@import url('catcher.css?v=0.5.3');
+@import url('preload.css?v=0.5.3');
+/* Other themes: complete restyles of the same layout, each scoped to
+   html[data-dc-skin="<id>"]. */
+@import url('themes/icq.css?v=0.5.3');
+@import url('themes/y2k.css?v=0.5.3');
+@import url('themes/icq-skins.css?v=0.5.3');
+@import url('themes/signal.css?v=0.5.3');
+@import url('themes/sage.css?v=0.5.3');
+@import url('themes/dossier.css?v=0.5.3');
+@import url('themes/gojo.css?v=0.5.3');

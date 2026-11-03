@@ -1,0 +1,294 @@
+/* SillyTavern's top-bar drawers, shown as a "server" next to the rail.
+ *
+ * :not(#dc-x) adds id-level specificity: ST's mobile stylesheet pins several
+ * panels with id selectors and !important, and this has to beat all of them
+ * without listing every panel by name (other extensions add their own). */
+
+body.dc-on #top-settings-holder .drawer-content:not(#dc-x) {
+    position: fixed !important;
+    top: var(--dc-drawer-top, calc(var(--dc-safe-top) + 8px + var(--dc-head-h))) !important;
+    left: var(--dc-drawer-left, var(--dc-rail-w)) !important;
+    right: 0 !important;
+    bottom: var(--dc-drawer-bottom, calc(var(--dc-userbar-h) + var(--dc-safe-bottom) + 16px)) !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 10px 12px 16px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--dc-bg) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    z-index: 1600 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    /* Hidden until src/shell.js adds .dc-shown two frames after opening
+       (see revealDrawers): the slide then runs on an already laid-out,
+       composited layer. Only opacity/transform animate. */
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+    transition:
+        opacity 0.2s ease,
+        transform 0.26s var(--dc-ease),
+        display 0.26s allow-discrete !important;
+}
+
+body.dc-on #top-settings-holder .drawer-content.openDrawer.dc-shown:not(#dc-x) {
+    opacity: 1;
+    transform: none;
+}
+
+/* Safety net: if the reveal never comes, show the drawer anyway. */
+body.dc-on #top-settings-holder .drawer-content.openDrawer:not(.dc-shown):not(#dc-x) {
+    animation: dc-drawer-failsafe 0.01s linear 0.6s forwards;
+}
+
+@keyframes dc-drawer-failsafe {
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+body.dc-on #top-settings-holder .drawer-content.closedDrawer:not(#dc-x) {
+    display: none !important;
+}
+
+/* The side panels manage their own inner scroll. */
+body.dc-on #top-settings-holder .fillLeft:not(#dc-x),
+body.dc-on #top-settings-holder .fillRight:not(#dc-x) {
+    overflow-y: hidden !important;
+}
+
+body.dc-on #top-settings-holder .fillLeft.openDrawer:not(#dc-x),
+body.dc-on #top-settings-holder .fillRight.openDrawer:not(#dc-x) {
+    display: flex !important;
+}
+
+/* Pinning is meaningless here — a pinned panel would cover the DM list. */
+body.dc-on #lm_button_panel_pin_div,
+body.dc-on #rm_button_panel_pin_div,
+body.dc-on #WI_panel_pin_div {
+    display: none !important;
+}
+
+/* ── Discord-ish controls inside the panels ────────────────────────────── */
+
+body.dc-on .drawer-content .menu_button,
+body.dc-on .drawer-content .menu_button_icon {
+    background: var(--dc-bg-card);
+    border: 0;
+    border-radius: 8px;
+    color: var(--dc-text-normal);
+    transition: background-color 0.15s ease;
+}
+
+body.dc-on .drawer-content .menu_button:hover {
+    background: var(--dc-bg-press);
+}
+
+body.dc-on .drawer-content .text_pole,
+body.dc-on .drawer-content select,
+body.dc-on .drawer-content textarea,
+body.dc-on .drawer-content input[type="text"],
+body.dc-on .drawer-content input[type="number"],
+body.dc-on .drawer-content input[type="search"] {
+    background-color: var(--dc-bg-lowest);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--dc-text);
+}
+
+body.dc-on .drawer-content .text_pole:focus,
+body.dc-on .drawer-content select:focus,
+body.dc-on .drawer-content textarea:focus {
+    border-color: var(--dc-blurple);
+    outline: none;
+}
+
+body.dc-on .drawer-content input[type="checkbox"],
+body.dc-on .drawer-content input[type="radio"],
+body.dc-on .drawer-content input[type="range"] {
+    accent-color: var(--dc-blurple);
+}
+
+/* Inline drawers become Discord's collapsible channel categories. */
+body.dc-on .drawer-content .inline-drawer-header {
+    padding: 8px 4px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on .drawer-content .inline-drawer-icon {
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .drawer-content h3,
+body.dc-on .drawer-content h4 {
+    color: var(--dc-text);
+}
+
+body.dc-on .drawer-content hr,
+body.dc-on .drawer-content .sysHR {
+    border-color: var(--dc-line);
+    background-image: none;
+    background-color: var(--dc-line);
+}
+
+/* ── Menus from the composer as bottom sheets ──────────────────────────── */
+
+/* "+" opens SillyTavern's options menu, the smiley opens the wand menu.
+   Discord shows both as sheets rising from the bottom edge. Popper writes
+   inline coordinates, hence the !important. */
+/* Popper's transform on #options would become the containing block of the
+   fixed sheet inside it. */
+body.dc-on #options {
+    transform: none !important;
+}
+
+body.dc-on #options .options-content,
+body.dc-on #extensionsMenu {
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: 70dvh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    margin: 0 !important;
+    padding: 8px 8px calc(var(--dc-safe-bottom) + 12px) !important;
+    border: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
+    background: var(--dc-bg-float) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: none !important;
+    z-index: 4500 !important;
+    animation: dc-sheet-up 0.3s var(--dc-ease);
+}
+
+/* Dim the app behind the sheet. Click-through on purpose: the tap lands
+   outside the menu and ST's own outside-click handler closes it. */
+body.dc-on #options::before,
+body.dc-on:has(> #extensionsMenu:not([style*="display: none"]))::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+    animation: dc-fade-in 0.25s ease;
+}
+
+/* The wand menu paints its own background, so its scrim can't live inside
+   it — it hangs off <body> just under the sheet instead. */
+body.dc-on:has(> #extensionsMenu:not([style*="display: none"]))::after {
+    z-index: 4400;
+}
+
+@keyframes dc-fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+body.dc-on #options .options-content::before,
+body.dc-on #extensionsMenu::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    margin: 2px auto 10px;
+    border-radius: 2px;
+    background: var(--dc-handle);
+}
+
+body.dc-on #options .options-content a,
+body.dc-on #extensionsMenu .list-group-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 48px;
+    padding: 0 14px;
+    margin: 0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--dc-text-normal);
+    opacity: 1;
+}
+
+body.dc-on #options .options-content a:active,
+body.dc-on #extensionsMenu .list-group-item:active,
+body.dc-on #options .options-content a:hover,
+body.dc-on #extensionsMenu .list-group-item:hover {
+    background: var(--dc-bg-card);
+}
+
+body.dc-on #options .options-content a i,
+body.dc-on #options .options-content a .fa-solid,
+body.dc-on #extensionsMenu .list-group-item .extensionsMenuExtensionButton,
+body.dc-on #extensionsMenu .list-group-item > .fa-solid {
+    width: 22px;
+    text-align: center;
+    color: var(--dc-text-muted);
+    font-size: 18px;
+}
+
+body.dc-on #options hr {
+    margin: 6px 8px;
+    border: 0;
+    height: 1px;
+    background: var(--dc-line);
+}
+
+@keyframes dc-sheet-up {
+    from {
+        translate: 0 100%;
+    }
+}
+
+/* Our own block in the Extensions panel. */
+body #dc-settings .dc-set-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+}
+
+body #dc-settings .dc-set-row > span {
+    flex: 0 0 auto;
+    min-width: 90px;
+}
+
+body #dc-settings .dc-set-row select {
+    flex: 1 1 auto;
+    margin: 0;
+}
+
+body #dc-settings .dc-set-theme {
+    margin-top: 10px;
+}
+
+body #dc-settings .dc-set-theme small {
+    display: block;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+body #dc-settings .dc-set-title {
+    margin: 14px 0 4px;
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+body #dc-settings .dc-set-row > span i {
+    width: 18px;
+    opacity: 0.7;
+}

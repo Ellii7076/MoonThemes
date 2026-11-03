@@ -1,0 +1,296 @@
+/* Everything SillyTavern opens on top of the app:
+ *
+ *   #movingDivs > .drawer-content  floating panels: Author's Note, CFG, token
+ *                                  probabilities, and the ones extensions add;
+ *   #character_popup               a character's advanced definitions;
+ *   dialog.popup                   every confirm / input / list popup.
+ *
+ * Their fields, switches and collapsible sections pick up the shared panel
+ * components (the :is() lists in panel-preset.css / panel-forms.css include
+ * them); this file draws the windows themselves. On a phone a floating
+ * panel is a sheet rising from the bottom; on a desktop it keeps ST's own
+ * position (it can be dragged) and only gets Discord's card look. */
+
+/* ── Floating panels ───────────────────────────────────────────────────── */
+
+body.dc-on #movingDivs > .drawer-content,
+body.dc-on #character_popup {
+    background: var(--dc-bg-sheet) !important;
+    border: 1px solid var(--dc-line) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: var(--dc-text-normal);
+    font-family: var(--dc-font);
+}
+
+/* The bar with grip / maximise / close. */
+body.dc-on #movingDivs > .drawer-content > .panelControlBar {
+    position: relative;
+    min-height: 40px;
+    margin: 0;
+    padding: 6px 6px 2px;
+    gap: 4px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+body.dc-on #movingDivs > .drawer-content > .panelControlBar > * {
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--dc-icon);
+    opacity: 1;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+body.dc-on #movingDivs > .drawer-content > .panelControlBar > .drag-grabber {
+    margin-right: auto;
+    cursor: grab;
+}
+
+/* Close: Discord's plain ✕ in a round button instead of ST's circled one. */
+body.dc-on #movingDivs .floating_panel_close,
+body.dc-on #character_popup #character_cross {
+    background: var(--dc-bg-card);
+}
+
+body.dc-on #movingDivs .floating_panel_close::before {
+    content: '\f00d';
+}
+
+@media (hover: hover) {
+    body.dc-on #movingDivs > .drawer-content > .panelControlBar > *:hover {
+        background: var(--dc-bg-press);
+        color: var(--dc-text);
+    }
+}
+
+body.dc-on #movingDivs > .drawer-content > .scrollY,
+body.dc-on #movingDivs > .drawer-content > .inline-drawer-content {
+    padding: 4px 12px 14px;
+    overscroll-behavior: contain;
+}
+
+/* Section headings inside (e.g. "Character Author's Note"). */
+body.dc-on #movingDivs > .drawer-content h3,
+body.dc-on #movingDivs > .drawer-content h4,
+body.dc-on #character_popup h3 {
+    font-family: var(--dc-font-name);
+    color: var(--dc-text);
+}
+
+body.dc-on #movingDivs > .drawer-content small,
+body.dc-on #character_popup small {
+    color: var(--dc-text-muted);
+}
+
+/* Radio rows (Author's Note position): one per line, accent dots. */
+body.dc-on #movingDivs > .drawer-content input[type="radio"] {
+    accent-color: var(--dc-blurple);
+    width: 18px;
+    height: 18px;
+    margin: 0 8px 0 0;
+}
+
+/* Phone: a bottom sheet under the chat header, sliding up like Discord's. */
+html[data-dc-desk="off"] body.dc-on #movingDivs > .drawer-content {
+    position: fixed !important;
+    top: calc(var(--dc-safe-top) + var(--dc-head-h)) !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-width: 1px 0 0 !important;
+    border-radius: 22px 22px 0 0 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
+    padding-bottom: var(--dc-safe-bottom) !important;
+    animation: dc-sheet-up 0.3s var(--dc-ease);
+}
+
+/* Desktop: ST sizes floating panels as "half the space beside the chat",
+   which is nothing here (the chat spans the window), so they collapsed to
+   a 100px sliver. They get a real card size and a home at the top right of
+   the chat instead. Not !important: a panel the user dragged or resized
+   keeps ST's inline position. */
+html[data-dc-desk="on"] body.dc-on #movingDivs > .drawer-content {
+    top: calc(var(--dc-head-h) + 12px);
+    left: auto;
+    right: calc(var(--dc-right-cur, 0px) + 16px);
+    width: min(440px, calc(100vw - 32px));
+    height: auto;
+    max-height: calc(100dvh - var(--dc-head-h) - 110px);
+    padding: 0;
+}
+
+html[data-dc-desk="on"] body.dc-on #movingDivs > .drawer-content.maximized {
+    top: calc(var(--dc-head-h) + 12px) !important;
+    right: calc(var(--dc-right-cur, 0px) + 16px) !important;
+    left: var(--dc-chat-left, 0px) !important;
+    width: auto !important;
+    margin: 0 0 0 16px !important;
+}
+
+/* No dragging or maximising a sheet; a grab handle on top instead. */
+html[data-dc-desk="off"] body.dc-on #movingDivs > .drawer-content > .panelControlBar > .drag-grabber,
+html[data-dc-desk="off"] body.dc-on #movingDivs > .drawer-content > .panelControlBar > .inline-drawer-maximize {
+    display: none !important;
+}
+
+html[data-dc-desk="off"] body.dc-on #movingDivs > .drawer-content > .panelControlBar::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    width: 36px;
+    height: 4px;
+    margin-left: -18px;
+    border-radius: 2px;
+    background: var(--dc-handle);
+}
+
+/* ── Popups ────────────────────────────────────────────────────────────── */
+
+/* Not the loading screen (styles/preload.css draws that one). */
+body.dc-on dialog.popup:not(:has(#loader)) {
+    background: var(--dc-bg-sheet) !important;
+    border: 1px solid var(--dc-line) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6) !important;
+    color: var(--dc-text-normal);
+    font-family: var(--dc-font);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.dc-on dialog.popup:not(:has(#loader))::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body.dc-on dialog.popup:not(:has(#loader)) .popup-body {
+    padding: 18px 18px 14px;
+}
+
+body.dc-on dialog.popup:not(:has(#loader)) .popup-content h3,
+body.dc-on dialog.popup:not(:has(#loader)) .popup-content h2 {
+    margin: 0 0 8px;
+    font-family: var(--dc-font-name);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on dialog.popup .popup-content {
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+body.dc-on dialog.popup .popup-input,
+body.dc-on dialog.popup .popup-inputs .text_pole {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border: 1px solid transparent !important;
+    border-radius: 8px;
+    background: var(--dc-bg-field) !important;
+    color: var(--dc-text);
+    font-size: 15px;
+}
+
+body.dc-on dialog.popup .popup-input:focus {
+    border-color: var(--dc-blurple) !important;
+    outline: none;
+}
+
+/* Buttons: Discord's filled primary, quiet secondary. */
+body.dc-on dialog.popup .popup-controls {
+    gap: 8px;
+    margin-top: 16px;
+    justify-content: flex-end;
+}
+
+body.dc-on dialog.popup .popup-controls .menu_button {
+    min-height: 38px;
+    margin: 0;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--dc-text);
+    font-size: 14.5px;
+    font-weight: 600;
+    opacity: 1;
+    filter: none;
+    transition: background-color 0.15s ease;
+}
+
+body.dc-on dialog.popup .popup-controls .menu_button:hover {
+    background: var(--dc-bg-card);
+}
+
+body.dc-on dialog.popup .popup-controls .popup-button-ok {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent);
+}
+
+body.dc-on dialog.popup .popup-controls .popup-button-ok:hover {
+    background: var(--dc-blurple-press);
+}
+
+body.dc-on dialog.popup .popup-button-close {
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-icon);
+    font-size: 13px;
+    opacity: 1;
+}
+
+body.dc-on dialog.popup .popup-button-close::before {
+    content: '\f00d';
+}
+
+/* Radio rows (Author's Note position, "In-chat @ Depth [4] as [System]"):
+   the shared label style lays a label out as text-left / control-right in
+   one line, which these multi-control rows overflow. Here they read left to
+   right and wrap when the words are long. */
+body.dc-on #movingDivs .checkbox_label:has(> input[type="radio"]) {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    align-items: center;
+    gap: 6px 8px;
+}
+
+body.dc-on #movingDivs .checkbox_label:has(> input[type="radio"]) > span {
+    flex: 0 1 auto;
+}
+
+body.dc-on #movingDivs .checkbox_label:has(> input[type="radio"]) > :is(input[type="number"], select) {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 64px;
+    margin: 0 !important;
+}

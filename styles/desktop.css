@@ -1,0 +1,578 @@
+/* ── Desktop layout ────────────────────────────────────────────────────────
+ *
+ *   rail | chat list | open panel | chat
+ *
+ * Switched on by html[data-dc-desk="on"] (src/boot.js: the "Версия для ПК"
+ * option and the window width). Column widths come from --dc-list-w and
+ * --dc-panel-w on <html>, which the drag handles in src/desktop.js change;
+ * html[data-dc-list="hidden"] folds the chat list away. Nothing slides
+ * between screens here: all columns are on screen at once, and a column
+ * snaps to its new width instead of animating it (animating a width
+ * re-lays out the whole chat on every frame). */
+
+html[data-dc-desk="on"] body.dc-on {
+    --dc-rail-w: 72px;
+    --dc-head-h: 48px;
+    --dc-userbar-h: 56px;
+    --dc-list-cur: var(--dc-list-w, 300px);
+    /* The dragged width, but never squeezing the chat under 380px. */
+    --dc-panel-fit: min(var(--dc-panel-w, 460px), max(340px, calc(100vw - var(--dc-rail-w) - var(--dc-list-cur) - var(--dc-right-w, 0px) - 380px)));
+    --dc-panel-cur: var(--dc-panel-fit);
+    /* The chat's left edge as the user put it (its own drag handle), counted
+       from the rail, so the list folding out covers that empty space first
+       instead of pushing the chat narrower; never squeezing the chat under
+       380px. What is left of it is the gap shown. */
+    --dc-left-fit: max(0px, min(calc(var(--dc-left-w, 0px) - var(--dc-list-cur) - var(--dc-panel-cur)), calc(100vw - var(--dc-rail-w) - var(--dc-list-cur) - var(--dc-panel-cur) - var(--dc-right-w, 0px) - 380px)));
+    --dc-chat-left: calc(var(--dc-rail-w) + var(--dc-list-cur) + var(--dc-panel-cur) + var(--dc-left-fit));
+    /* Empty space right of the chat (its own drag handle), again never
+       squeezing the chat under 380px. */
+    --dc-right-fit: max(0px, min(var(--dc-right-w, 0px), calc(100vw - var(--dc-chat-left) - 380px)));
+    --dc-right-cur: var(--dc-right-fit);
+    /* Where the open panel sits and how wide it is. */
+    --dc-panel-x: calc(var(--dc-rail-w) + var(--dc-list-cur));
+    --dc-panel-width: var(--dc-panel-fit);
+}
+
+html[data-dc-desk="on"][data-dc-list="hidden"] body.dc-on {
+    --dc-list-cur: 0px;
+}
+
+html[data-dc-desk="on"] body.dc-on[data-dc-panel=""] {
+    --dc-panel-cur: 0px;
+}
+
+/* Panels on the right (data-dc-deskpanel="right", the default): the panel
+   fills the space right of the chat, so the chat doesn't move when one
+   opens. That space is one width (--dc-right-w, the chat's right handle),
+   at least 340px while a panel is in it. */
+html[data-dc-desk="on"][data-dc-deskpanel="right"] body.dc-on {
+    --dc-left-fit: max(0px, min(calc(var(--dc-left-w, 0px) - var(--dc-list-cur)), calc(100vw - var(--dc-rail-w) - var(--dc-list-cur) - var(--dc-right-w, 0px) - 380px)));
+    --dc-chat-left: calc(var(--dc-rail-w) + var(--dc-list-cur) + var(--dc-left-fit));
+    --dc-right-open: min(max(340px, var(--dc-right-w, 0px)), max(340px, calc(100vw - var(--dc-chat-left) - 380px)));
+    --dc-panel-x: calc(100vw - var(--dc-right-open));
+    --dc-panel-width: var(--dc-right-open);
+}
+
+html[data-dc-desk="on"][data-dc-deskpanel="right"] body.dc-on:not([data-dc-panel=""]) {
+    --dc-right-cur: var(--dc-right-open);
+}
+
+/* ── Rail + chat list ──────────────────────────────────────────────────── */
+
+html[data-dc-desk="on"] body.dc-on #dc-home {
+    right: auto;
+    width: calc(var(--dc-rail-w) + var(--dc-list-cur));
+    transform: none !important;
+    transition: none;
+}
+
+html[data-dc-desk="on"] body.dc-on #dc-home::after,
+html[data-dc-desk="on"] body.dc-on .dc-home-dim,
+html[data-dc-desk="on"] body.dc-on .dc-server-head {
+    display: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-panel {
+    margin-top: 0;
+    border-top-left-radius: 12px;
+}
+
+html[data-dc-desk="on"][data-dc-list="hidden"] body.dc-on .dc-panel {
+    display: none;
+}
+
+/* The list stays put while a panel is open next to it. */
+html[data-dc-desk="on"] body.dc-on:not([data-dc-panel=""]) .dc-dm {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-head {
+    padding: 14px 12px 8px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-head h1 {
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-round,
+html[data-dc-desk="on"] body.dc-on .dc-pillbtn {
+    height: 34px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-round {
+    width: 34px;
+    flex-basis: 34px;
+    font-size: 14px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-pillbtn {
+    font-size: 14px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-list {
+    padding: 2px 8px calc(var(--dc-userbar-h) + 20px);
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-row {
+    gap: 10px;
+    padding: 6px 8px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-avatar {
+    width: 36px;
+    height: 36px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-av-group img {
+    width: 25px;
+    height: 25px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-item {
+    border-radius: 8px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-name {
+    font-size: 15px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-sub {
+    font-size: 13px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-time {
+    font-size: 12px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-note {
+    margin-left: 54px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-dm-note-btn {
+    top: 24px;
+}
+
+/* User bar: a strip across the bottom of rail + list. With the list
+   folded away only the avatar is left, under the rail. */
+html[data-dc-desk="on"] body.dc-on .dc-userbar {
+    gap: 10px;
+    padding: 0 8px;
+    border-radius: 12px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-userbar-avatar {
+    width: 38px;
+    height: 38px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-userbar-name {
+    font-size: 14px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-userbar-sub {
+    font-size: 12px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-userbar-bell {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+}
+
+html[data-dc-desk="on"][data-dc-list="hidden"] body.dc-on .dc-userbar {
+    justify-content: center;
+    padding: 0;
+}
+
+html[data-dc-desk="on"][data-dc-list="hidden"] body.dc-on .dc-userbar-text,
+html[data-dc-desk="on"][data-dc-list="hidden"] body.dc-on .dc-userbar-bell {
+    display: none;
+}
+
+/* ── Open panel: its own column right of the list ──────────────────────── */
+
+html[data-dc-desk="on"] body.dc-on #top-settings-holder .drawer-content:not(#dc-x) {
+    top: var(--dc-head-h) !important;
+    left: var(--dc-panel-x) !important;
+    right: auto !important;
+    bottom: 0 !important;
+    width: var(--dc-panel-width) !important;
+    border-left: 1px solid var(--dc-line) !important;
+}
+
+body.dc-on #dc-deskhead {
+    display: none;
+}
+
+html[data-dc-desk="on"] body.dc-on:not([data-dc-panel=""]) #dc-deskhead {
+    position: fixed;
+    top: 0;
+    left: var(--dc-panel-x);
+    width: var(--dc-panel-width);
+    height: var(--dc-head-h);
+    z-index: 1600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 6px 0 16px;
+    border-left: 1px solid var(--dc-line);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    background: var(--dc-bg);
+    color: var(--dc-text);
+    font-size: 16px;
+    font-weight: 700;
+    user-select: none;
+    animation: dc-desk-fade 0.18s ease;
+}
+
+html[data-dc-desk="on"] body.dc-on #dc-deskhead .dc-icon-btn {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: 16px;
+}
+
+@keyframes dc-desk-fade {
+    from {
+        opacity: 0;
+    }
+}
+
+/* ── Chat: whatever is left on the right ───────────────────────────────── */
+
+html[data-dc-desk="on"] body.dc-on #sheld {
+    left: var(--dc-chat-left) !important;
+    right: var(--dc-right-cur) !important;
+    width: auto !important;
+    border-right: 1px solid var(--dc-line);
+    transform: none !important;
+    pointer-events: auto !important;
+    box-shadow: none !important;
+    transition: none !important;
+    border-left: 1px solid var(--dc-line);
+}
+
+body.dc-on .dc-list-toggle {
+    display: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-back {
+    display: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-list-toggle {
+    display: flex;
+}
+
+html[data-dc-desk="on"][data-dc-list="shown"] body.dc-on .dc-list-toggle {
+    color: var(--dc-text);
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-chat-header {
+    padding-left: 8px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-chat-header .dc-icon-btn {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+    font-size: 17px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-chat-avatar {
+    width: 28px;
+    height: 28px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-chat-name {
+    font-size: 16px;
+}
+
+/* Messages: Discord's hover wash and the floating action bar. The bar is
+   SillyTavern's own .mes_buttons (… for the extra actions, pencil to edit),
+   which the phone layout hides in favour of the long-press sheet. Right
+   click still opens the sheet, here as a context menu. */
+html[data-dc-desk="on"] body.dc-on #chat .mes {
+    position: relative;
+}
+
+html[data-dc-desk="on"] body.dc-on:not(.dc-deleting) #chat .mes:hover {
+    background: rgba(255, 255, 255, 0.025) !important;
+}
+
+html[data-dc-desk="on"] body.dc-on:not(.dc-deleting) #chat .mes:hover:not(:has(.edit_textarea)) .mes_buttons {
+    display: flex !important;
+}
+
+html[data-dc-desk="on"] body.dc-on #chat .mes .mes_buttons {
+    position: absolute;
+    top: -14px;
+    right: 16px;
+    z-index: 5;
+    gap: 0;
+    height: auto;
+    padding: 2px;
+    border: 1px solid var(--dc-line);
+    border-radius: 8px;
+    background: var(--dc-bg-float);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    overflow: visible;
+}
+
+/* The first message would push the bar above the list's top edge. */
+html[data-dc-desk="on"] body.dc-on #chat .mes[mesid="0"] .mes_buttons {
+    top: 4px;
+}
+
+html[data-dc-desk="on"] body.dc-on #chat .mes_buttons .extraMesButtons {
+    gap: 0;
+    padding: 0;
+}
+
+html[data-dc-desk="on"] body.dc-on #chat .mes_buttons .mes_button,
+html[data-dc-desk="on"] body.dc-on #chat .mes_buttons .extraMesButtons > div {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    /* Centred by line-height, not display: ST shows and hides single
+       buttons through display (the checkpoint flag, hide/unhide…). */
+    line-height: 32px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--dc-icon);
+    opacity: 1;
+    filter: none;
+}
+
+html[data-dc-desk="on"] body.dc-on #chat .mes_buttons .mes_button:hover,
+html[data-dc-desk="on"] body.dc-on #chat .mes_buttons .extraMesButtons > div:hover {
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+}
+
+/* ── Composer menus as popovers above the composer ─────────────────────── */
+
+html[data-dc-desk="on"] body.dc-on #options .options-content,
+html[data-dc-desk="on"] body.dc-on #extensionsMenu {
+    inset: auto auto 78px calc(var(--dc-chat-left) + 14px) !important;
+    width: 320px !important;
+    max-height: min(60vh, 560px) !important;
+    padding: 6px !important;
+    border: 1px solid var(--dc-line) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+    animation: dc-pop-in 0.16s var(--dc-ease);
+}
+
+html[data-dc-desk="on"] body.dc-on #extensionsMenu {
+    inset: auto calc(var(--dc-right-cur) + 70px) 78px auto !important;
+}
+
+html[data-dc-desk="on"] body.dc-on #options .options-content::before,
+html[data-dc-desk="on"] body.dc-on #extensionsMenu::before,
+html[data-dc-desk="on"] body.dc-on #options::before,
+html[data-dc-desk="on"] body.dc-on:has(> #extensionsMenu:not([style*="display: none"]))::after {
+    display: none;
+}
+
+html[data-dc-desk="on"] body.dc-on #options .options-content a,
+html[data-dc-desk="on"] body.dc-on #extensionsMenu .list-group-item {
+    min-height: 38px;
+    gap: 12px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: 14.5px;
+}
+
+html[data-dc-desk="on"] body.dc-on #options .options-content a i,
+html[data-dc-desk="on"] body.dc-on #options .options-content a .fa-solid,
+html[data-dc-desk="on"] body.dc-on #extensionsMenu .list-group-item .extensionsMenuExtensionButton,
+html[data-dc-desk="on"] body.dc-on #extensionsMenu .list-group-item > .fa-solid {
+    font-size: 15px;
+}
+
+@keyframes dc-pop-in {
+    from {
+        opacity: 0;
+        translate: 0 6px;
+    }
+}
+
+/* ── Action sheet as a context menu ────────────────────────────────────── */
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-scrim {
+    background: transparent;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet {
+    right: auto;
+    bottom: auto;
+    width: 280px;
+    max-height: min(70vh, 560px);
+    padding: 6px;
+    border: 1px solid var(--dc-line);
+    border-radius: 10px;
+    background: var(--dc-bg-sheet);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity 0.12s ease, transform 0.14s var(--dc-ease);
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu.open .dc-sheet {
+    opacity: 1;
+    transform: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-handle {
+    display: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-head {
+    padding: 4px 6px 8px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-head img {
+    width: 32px;
+    height: 32px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-row {
+    min-height: 34px;
+    gap: 10px;
+    padding: 0 8px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-row + .dc-sheet-row {
+    box-shadow: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-row i {
+    width: 18px;
+    font-size: 14px;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-row:hover {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-row:hover i {
+    color: #fff;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-sheet-root.dc-menu .dc-sheet-row.danger:hover {
+    background: var(--dc-red);
+}
+
+/* ── Drag handles on the column borders ────────────────────────────────── */
+
+body.dc-on .dc-resizer {
+    display: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-resizer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 1800;
+    display: block;
+    width: 10px;
+    margin-left: -5px;
+    cursor: col-resize;
+    touch-action: none;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-resizer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 4px;
+    width: 2px;
+    background: var(--dc-blurple);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-resizer:hover::after {
+    opacity: 0.7;
+    transition-delay: 0.12s;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-resizer.active::after {
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-resizer[data-edge="list"] {
+    left: calc(var(--dc-rail-w) + var(--dc-list-cur));
+}
+
+html[data-dc-desk="on"] body.dc-on .dc-resizer[data-edge="panel"] {
+    left: calc(var(--dc-chat-left) - var(--dc-left-fit));
+}
+
+/* The chat's left edge: only moves the chat. With the list folded away its
+   handle goes too, so this one is the only handle on that edge. */
+html[data-dc-desk="on"] body.dc-on .dc-resizer[data-edge="left"] {
+    left: max(var(--dc-chat-left), 5px);
+}
+
+html[data-dc-desk="on"][data-dc-list="hidden"] body.dc-on .dc-resizer[data-edge="list"] {
+    display: none;
+}
+
+/* The chat's right edge. At 0 the handle sits inside the window edge. */
+html[data-dc-desk="on"] body.dc-on .dc-resizer[data-edge="right"] {
+    left: min(calc(100vw - var(--dc-right-cur)), calc(100vw - 5px));
+}
+
+html[data-dc-desk="on"] body.dc-on[data-dc-panel=""] .dc-resizer[data-edge="panel"],
+html[data-dc-desk="on"][data-dc-deskpanel="right"] body.dc-on .dc-resizer[data-edge="panel"] {
+    display: none;
+}
+
+/* While dragging: one cursor everywhere, no text selection, and nothing
+   underneath (iframes, the chat) gets to grab the pointer. */
+body.dc-on.dc-resizing,
+body.dc-on.dc-resizing * {
+    cursor: col-resize !important;
+    user-select: none !important;
+}
+
+body.dc-on.dc-resizing :is(#sheld, #dc-home, #top-settings-holder) {
+    pointer-events: none !important;
+}
+
+/* ── Hover states (a mouse, unlike a finger, hovers) ───────────────────── */
+
+@media (hover: hover) {
+    html[data-dc-desk="on"] body.dc-on .dc-dm-item:not(.active):hover {
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    html[data-dc-desk="on"] body.dc-on .dc-icon-btn:hover,
+    html[data-dc-desk="on"] body.dc-on .dc-chat-peer:hover,
+    html[data-dc-desk="on"] body.dc-on .dc-userbar-bell:hover {
+        background: var(--dc-bg-card);
+        color: var(--dc-text);
+    }
+
+    html[data-dc-desk="on"] body.dc-on .dc-round:not(.dc-blurple):not(.active):hover,
+    html[data-dc-desk="on"] body.dc-on .dc-pillbtn:hover,
+    html[data-dc-desk="on"] body.dc-on .dc-chip:not(.active):hover {
+        background: var(--dc-bg-press);
+    }
+
+    html[data-dc-desk="on"] body.dc-on .dc-userbar-avatar:hover,
+    html[data-dc-desk="on"] body.dc-on .dc-userbar-text:hover {
+        opacity: 0.85;
+    }
+}

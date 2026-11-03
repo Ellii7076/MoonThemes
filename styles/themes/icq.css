@@ -1,0 +1,1792 @@
+/* Theme "Ретро" — a messenger in Windows 98 windows.
+ *
+ * The screens and their logic (contact list → message window → panels,
+ * swipes, desktop columns and drag handles) are the shared layout; this
+ * file replaces how all of it looks. src/icq.js adds the parts the layout
+ * has no element for: the contact list's title and menu bars, group
+ * headers, the message window's toolbar.
+ *
+ * Everything sits under one prefix carrying two id-level :not()s, so these
+ * rules outrank the default theme's without a fight over each selector. */
+
+html[data-dc-family="icq"] body.dc-on:not(#icq-a):not(#icq-b) {
+    /* Win98 face, shadows and highlights. */
+    --icq-face: #c0c0c0;
+    --icq-light: #dfdfdf;
+    --icq-white: #ffffff;
+    --icq-field: #ffffff;
+    --icq-ink: #000000;
+    --icq-muted: #404040;
+    --icq-dim: #707070;
+    --icq-tip: #ffffe1;
+    --icq-them: #c00000;
+    --icq-you: #0000c0;
+    --icq-link: #0000ee;
+    --icq-code: #f4f4f4;
+    --icq-hold: #e8e8f4;
+    --icq-skel: #ececec;
+    --icq-note: #806000;
+    --icq-desktop: #6f6f73;
+    --icq-shadow: #808080;
+    --icq-dark: #0a0a0a;
+    --icq-navy: #000080;
+    /* Text on title bars and on navy selections. */
+    --icq-on-title: #fff;
+    --icq-on-navy: #fff;
+    --icq-sel: var(--icq-navy);
+    --icq-sel-ink: var(--icq-on-navy);
+    --icq-sel-caret: var(--icq-ink);
+    --icq-title: linear-gradient(90deg, #000080, #1084d0);
+    --icq-title-off: linear-gradient(90deg, var(--icq-shadow), #b5b5b5);
+    --icq-raised: inset -1px -1px var(--icq-dark), inset 1px 1px var(--icq-white), inset -2px -2px var(--icq-shadow), inset 2px 2px var(--icq-light);
+    --icq-pressed: inset -1px -1px var(--icq-white), inset 1px 1px var(--icq-dark), inset -2px -2px var(--icq-light), inset 2px 2px var(--icq-shadow);
+    --icq-sunken: inset -1px -1px var(--icq-white), inset 1px 1px var(--icq-shadow), inset -2px -2px var(--icq-light), inset 2px 2px var(--icq-dark);
+    --icq-window: inset -1px -1px var(--icq-dark), inset 1px 1px var(--icq-light), inset -2px -2px var(--icq-shadow), inset 2px 2px var(--icq-white);
+    --icq-status: inset -1px -1px var(--icq-white), inset 1px 1px var(--icq-shadow);
+    --icq-font: Tahoma, Verdana, 'Noto Sans', 'Segoe UI', sans-serif;
+    /* Status lamp in the status bar: green when connected, grey when not. */
+    --icq-led: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5.5' fill='%2321b33a' stroke='%23085a17'/%3E%3Ccircle cx='6.3' cy='6.2' r='1.8' fill='%23b9f5c4'/%3E%3C/svg%3E");
+    --icq-led-off: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5.5' fill='%238a8a8a' stroke='%23404040'/%3E%3Ccircle cx='6.3' cy='6.2' r='1.8' fill='%23dddddd'/%3E%3C/svg%3E");
+
+    /* The shared tokens, light and grey. */
+    --dc-bg-lowest: var(--icq-desktop);
+    --dc-bg: var(--icq-face);
+    --dc-bg-raised: var(--icq-face);
+    --dc-bg-card: var(--icq-face);
+    --dc-bg-press: #b0b0b0;
+    --dc-line: var(--icq-shadow);
+    --dc-text: var(--icq-ink);
+    --dc-text-normal: var(--icq-ink);
+    --dc-text-muted: var(--icq-muted);
+    --dc-text-dim: var(--icq-dim);
+    --dc-blurple: var(--icq-navy);
+    --dc-blurple-press: #00005a;
+    --dc-green: #008000;
+    --dc-red: var(--icq-them);
+    --dc-yellow: var(--icq-note);
+    --dc-link: var(--icq-link);
+    --dc-bg-float: var(--icq-face);
+    --dc-bg-sheet: var(--icq-face);
+    --dc-bg-field: var(--icq-field);
+    --dc-bg-code: var(--icq-field);
+    --dc-bg-code-line: var(--icq-shadow);
+    --dc-icon: var(--icq-ink);
+    --dc-handle: var(--icq-shadow);
+    --dc-track: var(--icq-field);
+    --dc-status-off: var(--icq-shadow);
+    --dc-accent-text: var(--icq-navy);
+    --dc-on-accent: #fff;
+    --dc-rail-w: 0px;
+    --dc-head-h: 28px;
+    --dc-userbar-h: 30px;
+    --dc-font: var(--icq-font);
+    --dc-font-text: var(--icq-font);
+    --dc-font-name: var(--icq-font);
+    --dc-ease: linear;
+    --dc-dur: 0.12s;
+
+    background: var(--icq-face) !important;
+    color: var(--icq-ink);
+    font-family: var(--icq-font);
+    font-size: 13px;
+
+    /* ── Everything square, nothing glows ─────────────────────────────── */
+
+    & *,
+    & *::before,
+    & *::after {
+        border-radius: 0 !important;
+        text-shadow: none !important;
+    }
+
+    /* The one round thing: the loading spinner (styles/preload.css). */
+    & #load-spinner::before {
+        border-radius: 50% !important;
+    }
+
+    /* Selected text: the navy band (Ретро розовая: pink, icq-skins.css). */
+    & ::selection {
+        background: var(--icq-sel);
+        color: var(--icq-sel-ink);
+    }
+
+    & :is(textarea, input) {
+        caret-color: var(--icq-sel-caret);
+    }
+
+    & ::-webkit-scrollbar {
+        width: 16px;
+        height: 16px;
+        background: var(--icq-light);
+    }
+
+    & ::-webkit-scrollbar-thumb {
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        border: 0;
+    }
+
+    & ::-webkit-scrollbar-track {
+        background: repeating-conic-gradient(var(--icq-face) 0 25%, var(--icq-white) 0 50%) 0 0 / 2px 2px;
+    }
+
+    /* ── Controls ──────────────────────────────────────────────────────── */
+
+    /* Raised buttons. */
+    & :is(.menu_button, .menu_button_icon, button.dc-round, button.dc-pillbtn, .dc-chip, .dc-userbar-bell,
+        .icq-menubar button, .icq-toolbar button, .popup-controls .menu_button, .dc-wl-classic) {
+        min-height: 24px;
+        padding: 2px 10px;
+        border: 0 !important;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-raised) !important;
+        color: var(--icq-ink) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 12.5px;
+        font-weight: 400;
+        opacity: 1;
+        filter: none;
+        transform: none !important;
+        transition: none !important;
+        cursor: default;
+    }
+
+    & :is(.menu_button, .menu_button_icon, button.dc-round, button.dc-pillbtn, .dc-chip, .dc-userbar-bell,
+        .icq-menubar button, .icq-toolbar button, .popup-controls .menu_button):active,
+    & :is(.menu_button.active, .dc-chip.active, .dc-round.active, .menu_button.toggleEnabled) {
+        box-shadow: var(--icq-pressed) !important;
+        background: var(--icq-face) !important;
+        color: var(--icq-ink) !important;
+    }
+
+    /* Sunken fields. */
+    & :is(.text_pole, textarea, select, input[type="text"], input[type="number"], input[type="search"], input[type="password"], .select2-selection) {
+        border: 0 !important;
+        background: var(--icq-field) !important;
+        box-shadow: var(--icq-sunken) !important;
+        color: var(--icq-ink) !important;
+        font-family: var(--icq-font) !important;
+        outline: none;
+    }
+
+    & :is(.text_pole, textarea, select, input):focus {
+        outline: 1px dotted var(--icq-ink);
+        outline-offset: -4px;
+    }
+
+    & select {
+        padding-right: 22px !important;
+        background:
+            linear-gradient(var(--icq-face), var(--icq-face)) right 2px top 2px / 16px calc(100% - 4px) no-repeat,
+            var(--icq-field) !important;
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M4 6h8l-4 5z'/%3E%3C/svg%3E"),
+            linear-gradient(var(--icq-face), var(--icq-face)) !important;
+        background-position: right 2px center, right 2px top 2px !important;
+        background-size: 16px 16px, 16px calc(100% - 4px) !important;
+        background-repeat: no-repeat !important;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    /* Checkboxes: the white square with a black tick. */
+    & input[type="checkbox"] {
+        -webkit-appearance: none;
+        appearance: none;
+        position: relative;
+        flex: 0 0 13px;
+        width: 13px !important;
+        height: 13px !important;
+        min-width: 13px;
+        margin: 0 6px 0 0;
+        border: 0 !important;
+        background: var(--icq-field) !important;
+        box-shadow: var(--icq-sunken) !important;
+        cursor: default;
+    }
+
+    & input[type="checkbox"]::before {
+        content: '';
+        position: absolute;
+        inset: 3px 2px 2px 3px;
+        width: auto;
+        height: auto;
+        margin: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        transform: none;
+        clip-path: polygon(0 45%, 35% 80%, 100% 10%, 100% 35%, 35% 100%, 0 70%);
+        transition: none;
+    }
+
+    & input[type="checkbox"]:checked::before {
+        background: var(--icq-ink);
+    }
+
+    & input[type="radio"] {
+        accent-color: var(--icq-ink);
+    }
+
+    /* Sliders: a sunken groove and a raised thumb. */
+    & input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 22px;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    & input[type="range"]::-webkit-slider-runnable-track {
+        height: 4px;
+        background: var(--icq-field);
+        box-shadow: var(--icq-sunken);
+        border: 0;
+    }
+
+    & input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 11px;
+        height: 21px;
+        margin-top: -9px;
+        border: 0;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        transform: none;
+    }
+
+    & input[type="range"]::-moz-range-track {
+        height: 4px;
+        background: var(--icq-field);
+        box-shadow: var(--icq-sunken);
+    }
+
+    & input[type="range"]::-moz-range-progress {
+        background: transparent;
+    }
+
+    & input[type="range"]::-moz-range-thumb {
+        width: 11px;
+        height: 21px;
+        border: 0;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+    }
+
+    /* Collapsible sections become Win98 group boxes. */
+    & .inline-drawer {
+        margin: 8px 0 !important;
+        border: 1px solid var(--icq-shadow) !important;
+        background: transparent !important;
+        box-shadow: 1px 1px 0 var(--icq-white), inset 1px 1px 0 var(--icq-white) !important;
+    }
+
+    & .inline-drawer-header {
+        min-height: 26px;
+        padding: 2px 8px !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        color: var(--icq-ink) !important;
+        background: transparent !important;
+    }
+
+    & .inline-drawer-icon {
+        color: var(--icq-ink) !important;
+    }
+
+    & h3,
+    & h4 {
+        color: var(--icq-ink) !important;
+        font-family: var(--icq-font) !important;
+        letter-spacing: 0 !important;
+        text-transform: none !important;
+    }
+
+    & a {
+        color: var(--icq-link);
+    }
+
+    /* ── Contact list window ──────────────────────────────────────────── */
+
+    & #dc-home {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        padding: 3px calc(3px) 3px 3px;
+        padding-top: calc(var(--dc-safe-top) + 3px);
+        background: var(--icq-face);
+        box-shadow: var(--icq-window);
+        user-select: none;
+    }
+
+    & .dc-rail,
+    & .dc-home-dim,
+    & #dc-home::after,
+    & .dc-dm-titlebar,
+    & .dc-dm-head h1,
+    & .dc-dm-actions {
+        display: none !important;
+    }
+
+    /* (#dc-deskhead is left out: desktop.css shows it only while a panel is
+       open — shown with no panel it had no position, and its title-bar
+       ::before spread over the empty desktop.) */
+    & .icq-title,
+    & .dc-server-head,
+    & .dc-chat-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 22px;
+        min-height: 22px;
+        margin: 0;
+        padding: 0 3px 0 4px;
+        border: 0;
+        background: var(--icq-title) !important;
+        box-shadow: none;
+        color: var(--icq-on-title) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0;
+        user-select: none;
+    }
+
+    & .icq-title-text,
+    & .dc-server-title,
+    & .dc-chat-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--icq-on-title) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+    }
+
+    & .icq-appicon {
+        flex: 0 0 16px;
+        width: 16px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--icq-on-title);
+    }
+
+    /* The decorative _ □ × of every window. */
+    & .icq-winbtns {
+        display: flex;
+        gap: 2px;
+        margin-left: auto;
+        pointer-events: none;
+    }
+
+    & .icq-winbtns b {
+        width: 16px;
+        height: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink);
+        font-size: 10px;
+        line-height: 1;
+    }
+
+    & .icq-winbtns b:last-child {
+        margin-left: 2px;
+    }
+
+    & .icq-menubar {
+        display: flex;
+        gap: 0;
+        padding: 2px 0;
+    }
+
+    & .icq-menubar button {
+        min-height: 22px;
+        padding: 0 8px;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    & .icq-menubar button:hover {
+        box-shadow: var(--icq-status) !important;
+    }
+
+    & .icq-menubar button:active {
+        box-shadow: var(--icq-pressed) !important;
+    }
+
+    & .dc-panel {
+        grid-row: 3;
+        margin: 0 !important;
+        border-radius: 0;
+        background: var(--icq-face) !important;
+    }
+
+    & .dc-dm-head {
+        padding: 0 0 2px;
+    }
+
+    & .dc-dm-searchbar {
+        height: 0;
+        margin: 0;
+        padding: 0 6px;
+        background: var(--icq-field);
+        box-shadow: var(--icq-sunken);
+        color: var(--icq-ink);
+    }
+
+    & #dc-home.dc-searching .dc-dm-searchbar {
+        height: 24px;
+        margin-top: 2px;
+    }
+
+    & .dc-dm-searchbar input {
+        color: var(--icq-ink);
+        font-size: 13px;
+    }
+
+    & .dc-dm-filters {
+        margin: 0;
+        padding: 4px 0 0;
+        gap: 4px;
+    }
+
+    & .dc-chip {
+        height: 22px;
+        padding: 0 8px;
+        font-size: 12px;
+    }
+
+    & .dc-chip[style] {
+        color: var(--icq-ink) !important;
+    }
+
+    /* The list itself: a white listbox. */
+    & .dc-dm-list {
+        padding: 2px 2px calc(var(--dc-safe-bottom) + 4px) !important;
+        background: var(--icq-field);
+        box-shadow: var(--icq-sunken);
+    }
+
+    & .icq-group {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        height: 20px;
+        padding: 0 4px;
+        font-weight: 700;
+        font-size: 12.5px;
+        color: var(--icq-ink);
+    }
+
+    & .icq-group span {
+        font-size: 9px;
+    }
+
+    & .dc-dm-item {
+        margin: 0;
+        background: transparent;
+        animation: none;
+        transition: none;
+    }
+
+    & .dc-dm-row {
+        gap: 6px;
+        padding: 3px 4px 3px 14px;
+        border: 1px dotted transparent;
+    }
+
+    & .dc-dm-item:active .dc-dm-row,
+    & .dc-dm-item.dc-holding .dc-dm-row,
+    & .dc-dm-item.dc-pressed .dc-dm-row,
+    & .dc-dm-item.active .dc-dm-row {
+        background: var(--icq-navy);
+        border-color: var(--icq-white);
+    }
+
+    & .dc-dm-item:is(:active, .dc-holding, .dc-pressed, .active) :is(.dc-dm-name, .dc-dm-sub, .dc-dm-time, .dc-dm-pin) {
+        color: var(--icq-on-navy) !important;
+    }
+
+    /* Avatar small and square. */
+    & .dc-dm-avatar {
+        width: 26px;
+        height: 26px;
+    }
+
+    & .dc-dm-avatar > img,
+    & .dc-av-group img {
+        box-shadow: 0 0 0 1px var(--icq-shadow);
+    }
+
+    & .dc-av-group img {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* No status per contact: characters are always "there". */
+    & .dc-dm-avatar .dc-status {
+        display: none !important;
+    }
+
+    & .dc-dm-name {
+        font-size: 13.5px !important;
+        font-weight: 700;
+        color: var(--icq-ink);
+    }
+
+    & .dc-dm-sub {
+        font-size: 12px;
+        color: var(--icq-muted);
+    }
+
+    & .dc-dm-time {
+        font-size: 11px;
+        color: var(--icq-muted);
+    }
+
+    & .dc-dm-tag {
+        padding: 0 4px;
+        border: 1px solid var(--icq-shadow);
+        background: var(--icq-tip) !important;
+        box-shadow: none;
+        color: var(--icq-ink) !important;
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    & .dc-dm-note {
+        margin: 0 4px 4px 40px;
+        border: 1px solid var(--icq-ink);
+        background: var(--icq-tip);
+        color: var(--icq-ink);
+        font-size: 12.5px;
+    }
+
+    /* The note sticker on the second line, clear of the time. */
+    & .dc-dm-note-btn {
+        top: 22px;
+        right: 4px;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+        color: var(--icq-note);
+    }
+
+    & .dc-empty,
+    & .dc-empty i {
+        color: var(--icq-muted);
+    }
+
+    & .dc-skel {
+        background:
+            linear-gradient(var(--icq-skel), var(--icq-skel)) 34px 8px / 45% 10px no-repeat,
+            linear-gradient(var(--icq-skel), var(--icq-skel)) 34px 24px / 65% 8px no-repeat;
+        height: 38px;
+    }
+
+    /* Status bar: a lamp (connected or not), your name, the model. */
+    & .dc-userbar {
+        position: static !important;
+        grid-row: 4;
+        height: var(--dc-userbar-h);
+        margin: 3px 0 calc(var(--dc-safe-bottom)) !important;
+        padding: 2px;
+        gap: 2px;
+        border: 0;
+        background: var(--icq-face);
+        box-shadow: none;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    & .dc-userbar-avatar {
+        width: 24px;
+        height: 24px;
+        flex: 0 0 24px;
+        margin-right: 2px;
+    }
+
+    & .dc-userbar .dc-status {
+        display: none !important;
+    }
+
+    & .dc-userbar-text {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 6px 0 24px;
+        background: var(--icq-led-off) 5px center / 13px 13px no-repeat;
+        box-shadow: var(--icq-status);
+    }
+
+    & .dc-userbar:has(.dc-status.dc-online) .dc-userbar-text {
+        background-image: var(--icq-led);
+    }
+
+    & .dc-userbar-name {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--icq-ink);
+    }
+
+    & .dc-userbar-name > i {
+        color: var(--icq-ink);
+    }
+
+    & .dc-tag {
+        padding: 0 4px;
+        background: transparent;
+        box-shadow: var(--icq-status);
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--icq-ink);
+    }
+
+    & .dc-userbar-sub {
+        font-size: 11.5px;
+        color: var(--icq-muted);
+    }
+
+    & .dc-userbar-bell {
+        width: 28px;
+        min-height: 24px;
+        height: 24px;
+        padding: 0;
+        font-size: 12px;
+    }
+
+    /* ── Message window ───────────────────────────────────────────────── */
+
+    & #sheld {
+        padding: 3px !important;
+        padding-top: calc(var(--dc-safe-top) + 3px) !important;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-window) !important;
+    }
+
+    & .dc-chat-header {
+        height: 26px;
+        padding-right: 3px;
+    }
+
+    & .dc-chat-header .dc-icon-btn {
+        width: 18px;
+        height: 16px;
+        flex: 0 0 18px;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink);
+        font-size: 9px;
+    }
+
+    & .dc-chat-header .dc-icon-btn:active {
+        box-shadow: var(--icq-pressed);
+    }
+
+    /* Back sits with the window buttons, as the × that closes the window. */
+    & .dc-chat-header .dc-back {
+        order: 99;
+        margin-left: 0;
+    }
+
+    & .dc-chat-header .dc-back i::before {
+        content: '\f00d';
+    }
+
+    & .dc-chat-header .icq-winbtns b:last-child {
+        display: none;
+    }
+
+    /* In the message window the decorative _ □ match the real buttons
+       next to them: same size, same spacing. */
+    & .dc-chat-header .icq-winbtns {
+        order: 98;
+        gap: 6px;
+    }
+
+    & .dc-chat-header .icq-winbtns b {
+        width: 18px;
+        height: 16px;
+        font-size: 10px;
+    }
+
+    & .dc-chat-peer {
+        height: 22px;
+        gap: 6px;
+        padding: 0;
+        color: var(--icq-on-title);
+    }
+
+    & .dc-chat-avatar {
+        width: 16px;
+        height: 16px;
+    }
+
+    & .dc-chat-avatar .dc-status,
+    & .dc-chat-chevron {
+        display: none;
+    }
+
+    & .dc-chat-name::after {
+        content: ' — Сообщение';
+        font-weight: 400;
+    }
+
+    & .dc-chat-header.dc-peer-home .dc-chat-name::after {
+        content: '';
+    }
+
+
+
+    /* A big-icon toolbar: icon over a short label, every button the same
+       width, so all of them fit on a phone. */
+    & .icq-toolbar {
+        flex: 0 0 auto;
+        display: flex;
+        gap: 2px;
+        padding: 2px 0 3px;
+    }
+
+    & .icq-toolbar button {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-height: 40px;
+        padding: 3px 2px;
+    }
+
+    & .icq-toolbar i {
+        font-size: 15px;
+    }
+
+    & .icq-toolbar span {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 11px;
+        line-height: 1.1;
+    }
+
+
+
+    /* The log: white, sunken, plain. */
+    & #chat {
+        margin: 0 !important;
+        padding: 6px 4px !important;
+        background: var(--icq-field) !important;
+        box-shadow: var(--icq-sunken);
+    }
+
+    & #chat .mes {
+        gap: 0;
+        padding: 6px 6px 0 !important;
+    }
+
+    & #chat .mes.dc-cont {
+        padding-top: 2px !important;
+    }
+
+    & #chat .mesAvatarWrapper {
+        display: none !important;
+    }
+
+    /* No avatar column: the name starts at the edge. */
+    & #chat .mes .ch_name {
+        gap: 6px;
+        min-height: 0;
+        padding-left: 0;
+        margin-bottom: 2px;
+    }
+
+    /* Room under the last message for the swipe buttons. */
+    &:not(.hideAllSwipeButtons) #chat .mes.last_mes:not([is_user="true"]),
+    &.swipeAllMessages #chat .mes.swipes_visible {
+        padding-bottom: 34px !important;
+    }
+
+    & #chat .mes .swipe_left {
+        left: 6px;
+        bottom: 4px;
+    }
+
+    & #chat .mes .swipeRightBlock {
+        left: 36px;
+        bottom: 4px;
+    }
+
+    /* While generating, the arrows are hidden: the counter moves to the edge. */
+    &.hideAllSwipeButtons #chat .mes .swipeRightBlock {
+        left: 6px;
+    }
+
+    &.hideAllSwipeButtons #chat .mes.last_mes:not([is_user="true"]):has(.swipes-counter:not(:empty, [hidden])) {
+        padding-bottom: 34px !important;
+    }
+
+    /* "Seraphina (21:04):" — red for them, blue for you. */
+    & #chat .name_text {
+        font-family: var(--icq-font) !important;
+        font-size: 13.5px !important;
+        font-weight: 700 !important;
+        color: var(--icq-them) !important;
+    }
+
+    & #chat .mes[is_user="true"] .name_text {
+        color: var(--icq-you) !important;
+    }
+
+    & #chat .dc-ts {
+        font-size: 12px !important;
+        color: inherit;
+    }
+
+    & #chat .mes .ch_name .dc-ts {
+        color: var(--icq-them);
+        font-weight: 700;
+    }
+
+    & #chat .mes[is_user="true"] .ch_name .dc-ts {
+        color: var(--icq-you);
+    }
+
+    & #chat .mes .ch_name .dc-ts::before {
+        content: '(';
+    }
+
+    & #chat .mes .ch_name .dc-ts::after {
+        content: '):';
+    }
+
+    & #chat .mes_text {
+        font-family: var(--icq-font) !important;
+        font-size: 14.5px;
+        line-height: 1.45;
+        color: var(--icq-ink);
+    }
+
+    /* Quotes look like text selected with the mouse in Windows: white on
+       the selection blue, each wrapped line its own highlighted strip. */
+    & #chat .mes_text q {
+        padding: 1px 0;
+        background: var(--icq-navy);
+        color: var(--icq-on-navy) !important;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+    }
+
+    & #chat .mes_text q :is(i, em, b, strong, u, a, span, font) {
+        color: var(--icq-on-navy) !important;
+    }
+
+    & #chat .mes.dc-cont .mes_text {
+        margin-top: 0;
+    }
+
+    & #chat .dc-day {
+        margin: 10px 4px 2px;
+        color: var(--icq-dim);
+        font-size: 11.5px;
+    }
+
+    & #chat .dc-day::before,
+    & #chat .dc-day::after {
+        background: none;
+        border-top: 1px solid var(--icq-shadow);
+        border-bottom: 1px solid var(--icq-white);
+        height: 0;
+    }
+
+    & #chat .mes_text blockquote {
+        border-left: 2px solid var(--icq-shadow);
+    }
+
+    & #chat .mes_text :is(code, pre) {
+        border: 1px solid var(--icq-shadow);
+        background: var(--icq-code);
+        color: var(--icq-ink);
+    }
+
+    & #chat .mes_reasoning_details {
+        border: 1px solid var(--icq-shadow);
+        border-left: 1px solid var(--icq-shadow);
+        background: var(--icq-code);
+    }
+
+    & #chat .mes.dc-holding,
+    & #chat .mes.dc-pressed {
+        background: var(--icq-hold) !important;
+    }
+
+    & #chat .edit_textarea {
+        background: var(--icq-field) !important;
+        box-shadow: var(--icq-sunken) !important;
+        color: var(--icq-ink);
+        font-size: 14px;
+    }
+
+    /* Swipe arrows and counter: small raised buttons. */
+    & #chat :is(.swipe_left, .swipe_right, .swipes-counter) {
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-raised) !important;
+        color: var(--icq-ink) !important;
+        border: 0 !important;
+    }
+
+    & .dc-typing {
+        color: var(--icq-muted);
+        font-style: italic;
+    }
+
+    /* Composer: a sunken box and a short "Send" button. */
+    & #form_sheld {
+        padding: 3px 0 calc(var(--dc-safe-bottom)) !important;
+        background: var(--icq-face) !important;
+    }
+
+    & #nonQRFormItems {
+        min-height: 32px;
+        margin-right: 62px;
+        padding: 1px 2px;
+        align-items: center;
+        background: var(--icq-field);
+        box-shadow: var(--icq-sunken) !important;
+    }
+
+    & #send_textarea {
+        min-height: 28px !important;
+        max-height: 30vh;
+        padding: 5px 6px !important;
+        text-align: left !important;
+        line-height: 1.3 !important;
+        color: var(--icq-ink) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 14px !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+
+    & #send_textarea::placeholder {
+        color: var(--icq-shadow) !important;
+    }
+
+    /* The "+" menu and the wand inside the field, left and right, as small
+       raised buttons: within thumb's reach, unlike the toolbar. */
+    /* As tall as the one-line field inside its sunken frame; when the
+       field grows they stay at the bottom, next to the last line. */
+    & #options_button,
+    & #extensionsMenuButton {
+        width: 34px !important;
+        height: 34px !important;
+        flex: 0 0 34px;
+        margin: 0 0 2px !important;
+        align-self: flex-end;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-raised) !important;
+        color: var(--icq-ink) !important;
+        font-size: 15px !important;
+    }
+
+    & #options_button:active,
+    & #extensionsMenuButton:active {
+        box-shadow: var(--icq-pressed) !important;
+        background: var(--icq-face) !important;
+    }
+
+    & #options_button::before {
+        content: '\f0c9';
+    }
+
+    /* Exactly as tall as the field, however tall the field grows. ST
+       centres Stop (place-self), which would shrink it to its text. */
+    & #send_but,
+    & #mes_stop {
+        right: -62px !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 56px !important;
+        height: auto !important;
+        place-self: stretch !important;
+        padding: 0 !important;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-raised), 0 0 0 1px #000 !important;
+        color: var(--icq-ink) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 0 !important;
+        transform: none !important;
+    }
+
+    & #send_but::before {
+        content: 'Send' !important;
+        font-family: var(--icq-font) !important;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    & #mes_stop i {
+        display: none;
+    }
+
+    & #mes_stop::before {
+        content: 'Stop';
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--icq-them);
+    }
+
+    & #send_but:active,
+    & #mes_stop:active {
+        box-shadow: var(--icq-pressed), 0 0 0 1px #000 !important;
+    }
+
+    /* ── Panels (ST drawers) as windows ───────────────────────────────── */
+
+    & #top-settings-holder .drawer-content {
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-window) !important;
+        color: var(--icq-ink);
+        padding: 6px 8px 10px !important;
+        transform: none !important;
+    }
+
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #rm_extensions_block, #movingDivs > .drawer-content, #character_popup) {
+        --dc-tile: transparent;
+        --dc-tile-line: var(--icq-shadow);
+        --dc-field: var(--icq-field);
+    }
+
+    & .dc-server-head {
+        height: 24px;
+        border: 0;
+    }
+
+    & .dc-server-back {
+        order: 99;
+        width: 18px;
+        height: 16px;
+        margin: 0 0 0 auto !important;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink) !important;
+        font-size: 9px;
+    }
+
+    & .dc-server-back i::before {
+        content: '\f00d';
+    }
+
+    & .dc-server-icon {
+        color: var(--icq-on-title);
+        font-size: 12px;
+    }
+
+    & .dc-server-chevron {
+        display: none;
+    }
+
+    /* No banner to hang over: the profile avatars sit in the window,
+       whole, in a sunken frame. */
+    & #right-nav-panel #avatar_div_div,
+    & #PersonaManagement .dc-persona-avatar {
+        margin-top: 6px !important;
+        border: 0 !important;
+        padding: 2px !important;
+        background: var(--icq-field) !important;
+        box-shadow: var(--icq-sunken) !important;
+    }
+
+    /* Discord's blurred banners have no place here. */
+    & :is(.dc-persona-banner, .dc-char-banner) {
+        display: none !important;
+    }
+
+    & :is(.dc-persona-avatar, #avatar_load_preview, .avatar img) {
+        box-shadow: var(--icq-sunken) !important;
+    }
+
+    /* ── Menus (the action sheet as a context menu) ───────────────────── */
+
+    & .dc-sheet-root .dc-sheet-scrim {
+        background: transparent !important;
+    }
+
+    /* Placed by src/sheet.js where the click was, phone or not; none of
+       the phone sheet's edges or slide apply. */
+    & .dc-sheet-root.dc-menu .dc-sheet {
+        right: auto !important;
+        bottom: auto !important;
+        max-height: min(75vh, 560px);
+        transform: none !important;
+    }
+
+    & .dc-sheet-root:not(.open) .dc-sheet {
+        visibility: hidden;
+    }
+
+    & .dc-sheet-root .dc-sheet {
+        width: 230px !important;
+        padding: 2px !important;
+        border: 0 !important;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-window), 2px 2px 0 rgba(0, 0, 0, 0.35) !important;
+        opacity: 1 !important;
+        transition: none !important;
+    }
+
+    & .dc-sheet-handle {
+        display: none !important;
+    }
+
+    & .dc-sheet-head {
+        padding: 2px 4px 4px !important;
+        border-bottom: 1px solid var(--icq-shadow);
+        box-shadow: 0 1px 0 var(--icq-white);
+        margin-bottom: 2px;
+    }
+
+    & .dc-sheet-head[hidden] {
+        display: none !important;
+    }
+
+    /* Square, whole: the shared sheet gives the image a 36px flex basis,
+       which stretched it into a cropped strip next to a 24px height. */
+    & .dc-sheet-head img {
+        flex: 0 0 32px !important;
+        width: 32px !important;
+        height: 32px !important;
+        align-self: flex-start;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    & .dc-sheet-head b {
+        font-family: var(--icq-font) !important;
+        font-size: 13px !important;
+        color: var(--icq-ink);
+    }
+
+    & .dc-sheet-head small,
+    & .dc-sheet-chip {
+        color: var(--icq-muted) !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    & .dc-sheet-group {
+        background: transparent !important;
+        box-shadow: none !important;
+        margin: 0;
+    }
+
+    & .dc-sheet-group + .dc-sheet-group,
+    & .dc-sheet-title {
+        border-top: 1px solid var(--icq-shadow);
+        box-shadow: inset 0 1px 0 var(--icq-white);
+    }
+
+    & .dc-sheet-title {
+        margin: 2px 0;
+        padding: 3px 6px 1px !important;
+        font-size: 11px !important;
+        color: var(--icq-muted) !important;
+        text-transform: none !important;
+        letter-spacing: 0 !important;
+    }
+
+    & .dc-sheet-row {
+        min-height: 22px !important;
+        gap: 8px !important;
+        padding: 0 8px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: var(--icq-ink) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 13px !important;
+        font-weight: 400 !important;
+    }
+
+    & .dc-sheet-row i {
+        width: 16px !important;
+        font-size: 12px !important;
+        color: var(--icq-ink) !important;
+    }
+
+    & .dc-sheet-row:hover,
+    & .dc-sheet-row:active {
+        background: var(--icq-navy) !important;
+        color: var(--icq-on-navy) !important;
+    }
+
+    & .dc-sheet-row:hover i,
+    & .dc-sheet-row:active i {
+        color: var(--icq-on-navy) !important;
+    }
+
+    & .dc-sheet-row.danger {
+        color: var(--icq-them) !important;
+    }
+
+    /* The "+" and wand menus: same Windows menus. */
+    & :is(#options .options-content, #extensionsMenu) {
+        padding: 2px !important;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-window), 2px 2px 0 rgba(0, 0, 0, 0.35) !important;
+        border: 0 !important;
+        animation: none !important;
+    }
+
+    & :is(#options .options-content, #extensionsMenu)::before,
+    & #options::before,
+    &:has(> #extensionsMenu:not([style*="display: none"]))::after {
+        display: none !important;
+    }
+
+    & :is(#options .options-content a, #extensionsMenu .list-group-item) {
+        min-height: 26px !important;
+        padding: 0 8px !important;
+        gap: 8px !important;
+        color: var(--icq-ink) !important;
+        font-size: 13px !important;
+        font-weight: 400 !important;
+    }
+
+    & :is(#options .options-content a, #extensionsMenu .list-group-item):hover {
+        background: var(--icq-navy) !important;
+        color: var(--icq-on-navy) !important;
+    }
+
+    & :is(#options .options-content a, #extensionsMenu .list-group-item):hover :is(i, .fa-solid) {
+        color: var(--icq-on-navy) !important;
+    }
+
+    & :is(#options .options-content a i, #options .options-content a .fa-solid, #extensionsMenu .list-group-item .fa-solid) {
+        color: var(--icq-ink) !important;
+        font-size: 13px !important;
+    }
+
+    /* ── Popups: Windows message boxes ────────────────────────────────── */
+
+    & dialog.popup:not(:has(#loader)) {
+        padding: 3px 3px 0 !important;
+        border: 0 !important;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-window), 3px 3px 0 rgba(0, 0, 0, 0.3) !important;
+        color: var(--icq-ink);
+    }
+
+    & dialog.popup:not(:has(#loader))::before {
+        content: 'MoonThemes';
+        display: block;
+        height: 20px;
+        padding: 0 6px;
+        background: var(--icq-title);
+        color: var(--icq-on-title);
+        font-family: var(--icq-font);
+        font-size: 12.5px;
+        font-weight: 700;
+        line-height: 20px;
+    }
+
+    & dialog.popup:not(:has(#loader))::backdrop {
+        background: transparent;
+    }
+
+    & dialog.popup .popup-body {
+        padding: 12px 12px 10px !important;
+    }
+
+    & dialog.popup:not(:has(#loader)) .popup-content :is(h2, h3) {
+        font-family: var(--icq-font) !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: var(--icq-ink) !important;
+    }
+
+    & dialog.popup .popup-controls {
+        justify-content: center;
+    }
+
+    & dialog.popup .popup-controls .menu_button {
+        min-width: 80px;
+        min-height: 26px;
+        padding: 0 12px;
+    }
+
+    & dialog.popup .popup-controls .popup-button-ok {
+        box-shadow: var(--icq-raised), 0 0 0 1px var(--icq-ink) !important;
+        font-weight: 700;
+    }
+
+    & dialog.popup .popup-button-close {
+        top: 5px;
+        right: 5px;
+        width: 16px;
+        height: 14px;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink);
+        font-size: 9px;
+    }
+
+    /* Floating panels (Author's Note…): windows too. */
+    & #movingDivs > .drawer-content,
+    & #character_popup {
+        padding: 3px !important;
+        border: 0 !important;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-window), 3px 3px 0 rgba(0, 0, 0, 0.3) !important;
+        animation: none !important;
+    }
+
+    & #movingDivs > .drawer-content > .panelControlBar {
+        min-height: 22px;
+        padding: 0 3px;
+        margin: 0 0 4px;
+        background: var(--icq-title);
+    }
+
+    & #movingDivs > .drawer-content > .panelControlBar::before {
+        display: none;
+    }
+
+    & #movingDivs > .drawer-content > .panelControlBar > * {
+        width: 16px;
+        height: 14px;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink) !important;
+        font-size: 9px;
+    }
+
+    & #movingDivs > .drawer-content > .panelControlBar > .drag-grabber {
+        background: transparent !important;
+        box-shadow: none;
+        color: var(--icq-on-title) !important;
+    }
+
+    /* ── Toasts: small Windows message windows ─────────────────────────
+     * A raised grey window; ::after is its blue title bar naming the kind
+     * (Сообщение / Готово / Внимание / Ошибка), ::before the Windows icon
+     * in the body — blue "i", green tick, yellow triangle, red ×. */
+
+    & #toast-container > div {
+        width: min(92vw, 360px) !important;
+        min-height: 72px;
+        padding: 32px 12px 12px 56px !important;
+        border: 0 !important;
+        background: var(--icq-face) !important;
+        background-image: none !important;
+        box-shadow: var(--icq-window), 3px 3px 0 rgba(0, 0, 0, 0.3) !important;
+        color: var(--icq-ink) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 13px;
+        line-height: 1.35;
+        opacity: 1;
+        animation: dc-fade-in 0.12s linear both;
+    }
+
+    & #toast-container > div:hover {
+        box-shadow: var(--icq-window), 3px 3px 0 rgba(0, 0, 0, 0.3) !important;
+    }
+
+    & #toast-container > div::after {
+        content: 'Сообщение';
+        display: block;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        right: 3px;
+        bottom: auto;
+        width: auto;
+        height: 20px;
+        padding: 0 6px;
+        background: var(--icq-title);
+        color: var(--icq-on-title);
+        font-family: var(--icq-font);
+        font-size: 12.5px;
+        font-weight: 700;
+        line-height: 20px;
+        text-align: left;
+    }
+
+    & #toast-container > .toast-success::after {
+        content: 'Готово';
+        background: var(--icq-title);
+    }
+
+    & #toast-container > .toast-warning::after {
+        content: 'Внимание';
+        background: var(--icq-title);
+    }
+
+    & #toast-container > .toast-error::after {
+        content: 'Ошибка';
+        background: var(--icq-title);
+    }
+
+    & #toast-container > div::before {
+        content: '\f129';
+        top: 34px;
+        left: 12px;
+        width: 32px;
+        height: 32px;
+        margin-top: 0;
+        border-radius: 50% !important;
+        background: #1c5bd0;
+        box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.35), inset 1px 1px 0 rgba(255, 255, 255, 0.45), 1px 1px 0 rgba(0, 0, 0, 0.35);
+        color: #fff;
+        font-size: 15px;
+    }
+
+    & #toast-container > .toast-success::before {
+        content: '\f00c';
+        background: #1f9a2e;
+    }
+
+    & #toast-container > .toast-error::before {
+        content: '\f00d';
+        background: #d32020;
+        font-size: 17px;
+    }
+
+    /* Warning: the yellow triangle with a black "!". */
+    & #toast-container > .toast-warning::before {
+        content: '\f12a';
+        border-radius: 0 !important;
+        padding-top: 8px;
+        background: #f2c51c;
+        box-shadow: none;
+        clip-path: polygon(50% 0, 100% 100%, 0 100%);
+        color: #000;
+        font-size: 13px;
+    }
+
+    & #toast-container .toast-title {
+        margin-bottom: 2px;
+        color: var(--icq-ink) !important;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    & #toast-container .toast-message,
+    & #toast-container > div:not(:has(.toast-title)) .toast-message {
+        color: var(--icq-ink) !important;
+        font-weight: 400;
+    }
+
+    & #toast-container .toast-message a {
+        color: var(--icq-link);
+    }
+
+    /* Close: the × of the title bar. */
+    & #toast-container .toast-close-button {
+        top: 6px;
+        right: 6px;
+        width: 16px;
+        height: 14px;
+        margin-top: 0;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink);
+        font-size: 11px;
+        z-index: 1;
+    }
+
+    /* Time left: Windows' blue progress blocks along the bottom edge. */
+    & #toast-container .toast-progress {
+        left: 3px;
+        bottom: 3px;
+        height: 4px;
+        background: repeating-linear-gradient(90deg, var(--icq-navy) 0 6px, transparent 6px 8px);
+        opacity: 1;
+    }
+
+    /* ── Home page (Главная) inside the log ───────────────────────────── */
+
+    & .dc-welcome {
+        gap: 14px;
+        padding: 12px 10px;
+        animation: none;
+    }
+
+    & .dc-wl-hero h2 {
+        font-family: var(--icq-font);
+        font-size: 18px;
+        color: var(--icq-ink);
+    }
+
+    & .dc-wl-hero p,
+    & .dc-wl-foot {
+        color: var(--icq-muted);
+    }
+
+    & .dc-wl-me {
+        box-shadow: var(--icq-sunken);
+    }
+
+    & .dc-wl-section h3 {
+        color: var(--icq-ink) !important;
+        font-size: 12.5px;
+        letter-spacing: 0;
+        text-transform: none;
+        border-bottom: 1px solid var(--icq-shadow);
+        box-shadow: 0 1px 0 var(--icq-white);
+        padding-bottom: 2px;
+    }
+
+    & :is(.dc-wl-continue, .dc-wl-action) {
+        border: 0;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        transform: none !important;
+        transition: none;
+    }
+
+    & :is(.dc-wl-continue, .dc-wl-action):active {
+        box-shadow: var(--icq-pressed);
+    }
+
+    & .dc-wl-continue-go {
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink);
+    }
+
+    & .dc-wl-continue-av,
+    & .dc-wl-person img {
+        box-shadow: var(--icq-sunken);
+    }
+
+    & .dc-wl-continue-top b,
+    & .dc-wl-action-text b,
+    & .dc-wl-person span {
+        font-family: var(--icq-font);
+        color: var(--icq-ink);
+    }
+
+    & .dc-wl-continue-snippet,
+    & .dc-wl-action-text small,
+    & .dc-wl-continue-top small,
+    & .dc-wl-continue-file {
+        color: var(--icq-muted);
+    }
+
+    & .dc-wl-action-icon {
+        background: transparent;
+        color: var(--icq-ink);
+    }
+
+    & .dc-wl-person:hover {
+        background: transparent;
+    }
+
+    & .dc-wl-person:hover span {
+        background: var(--icq-navy);
+        color: var(--icq-on-navy);
+    }
+
+    & .dc-wl-classic {
+        text-decoration: none;
+    }
+
+    /* Icon buttons are often the icon element itself (.menu_button.fa-*):
+       the button font above must not take their glyph font away. Last in
+       the block so it wins over every button rule. */
+    /* Doubled classes: the button rule's :is() counts as type + class. */
+    & :is(.fa-solid.fa-solid, .fa-regular.fa-regular, .fa.fa) {
+        font-family: 'Font Awesome 6 Free' !important;
+    }
+
+    & :is(.fa-solid.fa-solid, .fa.fa) {
+        font-weight: 900 !important;
+    }
+
+    & .fa-regular.fa-regular {
+        font-weight: 400 !important;
+    }
+
+    & .fa-brands.fa-brands {
+        font-family: 'Font Awesome 6 Brands' !important;
+        font-weight: 400 !important;
+    }
+}
+
+/* ── Desktop: windows on the teal Windows desktop ─────────────────────── */
+
+html[data-dc-family="icq"][data-dc-desk="on"] body.dc-on:not(#icq-a):not(#icq-b) {
+    background: var(--icq-desktop) !important;
+
+    & #dc-home {
+        top: 6px;
+        left: 6px;
+        bottom: 6px;
+        width: calc(var(--dc-list-cur) - 6px);
+        padding-top: 3px;
+    }
+
+    & #sheld {
+        top: 6px !important;
+        bottom: 6px !important;
+        left: calc(var(--dc-chat-left) + 6px) !important;
+        right: calc(var(--dc-right-cur) + 6px) !important;
+        width: auto !important;
+        height: auto !important;
+        padding-top: 3px !important;
+        border: 0;
+    }
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        top: calc(6px + 3px + 24px) !important;
+        bottom: 6px !important;
+        left: calc(var(--dc-panel-x) + 6px) !important;
+        width: calc(var(--dc-panel-width) - 12px) !important;
+        border: 0 !important;
+        box-shadow: var(--icq-window) !important;
+    }
+
+    & #dc-deskhead {
+        top: 6px;
+        left: calc(var(--dc-panel-x) + 6px);
+        width: calc(var(--dc-panel-width) - 12px);
+        height: 27px;
+        padding: 3px 3px 0;
+        border: 0;
+        background: var(--icq-face) !important;
+        box-shadow: var(--icq-window);
+        align-items: center;
+        gap: 6px;
+        color: var(--icq-on-title) !important;
+        font-family: var(--icq-font) !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        user-select: none;
+    }
+
+    & #dc-deskhead::before {
+        content: '';
+        position: absolute;
+        inset: 3px 3px 0;
+        background: var(--icq-title);
+        z-index: -1;
+    }
+
+    & #dc-deskhead .dc-icon-btn {
+        width: 16px;
+        height: 14px;
+        flex-basis: 16px;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+        color: var(--icq-ink);
+        font-size: 9px;
+    }
+
+    & #dc-deskhead .dc-server-icon,
+    & #dc-deskhead .dc-server-title {
+        position: relative;
+        color: var(--icq-on-title) !important;
+    }
+
+    /* The open panel has its own window here (#dc-deskhead + drawer);
+       the list window keeps showing the list. */
+    & .dc-server-head {
+        display: none !important;
+    }
+
+    & .dc-resizer::after {
+        background: var(--icq-ink);
+        width: 1px;
+        left: 5px;
+    }
+
+    /* Hover on a mouse: Windows-style highlight, nothing else moves. */
+    & .dc-dm-item:not(.active):hover .dc-dm-row {
+        border-color: var(--icq-navy);
+    }
+
+    & #chat .mes:hover {
+        background: transparent !important;
+    }
+
+    & #chat .mes .mes_buttons {
+        top: 2px;
+        right: 6px;
+        padding: 1px;
+        border: 0;
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+    }
+
+    & #chat .mes_buttons .mes_button,
+    & #chat .mes_buttons .extraMesButtons > div {
+        width: 22px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 11px;
+        color: var(--icq-ink);
+    }
+
+    & #chat .mes_buttons .mes_button:hover,
+    & #chat .mes_buttons .extraMesButtons > div:hover {
+        background: var(--icq-face);
+        box-shadow: var(--icq-raised);
+    }
+}
+
+html[data-dc-family="icq"][data-dc-desk="on"][data-dc-list="hidden"] body.dc-on:not(#icq-a):not(#icq-b) #dc-home {
+    display: none !important;
+}
+
+/* Phone panels: the drawer under its title bar, nothing of the list
+   window's own chrome above it. */
+html[data-dc-family="icq"][data-dc-desk="off"] body.dc-on:not(#icq-a):not(#icq-b):not([data-dc-panel=""]) {
+    & .icq-title,
+    & .icq-menubar,
+    & .dc-userbar {
+        display: none !important;
+    }
+
+    --dc-drawer-top: calc(var(--dc-safe-top) + 3px + 24px);
+}
+
+
+/* ── "Ретро тёмная": the same windows in dark grey ────────────────────── */
+
+html[data-dc-skin="icq-dark"] body.dc-on:not(#icq-a):not(#icq-b) {
+    --icq-face: #2e2e32;
+    --icq-light: #45454b;
+    --icq-white: #5a5a62;
+    --icq-shadow: #17171a;
+    --icq-dark: #000000;
+    --icq-field: #18181b;
+    --icq-ink: #e6e6e6;
+    --icq-muted: #b4b4b8;
+    --icq-dim: #8a8a90;
+    --icq-tip: #34331f;
+    --icq-them: #ff7a6e;
+    --icq-you: #86aaff;
+    --icq-link: #8ab4ff;
+    --icq-code: #222226;
+    --icq-hold: #2a2a40;
+    --icq-skel: #26262a;
+    --icq-note: #e0b84e;
+    --icq-desktop: #0e0e10;
+    --icq-navy: #23408f;
+    /* Navy stays for fills; as text on dark grey it would vanish. */
+    --dc-accent-text: var(--icq-link);
+    --icq-title: linear-gradient(90deg, #13235c, #2f5aa8);
+    --dc-bg-press: #3a3a40;
+    --dc-red: #ff7a6e;
+    --dc-green: #5fd16a;
+}
+

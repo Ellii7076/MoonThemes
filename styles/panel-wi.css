@@ -1,0 +1,667 @@
+/* ── "Лорбуки" server: SillyTavern's World Info ─────────────────────────
+ *
+ * CSS only.
+ *
+ *   active worlds / global settings → two tiles at the top
+ *   activation sliders              → label, slider and number on a grid
+ *   lorebook toolbar                → picker on its own row, round buttons,
+ *                                     a search field like Discord's
+ *   entries                         → cards: title, status, a row of small
+ *                                     fields, round actions; the editor
+ *                                     inside uses the shared fields
+ */
+
+body.dc-on #WorldInfo {
+    padding-bottom: 32px;
+}
+
+/* Drag grip and pin make no sense on a full-screen panel. */
+body.dc-on #WorldInfo #WorldInfoheader,
+body.dc-on #WorldInfo #WI_panel_pin_div {
+    display: none;
+}
+
+body.dc-on #WorldInfo #WI_panel_pin {
+    display: none !important;
+}
+
+body.dc-on #WorldInfo > .flex-container:has(> h3) {
+    margin: 2px 2px 8px;
+}
+
+body.dc-on #WorldInfo #wi-holder {
+    margin: 0;
+}
+
+/* ── Top tiles ────────────────────────────────────────────────────── */
+
+body.dc-on #WorldInfo #wiTopBlock {
+    flex-direction: column;
+    gap: 10px;
+}
+
+body.dc-on #WorldInfo #wiTopBlock > .range-block {
+    width: 100%;
+    margin: 0;
+    padding: 12px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on #WorldInfo #WIMultiSelector {
+    background:
+        radial-gradient(120% 120px at 0% 0%, color-mix(in srgb, var(--dc-blurple) 20%, transparent), transparent 70%),
+        var(--dc-tile);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dc-blurple) 14%, transparent);
+}
+
+body.dc-on #WorldInfo #wiTopBlock .range-block-title {
+    margin: 0 2px 8px;
+}
+
+body.dc-on #WorldInfo #wiTopBlock .range-block-title small,
+body.dc-on #WorldInfo #wiTopBlock .range-block-title span {
+    font-family: var(--dc-font);
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #WorldInfo #WIMultiSelector .range-block-title small {
+    color: var(--dc-accent-text);
+}
+
+body.dc-on #WorldInfo #world_info {
+    width: 100%;
+    min-height: 120px;
+}
+
+/* select2, when ST uses it for the active worlds. */
+body.dc-on #WorldInfo #WIMultiSelector .select2-selection--multiple {
+    min-height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--dc-field);
+}
+
+body.dc-on #WorldInfo #WIMultiSelector .select2-selection__choice {
+    border: 0;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--dc-blurple) 28%, transparent);
+    color: var(--dc-on-accent, #fff);
+    font-weight: 600;
+}
+
+/* The global settings collapsible sits inside the tile without its own
+   background. */
+body.dc-on #WorldInfo #wiTopBlock .inline-drawer {
+    margin: 0;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+body.dc-on #WorldInfo #wiActivationSettings {
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Activation sliders: "LABEL ……… [num]" over a full-width slider. */
+body.dc-on #WorldInfo #wiSliders {
+    flex-direction: column;
+    gap: 6px;
+}
+
+body.dc-on #WorldInfo #wiSliders > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 74px;
+    grid-template-areas: 'label num' 'range range';
+    align-items: center;
+    gap: 2px 10px;
+    width: 100%;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #WorldInfo #wiSliders > div:last-child {
+    border-bottom: 0;
+}
+
+body.dc-on #WorldInfo #wiSliders > div > small {
+    grid-area: label;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on #WorldInfo #wiSliders > div > small .fa-solid {
+    font-size: 11px;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #WorldInfo #wiSliders .neo-range-slider {
+    grid-area: range;
+    height: 28px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: none;
+}
+
+body.dc-on #WorldInfo #wiSliders .neo-range-input {
+    grid-area: num;
+    height: 34px;
+    min-height: 34px;
+    padding: 0 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Insertion Strategy: label over a full-width picker. */
+body.dc-on #WorldInfo #wiSliders > div:has(> select) {
+    grid-template-areas: 'label label' 'range range';
+}
+
+body.dc-on #WorldInfo #wiSliders > div > select {
+    grid-area: range;
+    width: 100%;
+    margin-top: 6px;
+}
+
+body.dc-on #WorldInfo #wiCheckboxes {
+    gap: 0;
+}
+
+body.dc-on #WorldInfo #wiCheckboxes .checkbox_label {
+    min-height: 44px;
+    padding: 4px 2px;
+}
+
+body.dc-on #WorldInfo #wiCheckboxes .checkbox_label small {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--dc-text);
+}
+
+/* ── Lorebook toolbar ─────────────────────────────────────────────── */
+
+body.dc-on #WorldInfo #world_popup {
+    margin-top: 14px;
+}
+
+body.dc-on #WorldInfo #world_popup > hr {
+    display: none;
+}
+
+body.dc-on #WorldInfo #world_popup > .flex-container {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+/* Row 1: the lorebook picker first, then New + file buttons. */
+body.dc-on #WorldInfo #world_editor_select,
+body.dc-on #WorldInfo #world_editor_select ~ .select2-container {
+    order: -1;
+    flex: 1 1 100%;
+    min-height: 46px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+body.dc-on #WorldInfo #world_popup > .flex-container > small {
+    display: none;
+}
+
+body.dc-on #WorldInfo #world_create_button {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+    margin-right: auto;
+}
+
+/* Row 2: search on its own line, like Discord's search bar. */
+body.dc-on #WorldInfo #world_info_search {
+    order: -1;
+    flex: 1 1 100%;
+    padding-left: 38px;
+    background:
+        no-repeat 13px 50% / 15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2380848e' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"),
+        var(--dc-field);
+}
+
+body.dc-on #WorldInfo #world_info_sort_order {
+    flex: 1 1 120px;
+    min-height: 36px;
+}
+
+/* Pagination (paginationjs). */
+body.dc-on #WorldInfo #world_info_pagination {
+    flex: 1 1 100%;
+}
+
+body.dc-on #WorldInfo #world_info_pagination .paginationjs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--dc-font);
+    font-size: 13px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #WorldInfo #world_info_pagination .paginationjs-pages ul {
+    display: flex;
+    gap: 4px;
+}
+
+body.dc-on #WorldInfo #world_info_pagination .paginationjs-pages li > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+}
+
+body.dc-on #WorldInfo #world_info_pagination .paginationjs-pages li.disabled > a {
+    opacity: 0.4;
+}
+
+body.dc-on #WorldInfo #world_info_pagination select {
+    min-height: 30px;
+    padding: 0 26px 0 10px;
+    font-size: 13px;
+}
+
+/* ── Entry cards ──────────────────────────────────────────────────── */
+
+body.dc-on #WorldInfo #world_popup_entries_list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+body.dc-on #WorldInfo #world_popup_entries_list:empty::before {
+    content: 'Записей нет';
+    padding: 40px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #WorldInfo .wi-card-entry {
+    margin: 0;
+    padding: 10px 10px 8px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--dc-tile);
+}
+
+body.dc-on #WorldInfo .world_entry .inline-drawer {
+    margin: 0;
+    border-radius: 0;
+    background: none;
+    overflow: visible;
+}
+
+body.dc-on #WorldInfo .world_entry > form > .inline-drawer > .inline-drawer-header {
+    display: grid;
+    grid-template-columns: 30px auto minmax(0, 1fr) 34px 34px 34px;
+    align-items: center;
+    gap: 8px 6px;
+    min-height: 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: default;
+}
+
+/* Flatten ST's wrappers so the pieces land on one grid:
+ *   [chevron] [on/off] [title ………… status]
+ *   [position] [depth] [order] [trigger %]
+ *                          [move] [copy] [delete]                     */
+body.dc-on #WorldInfo .world_entry .inline-drawer-header > .world_entry_thin_controls,
+body.dc-on #WorldInfo .world_entry .inline-drawer-header > .world_entry_thin_controls > .flex-container.wide100p {
+    display: contents;
+}
+
+body.dc-on #WorldInfo .world_entry .inline-drawer-header .inline-drawer-toggle {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--dc-bg-card);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+body.dc-on #WorldInfo .world_entry .killSwitch {
+    grid-area: 1 / 2;
+    font-size: 24px;
+    color: var(--dc-handle);
+    transition: color 0.2s ease;
+}
+
+body.dc-on #WorldInfo .world_entry .killSwitch.fa-toggle-on {
+    color: var(--dc-blurple);
+}
+
+body.dc-on #WorldInfo .WIEntryTitleAndStatus {
+    grid-area: 1 / 3 / 2 / 7;
+    flex-wrap: nowrap;
+    gap: 6px;
+    min-width: 0;
+}
+
+body.dc-on #WorldInfo .world_entry:has(.killSwitch.fa-toggle-off) :is(.WIEntryTitleAndStatus, .WIEnteryHeaderControls) {
+    opacity: 0.5;
+}
+
+body.dc-on #WorldInfo .world_entry textarea[name="comment"] {
+    min-height: 38px;
+    padding: 8px 12px;
+    font-family: var(--dc-font);
+    font-size: 15px;
+    font-weight: 700;
+    resize: none;
+}
+
+body.dc-on #WorldInfo .world_entry select[name="entryStateSelector"] {
+    min-height: 38px;
+    padding: 0 22px 0 10px;
+}
+
+body.dc-on #WorldInfo .WIEnteryHeaderControls {
+    grid-area: 2 / 1 / 3 / 7;
+}
+
+body.dc-on #WorldInfo .world_entry .move_entry_button {
+    grid-area: 3 / 4;
+}
+
+body.dc-on #WorldInfo .world_entry .duplicate_entry_button {
+    grid-area: 3 / 5;
+}
+
+body.dc-on #WorldInfo .world_entry .delete_entry_button {
+    grid-area: 3 / 6;
+}
+
+/* Position / Depth / Order / Trigger %: four small fields on a row. */
+body.dc-on #WorldInfo .WIEnteryHeaderControls {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+}
+
+body.dc-on #WorldInfo .WIEnteryHeaderControls > .world_entry_form_control {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    min-width: 0;
+}
+
+body.dc-on #WorldInfo .WIEntryHeaderTitleMobile {
+    margin: 0 2px;
+    font-family: var(--dc-font);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #WorldInfo .WIEnteryHeaderControls :is(select, input) {
+    width: 100% !important;
+    max-width: none;
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+body.dc-on #WorldInfo .WIEnteryHeaderControls select {
+    padding-right: 18px;
+}
+
+/* Move / duplicate / delete. */
+body.dc-on #WorldInfo .world_entry .inline-drawer-header > i.menu_button {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    flex-basis: 34px;
+    font-size: 13px;
+}
+
+/* ── Entry editor ─────────────────────────────────────────────────── */
+
+body.dc-on #WorldInfo .world_entry .inline-drawer-outlet {
+    gap: 4px;
+    margin-top: 10px;
+    padding: 10px 0 2px;
+    border-top: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #WorldInfo .world_entry_edit .flex-container {
+    gap: 8px;
+}
+
+/* Field labels. */
+body.dc-on #WorldInfo .world_entry_edit small:not(.displayNone),
+body.dc-on #WorldInfo .world_entry_edit .world_entry_form_control > small {
+    text-align: left;
+    font-family: var(--dc-font);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #WorldInfo .world_entry_edit .world_entry_form_control > small {
+    margin: 0 2px 4px;
+}
+
+body.dc-on #WorldInfo .world_entry_edit .world_entry_form_control {
+    min-width: 0;
+}
+
+/* Keywords: primary and optional filter full width, logic between. */
+body.dc-on #WorldInfo [name="keywordsAndLogicBlock"] > .keyprimary,
+body.dc-on #WorldInfo [name="keywordsAndLogicBlock"] > .keysecondary {
+    flex: 1 1 100%;
+}
+
+body.dc-on #WorldInfo [name="keywordsAndLogicBlock"] > .world_entry_form_control:not(.keyprimary):not(.keysecondary) {
+    flex: 1 1 100%;
+}
+
+body.dc-on #WorldInfo .world_entry textarea:is(.keyprimarytextpole, .keysecondarytextpole) {
+    height: auto !important;
+    min-height: 44px;
+}
+
+body.dc-on #WorldInfo .switch_input_type_icon {
+    top: 22px;
+    margin: 0;
+    right: 6px;
+}
+
+/* Per-entry overrides: two per row. */
+body.dc-on #WorldInfo [name="perEntryOverridesBlock"] > .world_entry_form_control {
+    flex: 1 1 calc(50% - 8px);
+}
+
+body.dc-on #WorldInfo [name="perEntryOverridesBlock"] :is(select, input) {
+    width: 100%;
+}
+
+/* Content: label line with tokens / UID, the four switches, the text. */
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] {
+    flex: 1 1 100%;
+    width: 100%;
+}
+
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] > .world_entry_form_control {
+    width: 100%;
+}
+
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] label > small > span {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+}
+
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] label > small > span > .flex-container {
+    flex: 1 1 100%;
+    flex-direction: column;
+    gap: 0;
+}
+
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] label > small > span > .flex-container > .flex-container {
+    gap: 0;
+}
+
+body.dc-on #WorldInfo .world_entry label.checkbox {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 40px;
+    font-family: var(--dc-font);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--dc-text);
+}
+
+body.dc-on #WorldInfo .world_entry .world_entry_form_token_counter,
+body.dc-on #WorldInfo .world_entry .world_entry_form_uid_value {
+    color: var(--dc-text);
+}
+
+body.dc-on #WorldInfo .world_entry textarea[name="content"] {
+    width: 100%;
+    min-height: 160px;
+    margin-top: 6px;
+}
+
+/* Inclusion group / weight / sticky / cooldown / delay. */
+body.dc-on #WorldInfo .world_entry_edit > .flex-container.flexGap10 {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+body.dc-on #WorldInfo .world_entry_edit > .flex-container.flexGap10 > .flex4 {
+    flex: 1 1 100% !important;
+}
+
+body.dc-on #WorldInfo .world_entry_edit > .flex-container.flexGap10 > .flex2 {
+    flex: 1 1 calc(25% - 8px);
+    min-width: 64px;
+}
+
+body.dc-on #WorldInfo .world_entry_edit .flexGap10 .justifySpaceBetween {
+    align-items: center;
+    margin: 0 2px 4px;
+}
+
+body.dc-on #WorldInfo .world_entry_edit .flexGap10 .checkbox_label {
+    width: auto;
+    gap: 8px;
+}
+
+body.dc-on #WorldInfo .world_entry_edit .flexGap10 .checkbox_label input[type="checkbox"] {
+    flex-basis: 36px;
+    width: 36px;
+    height: 22px;
+}
+
+body.dc-on #WorldInfo .world_entry_edit .flexGap10 .checkbox_label input[type="checkbox"]::before {
+    width: 16px;
+    height: 16px;
+}
+
+body.dc-on #WorldInfo .world_entry_edit .flexGap10 .checkbox_label input[type="checkbox"]:checked::before {
+    transform: translateX(14px);
+}
+
+body.dc-on #WorldInfo .world_entry_edit .flexGap10 :is(input, select) {
+    width: 100%;
+}
+
+body.dc-on #WorldInfo .world_entry_edit select[multiple] {
+    width: 100%;
+    min-height: 90px;
+}
+
+/* "Additional Matching Sources" collapsible. */
+body.dc-on #WorldInfo .world_entry_edit .inline-drawer {
+    margin-top: 6px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+body.dc-on #WorldInfo .world_entry_edit .inline-drawer-header {
+    min-height: 44px;
+    font-size: 14px;
+}
+
+/* ── Fixes after a look on the phone ─────────────────────────────── */
+
+/* "CONTENT ⤢" on one line, tokens / UID under it, left-aligned. */
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] label > small {
+    display: block;
+    margin: 4px 2px 0;
+    text-align: left;
+}
+
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] label > small > span {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: stretch;
+    gap: 4px;
+}
+
+body.dc-on #WorldInfo [name="contentAndCharFilterBlock"] label > small > span > span:first-child {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+body.dc-on #WorldInfo .world_entry .editor_maximize {
+    margin: 0;
+    padding: 4px;
+    font-size: 12px;
+    color: var(--dc-text-muted);
+    opacity: 1;
+}
+
+/* Weight / sticky / cooldown / delay: two per row, labels on one line. */
+body.dc-on #WorldInfo .world_entry_edit > .flex-container.flexGap10 > .flex2 {
+    flex: 1 1 calc(50% - 8px) !important;
+}
+
+body.dc-on #WorldInfo .world_entry_edit > .flex-container.flexGap10 > .flex2 small {
+    white-space: nowrap;
+}
+
+body.dc-on #WorldInfo #world_info_sort_order {
+    flex: 1 1 70px;
+    min-width: 0;
+}

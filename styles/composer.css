@@ -1,0 +1,218 @@
+/* The composer is SillyTavern's own #send_form, rearranged in CSS only:
+ *   [ + | textarea | ☺ ]  (➤)
+ * "+" is the options menu (☰), the smiley is the wand. The wrappers around
+ * them are flattened with display: contents so `order` can lay them out. */
+
+body.dc-on #form_sheld {
+    flex: 0 0 auto;
+    margin: 0 !important;
+    padding: 4px 10px calc(var(--dc-safe-bottom) + 10px) !important;
+    background: var(--dc-bg);
+    border: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+}
+
+body.dc-on #send_form {
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    gap: 6px;
+}
+
+body.dc-on #send_form.no-connection {
+    background: transparent !important;
+}
+
+body.dc-on #nonQRFormItems {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    /* min-width: 0, or a long "Написать @…" placeholder (form_sheld is
+       nowrap) widens the pill and pushes Send off-screen. */
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 48px;
+    margin-right: 56px;
+    padding: 4px;
+    border-radius: 24px;
+    background: var(--dc-bg-raised);
+    transition: box-shadow 0.18s ease;
+}
+
+body.dc-on #nonQRFormItems:focus-within {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+body.dc-on #leftSendForm,
+body.dc-on #rightSendForm {
+    display: contents !important;
+}
+
+/* Shared shape for the in-pill icon buttons. */
+body.dc-on #options_button,
+body.dc-on #extensionsMenuButton,
+body.dc-on #nonQRFormItems .stscript_btn {
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px !important;
+    color: var(--dc-icon) !important;
+    opacity: 1 !important;
+    background: none;
+    transition: background-color 0.15s ease, transform 0.15s var(--dc-ease), color 0.15s ease;
+}
+
+body.dc-on #nonQRFormItems .stscript_btn:not(.stscript_btn_visible) {
+    display: none !important;
+}
+
+body.dc-on #options_button:active,
+body.dc-on #extensionsMenuButton:active {
+    background: var(--dc-bg-card);
+    transform: scale(0.9);
+}
+
+body.dc-on #options_button {
+    order: 1;
+}
+
+body.dc-on #options_button::before {
+    content: '\f067';  /* fa-plus */
+}
+
+body.dc-on #send_textarea {
+    order: 2;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 40px;
+    max-height: 40dvh;
+    margin: 0 !important;
+    padding: 9px 4px !important;
+    border: 0 !important;
+    outline: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    color: var(--dc-text) !important;
+    font-family: var(--dc-font) !important;
+    font-size: 16px !important;
+    line-height: 22px !important;
+    text-align: left !important;
+}
+
+body.dc-on #send_textarea::placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--dc-status-off);
+    opacity: 1;
+}
+
+body.dc-on #extensionsMenuButton {
+    order: 3;
+}
+
+body.dc-on #extensionsMenuButton::before {
+    content: '\f118' !important;  /* fa-face-smile */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 400;
+}
+
+/* Everything else ST or extensions put in the form sits after the smiley. */
+body.dc-on #rightSendForm > * {
+    order: 4;
+}
+
+/* Continue / impersonate live in the header and the "+" sheet instead. */
+body.dc-on #mes_impersonate,
+body.dc-on #mes_continue {
+    display: none !important;
+}
+
+/* Send: blurple circle outside the pill. Stop takes its place while
+   generating (ST swaps them itself). */
+body.dc-on #send_but,
+body.dc-on #mes_stop {
+    position: absolute !important;
+    right: -54px;
+    bottom: 2px;
+    width: 46px !important;
+    height: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px !important;
+    opacity: 1 !important;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.18s var(--dc-spring);
+}
+
+body.dc-on #send_but {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff) !important;
+}
+
+body.dc-on #send_but:not(.displayNone) {
+    display: flex !important;
+}
+
+body.dc-on #send_but:active {
+    background: var(--dc-blurple-press);
+    transform: scale(0.9);
+}
+
+body.dc-on #mes_stop {
+    background: var(--dc-bg-card);
+    color: var(--dc-red) !important;
+}
+
+body.dc-on #mes_stop i {
+    font-size: 20px;
+}
+
+/* Attached file preview. */
+body.dc-on #file_form .file_attached {
+    border: 0;
+    border-radius: 12px;
+    background: var(--dc-bg-raised);
+    color: var(--dc-text-normal);
+    margin-bottom: 4px;
+}
+
+/* While generating ST shows #mes_stop (inline display:flex) but leaves Send
+   visible — and Send sits on top of Stop in the same spot. Hide Send so the
+   Stop button is the one under the thumb. */
+body.dc-on #nonQRFormItems:has(#mes_stop[style*="flex"]) #send_but {
+    display: none !important;
+}
+
+body.dc-on #mes_stop[style*="flex"] {
+    animation: dc-pop-in 0.22s var(--dc-spring);
+}
+
+@keyframes dc-pop-in {
+    from {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+}
+
+/* ST outlines the whole form while typing (#send_form:has(:focus-visible)).
+   Discord's pill has no focus ring. */
+body.dc-on #send_form,
+body.dc-on #send_form:has(#send_textarea:focus-visible) {
+    outline: none !important;
+    border-color: transparent !important;
+}

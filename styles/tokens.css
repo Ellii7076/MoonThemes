@@ -1,0 +1,149 @@
+/* SillyTavern puts translateZ(0) + perspective on <html> (a Chrome blur
+   flicker fix). That makes the zero-height <html> box the containing block
+   for every position: fixed element, so `inset: 0` collapses to 0px tall.
+   We use no blur, so the fix can go — and the height is a second guard. */
+html[data-dc-enabled="on"] {
+    height: 100%;
+    -webkit-transform: none !important;
+    transform: none !important;
+    -webkit-perspective: none !important;
+    perspective: none !important;
+}
+
+/* Discord's default dark theme, sampled from the mobile app. */
+body.dc-on {
+    --dc-bg-lowest: #121214;   /* rail, status-bar strip */
+    --dc-bg: #1a1a1e;          /* panels, chat */
+    --dc-bg-raised: #242429;   /* active row, composer pill */
+    --dc-bg-card: #2b2b31;     /* cards, round buttons */
+    --dc-bg-press: #313137;
+    --dc-line: rgba(255, 255, 255, 0.07);
+
+    --dc-text: #f2f3f5;
+    --dc-text-normal: #dbdee1;
+    --dc-text-muted: #949ba4;
+    --dc-text-dim: #6d6f78;
+
+    --dc-blurple: #5865f2;
+    --dc-blurple-press: #4752c4;
+    --dc-green: #23a55a;
+    --dc-red: #f23f43;
+    --dc-yellow: #f0b232;
+    --dc-link: #00a8fc;
+
+    /* Secondary surfaces and greys. Every colour the layout uses comes from
+       a token, so a skin (styles/skins/*.css) only has to redefine these. */
+    --dc-bg-float: #232328;    /* user bar, popovers, toolbars */
+    --dc-bg-sheet: #1e1e22;    /* action sheet, context menu */
+    --dc-bg-field: #111214;    /* text fields inside panels */
+    --dc-bg-code: #2b2d31;
+    --dc-bg-code-line: #1e1f22;
+    --dc-icon: #b5bac1;        /* icon buttons */
+    --dc-handle: #4e5058;      /* sheet grab handles, quote bars */
+    --dc-track: #3f4147;       /* empty part of sliders */
+    --dc-status-off: #80848e;
+    --dc-accent-text: #c9cdfb; /* text tinted with the accent */
+    --dc-on-accent: #fff;      /* text on an accent-filled surface */
+
+    --dc-rail-w: 76px;
+    --dc-safe-top: env(safe-area-inset-top, 0px);
+    --dc-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --dc-userbar-h: 64px;
+    --dc-head-h: 56px;
+
+    --dc-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --dc-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+    --dc-dur: 0.32s;
+    /* Three faces: UI chrome, message text, names/titles. */
+    --dc-font: 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --dc-font-text: var(--dc-font);
+    --dc-font-name: var(--dc-font);
+
+    /* Text colours (main, italics, quotes, links) are deliberately NOT forced
+       here: they come from the active ST theme, so the theme's colour pickers
+       keep working. The bundled "Discord Mobile" theme sets them; everything
+       structural below is forced because the layout depends on it. */
+    --SmartThemeBlurTintColor: var(--dc-bg);
+    --SmartThemeChatTintColor: var(--dc-bg);
+    --SmartThemeUserMesBlurTintColor: transparent;
+    --SmartThemeBotMesBlurTintColor: transparent;
+    --SmartThemeShadowColor: transparent;
+    --SmartThemeBorderColor: var(--dc-line);
+    --SmartThemeBlurStrength: 0px;
+    --shadowWidth: 0;
+    --mainFontFamily: var(--dc-font);
+    --black30a: rgba(0, 0, 0, 0.3);
+
+    font-family: var(--dc-font);
+    background: var(--dc-bg-lowest) !important;
+    color: var(--dc-text-normal);
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html[data-dc-motion="off"] body.dc-on {
+    --dc-dur: 0s;
+}
+
+/* Y2K set, borrowed from the Olive Grove Y2K theme. */
+html[data-dc-font="y2k"] body.dc-on {
+    --dc-font: 'Comfortaa', 'Noto Sans', sans-serif;
+    --dc-font-text: 'Exo 2', 'Noto Sans', sans-serif;
+    --dc-font-name: 'Tektur', 'Exo 2', sans-serif;
+}
+
+body.dc-on #chat .mes_text,
+body.dc-on #chat .mes_reasoning,
+body.dc-on #send_textarea,
+body.dc-on .dc-dm-sub,
+body.dc-on .dc-dm-note,
+body.dc-on .dc-userbar-sub {
+    font-family: var(--dc-font-text) !important;
+}
+
+body.dc-on #chat .name_text,
+body.dc-on .dc-dm-name,
+body.dc-on .dc-dm-head h1,
+body.dc-on .dc-server-title,
+body.dc-on .dc-chat-name,
+body.dc-on .dc-userbar-nick,
+body.dc-on .dc-sheet-head b {
+    font-family: var(--dc-font-name) !important;
+}
+
+/* Icons must keep their own font whatever the theme does to fonts. */
+body.dc-on .fa-solid,
+body.dc-on .fa-regular,
+body.dc-on .fa-brands,
+body.dc-on .fa {
+    font-family: 'Font Awesome 6 Free' !important;
+}
+
+body.dc-on .fa-brands {
+    font-family: 'Font Awesome 6 Brands' !important;
+}
+
+body.dc-on ::selection {
+    background: rgba(88, 101, 242, 0.45);
+    color: #fff;
+}
+
+body.dc-on button {
+    font-family: inherit;
+}
+
+/* Discord-style thin dark scrollbars. */
+body.dc-on ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+body.dc-on ::-webkit-scrollbar-thumb {
+    background: #3a3a41;
+    border-radius: 4px;
+    border: 0;
+}
+
+body.dc-on ::-webkit-scrollbar-track {
+    background: transparent;
+}

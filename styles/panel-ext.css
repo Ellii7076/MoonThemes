@@ -1,0 +1,552 @@
+/* ── "Расширения" server: SillyTavern's Extensions panel ────────────────
+ *
+ * CSS only. Laid out like Discord's settings list:
+ *
+ *   header            → small caps title, "Notify on updates" switch row,
+ *                       Manage / Install as pills (Install is blurple)
+ *   extension list    → one rounded card; every extension's drawer is a
+ *                       row with a grey icon, its name and a chevron.
+ *                       Icons are picked per extension where we know it,
+ *                       a puzzle piece otherwise.
+ *   opened extension  → its settings appear under the row on a darker band.
+ *                       Only light touches inside (fields, buttons,
+ *                       .checkbox_label switches): every extension draws
+ *                       its own UI and must keep working.
+ *   Extras API        → a muted tile at the bottom (it's deprecated).
+ */
+
+body.dc-on #rm_extensions_block {
+    --dc-tile: var(--dc-bg-float);
+    --dc-tile-line: rgba(255, 255, 255, 0.06);
+    --dc-field: var(--dc-bg-field);
+    padding-bottom: 32px;
+    font-family: var(--dc-font);
+}
+
+body.dc-on #rm_extensions_block .extensions_block {
+    gap: 0;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+
+body.dc-on #rm_extensions_block .extensions_block > .flex-container:first-child {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 2px 0 16px;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > .flex-container:first-child > h3 {
+    grid-column: 1 / -1;
+    margin: 0 2px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #rm_extensions_block label[for="extensions_notify_updates"] {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    margin: 0;
+    padding: 0 14px;
+    border-radius: 16px;
+    background: var(--dc-tile);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on #rm_extensions_block #extensions_details,
+body.dc-on #rm_extensions_block #third_party_extension_button {
+    min-height: 44px;
+    margin: 0;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    filter: none;
+    opacity: 1;
+    transition: transform 0.15s var(--dc-ease), background-color 0.15s ease;
+}
+
+body.dc-on #rm_extensions_block #third_party_extension_button {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #rm_extensions_block :is(#extensions_details, #third_party_extension_button):active {
+    transform: scale(0.96);
+}
+
+/* ── The list card ────────────────────────────────────────────────── */
+
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) {
+    flex: 1 1 100%;
+    width: 100%;
+    margin: 0;
+    background: var(--dc-tile);
+    overflow: hidden;
+}
+
+body.dc-on #rm_extensions_block #extensions_settings {
+    border-radius: 18px 18px 0 0;
+}
+
+body.dc-on #rm_extensions_block #extensions_settings2 {
+    margin-bottom: 18px;
+    border-radius: 0 0 18px 18px;
+}
+
+body.dc-on #rm_extensions_block .extension_container:empty {
+    display: none;
+}
+
+body.dc-on #rm_extensions_block .extension_container {
+    margin: 0;
+}
+
+/* A row = one extension's top-level drawer. */
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer) {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+/* Hairline between rows, inset past the icon like Discord's. */
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 58px;
+    right: 0;
+    height: 1px;
+    background: var(--dc-tile-line);
+}
+
+body.dc-on #rm_extensions_block #extensions_settings > :first-child:not(:empty) .inline-drawer::before,
+body.dc-on #rm_extensions_block #extensions_settings > .inline-drawer:first-child::before {
+    display: none;
+}
+
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer) > .inline-drawer-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 54px;
+    margin: 0;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    font-family: var(--dc-font);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dc-text);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer) > .inline-drawer-header:active {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Grey icon tile at the start of the row. */
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer) > .inline-drawer-header::before {
+    content: var(--dc-ext-icon, '\f12e');
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-icon);
+    font-family: var(--dc-ext-font, 'Font Awesome 6 Free');
+    font-weight: var(--dc-ext-weight, 900);
+    font-size: 14px;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-header > :is(b, span, div:not(.inline-drawer-icon)) {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-header b {
+    font-weight: 700;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-icon {
+    flex: 0 0 auto;
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--dc-text-muted);
+    transition: transform 0.25s var(--dc-ease);
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-icon::before {
+    content: '\f078';
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-icon.up {
+    transform: rotate(180deg);
+}
+
+/* Opened: the settings sit on a darker band under the row. */
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer) > .inline-drawer-content {
+    margin: 0;
+    padding: 12px 14px 16px;
+    border: 0;
+    background: rgba(0, 0, 0, 0.18);
+    font-size: 14px;
+}
+
+/* Rows without a drawer (Start Page's plain block, etc.) keep a margin. */
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) > :not(.extension_container):not(.inline-drawer):not(:has(.inline-drawer)) {
+    padding: 10px 14px;
+}
+
+/* ── Known extensions get their own icon ──────────────────────────── */
+
+body.dc-on #rm_extensions_block #assets_container .inline-drawer-header { --dc-ext-icon: '\f019'; }
+body.dc-on #rm_extensions_block #expressions_container .inline-drawer-header { --dc-ext-icon: '\f118'; }
+body.dc-on #rm_extensions_block #sd_container .inline-drawer-header { --dc-ext-icon: '\f03e'; }
+body.dc-on #rm_extensions_block #tts_container .inline-drawer-header { --dc-ext-icon: '\f028'; }
+body.dc-on #rm_extensions_block #stt_container .inline-drawer-header { --dc-ext-icon: '\f130'; }
+body.dc-on #rm_extensions_block #qr_container .inline-drawer-header { --dc-ext-icon: '\f0e7'; }
+body.dc-on #rm_extensions_block #translation_container .inline-drawer-header { --dc-ext-icon: '\f1ab'; }
+body.dc-on #rm_extensions_block #caption_container .inline-drawer-header { --dc-ext-icon: '\f20a'; }
+body.dc-on #rm_extensions_block #summarize_container .inline-drawer-header { --dc-ext-icon: '\f15c'; }
+body.dc-on #rm_extensions_block #regex_container .inline-drawer-header { --dc-ext-icon: '\f121'; }
+body.dc-on #rm_extensions_block #vectors_container .inline-drawer-header { --dc-ext-icon: '\f1c0'; }
+body.dc-on #rm_extensions_block #websearch_container .inline-drawer-header { --dc-ext-icon: '\f0ac'; }
+body.dc-on #rm_extensions_block #idle_container .inline-drawer-header { --dc-ext-icon: '\f017'; }
+body.dc-on #rm_extensions_block #objective_container .inline-drawer-header { --dc-ext-icon: '\f140'; }
+body.dc-on #rm_extensions_block #audio_container .inline-drawer-header { --dc-ext-icon: '\f001'; }
+body.dc-on #rm_extensions_block .fatpresets-settings .inline-drawer-header { --dc-ext-icon: '\f1de'; }
+body.dc-on #rm_extensions_block .startpage-extension-settings .inline-drawer-header { --dc-ext-icon: '\f015'; }
+body.dc-on #rm_extensions_block #optimizer_container .inline-drawer-header { --dc-ext-icon: '\f0e4'; }
+body.dc-on #rm_extensions_block #optimizer_wand_dock_container .inline-drawer-header { --dc-ext-icon: '\f0d0'; }
+body.dc-on #rm_extensions_block #vte-settings > .inline-drawer-header,
+body.dc-on #rm_extensions_block #vte-settings .inline-drawer-header { --dc-ext-icon: '\f53f'; }
+
+body.dc-on #rm_extensions_block :is(#spotify_settings, #st-telegram-settings) .inline-drawer-header {
+    --dc-ext-font: 'Font Awesome 6 Brands';
+    --dc-ext-weight: 400;
+}
+
+/* MoonThemes: a moon, in the current theme's accent (every theme maps
+   --dc-blurple and --dc-on-accent to its own). */
+body.dc-on #rm_extensions_block #dc-settings .inline-drawer-header { --dc-ext-icon: '\f186'; }
+body.dc-on #rm_extensions_block #spotify_settings .inline-drawer-header { --dc-ext-icon: '\f1bc'; }
+body.dc-on #rm_extensions_block #st-telegram-settings .inline-drawer-header { --dc-ext-icon: '\f2c6'; }
+
+body.dc-on #rm_extensions_block #dc-settings .inline-drawer-header::before {
+    background: var(--dc-blurple) !important;
+    color: var(--dc-on-accent) !important;
+}
+
+/* Spotify and Telegram in their brand colours. */
+
+body.dc-on #rm_extensions_block #spotify_settings .inline-drawer-header::before {
+    background: #1db954 !important;
+    color: #fff !important;
+}
+
+body.dc-on #rm_extensions_block #st-telegram-settings .inline-drawer-header::before {
+    background: #2aabee !important;
+    color: #fff !important;
+}
+
+/* A header that brings its own Font Awesome icon ("<b><i …></i> Name</b>"):
+   that icon becomes the tile instead of ours. */
+body.dc-on #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer-header:has(> b > i.fa-solid:first-child)::before {
+    display: none !important;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-header > b:has(> i.fa-solid:first-child) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-header > b > i.fa-solid:first-child {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-icon);
+    font-size: 14px;
+}
+
+/* ── Light touches inside extensions ──────────────────────────────── */
+
+body.dc-on #rm_extensions_block .inline-drawer-content :is(select:not([multiple]), input.text_pole, input[type="text"], input[type="number"], input[type="search"], input[type="url"], input[type="password"]) {
+    min-height: 38px;
+    border: 0;
+    border-radius: 10px;
+    background-color: var(--dc-field);
+    color: var(--dc-text);
+    font-family: var(--dc-font);
+    font-size: 14px;
+    box-shadow: none;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-content textarea {
+    border: 0;
+    border-radius: 12px;
+    background-color: var(--dc-field);
+    color: var(--dc-text);
+    font-family: var(--dc-font-text);
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-content :is(select, input, textarea):focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1.5px var(--dc-blurple);
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-content .menu_button:not(.fa-solid):not(i) {
+    min-height: 38px;
+    border: 0;
+    border-radius: 19px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-weight: 700;
+    filter: none;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer-content :is(i.menu_button, div.menu_button.fa-solid) {
+    border: 0;
+    border-radius: 50%;
+    background: var(--dc-bg-card);
+    color: var(--dc-icon);
+    filter: none;
+}
+
+/* Standard ST checkbox rows → switches. */
+body.dc-on #rm_extensions_block .checkbox_label {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 40px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--dc-text);
+}
+
+body.dc-on #rm_extensions_block .checkbox_label > :not(input) {
+    flex: 1 1 auto;
+    text-align: left;
+}
+
+body.dc-on #rm_extensions_block .checkbox_label > input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    position: relative;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 26px;
+    margin: 0;
+    border: 0;
+    border-radius: 13px;
+    outline: none;
+    background: var(--dc-handle);
+    box-shadow: none;
+    filter: none;
+    transform: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+body.dc-on #rm_extensions_block .checkbox_label > input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    clip-path: none;
+    transform: none;
+    transition: transform 0.25s var(--dc-spring);
+}
+
+body.dc-on #rm_extensions_block .checkbox_label > input[type="checkbox"]:checked {
+    background: var(--dc-blurple);
+}
+
+body.dc-on #rm_extensions_block .checkbox_label > input[type="checkbox"]:checked::before {
+    transform: translateX(16px);
+}
+
+body.dc-on #rm_extensions_block .checkbox_label > input[type="checkbox"]:disabled {
+    opacity: 0.45;
+}
+
+/* Nested drawers inside an extension: lighter tiles. */
+body.dc-on #rm_extensions_block .inline-drawer .inline-drawer {
+    margin: 8px 0;
+    border: 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+body.dc-on #rm_extensions_block .inline-drawer .inline-drawer > .inline-drawer-header {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 0;
+    background: none;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+body.dc-on #rm_extensions_block .inline-drawer .inline-drawer > .inline-drawer-content {
+    padding: 0 12px 12px;
+}
+
+/* ── Extras API (deprecated) ──────────────────────────────────────── */
+
+body.dc-on #rm_extensions_block .extensions_block > hr {
+    display: none;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr ~ .flex-container {
+    margin: 0;
+    padding: 10px 14px;
+    background: var(--dc-tile);
+    opacity: 0.75;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr + .flex-container {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 14px;
+    border-radius: 16px 16px 0 0;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr ~ .flex-container:last-child {
+    padding-bottom: 14px;
+    border-radius: 0 0 16px 16px;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr + .flex-container h4 {
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #rm_extensions_block #extensions_status {
+    font-size: 13px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr ~ .flex-container :is(input.text_pole, input[type="text"]) {
+    min-height: 38px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--dc-field);
+    color: var(--dc-text);
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr ~ .flex-container .menu_button {
+    min-height: 38px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 19px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-weight: 700;
+}
+
+/* ── Fixes after a look on the phone ─────────────────────────────── */
+
+body.dc-on #rm_extensions_block .extensions_block > .flex-container:first-child {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+body.dc-on #rm_extensions_block :is(#extensions_details, #third_party_extension_button) {
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 13.5px;
+}
+
+body.dc-on #rm_extensions_block :is(#extensions_details, #third_party_extension_button) > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Extras API: "Not connected…" on the left, Auto-connect switch on the right. */
+body.dc-on #rm_extensions_block .extensions_block > hr + .flex-container > .flex-container {
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr + .flex-container .checkbox_label {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 0;
+    font-size: 13.5px;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > hr ~ .flex-container:last-child {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+body.dc-on #rm_extensions_block #extensions_url {
+    flex: 1 1 100%;
+}
+
+/* Russian labels ("Управление расширениями", "Установить расширение") don't
+   fit two to a row: buttons size to their text and wrap. */
+body.dc-on #rm_extensions_block .extensions_block > .flex-container:first-child {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+body.dc-on #rm_extensions_block .extensions_block > .flex-container:first-child > :is(h3, label) {
+    flex: 1 1 100%;
+}
+
+body.dc-on #rm_extensions_block :is(#extensions_details, #third_party_extension_button) {
+    flex: 1 1 auto;
+    min-width: min(100%, max-content);
+    padding: 0 14px;
+}
+
+body.dc-on #rm_extensions_block :is(#extensions_details, #third_party_extension_button) > span {
+    overflow: visible;
+}

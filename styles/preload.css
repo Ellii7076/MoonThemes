@@ -1,0 +1,379 @@
+/* The loading screen, from the very first frame, in the theme's own look:
+ * Discord's hopping logo, the Retro spinner (twelve spokes, a fading
+ * tail, ticking round one spoke at a time), or Bubble's ring.
+ *
+ * This file is pulled in two ways:
+ *   - by data/_css/user.css (`@import` of this file). SillyTavern links
+ *     user.css in <head>, before any script runs, so the dark screen and
+ *     the logo are there before ST's own splash and before extensions load;
+ *   - by styles/discord.css, so it still works without that line.
+ *
+ * Nothing here can rely on the extension yet: no body.dc-on, no --dc-*
+ * tokens, plain colours only. html[data-dc-enabled="off"] (set by boot.js
+ * once the extension knows it is switched off) turns it all back off.
+ *
+ * Two phases share one picture:
+ *   1. only ST's empty #preloader exists: it draws the mark itself;
+ *   2. ST's splash popup (#loader.splash-screen) opens on top: it draws the
+ *      same mark in the same spot and the preloader's copy steps aside.
+ * No status text, no tips. */
+
+/* Colours of the loading screen. Until the extension has loaded, which
+   theme is on is unknown (dark); then boot.js sets html[data-dc-skin] and
+   the screen fades into the theme's own colours. */
+html {
+    --dc-load-bg: #1a1a1e;
+    --dc-load-ink: #ffffff;
+}
+
+html[data-dc-skin="icq"] {
+    --dc-load-bg: #c0c0c0;
+    --dc-load-ink: #000080;
+}
+
+html[data-dc-skin="icq-dark"] {
+    --dc-load-bg: #2e2e32;
+    --dc-load-ink: #e6e6e6;
+}
+
+html[data-dc-skin="mono"] {
+    --dc-load-bg: #f3eedd;
+    --dc-load-ink: #1d1d1b;
+}
+
+html[data-dc-skin="mono-dark"] {
+    --dc-load-bg: #1d1d1b;
+    --dc-load-ink: #efe9d6;
+}
+
+html[data-dc-skin="icq-pink"] {
+    --dc-load-bg: #f6d3e6;
+    --dc-load-ink: #3456c4;
+}
+
+html[data-dc-skin="icq-pink-dark"] {
+    --dc-load-bg: #24152a;
+    --dc-load-ink: #ff8cc6;
+}
+
+html[data-dc-skin="signal"] {
+    --dc-load-bg: #141922;
+    --dc-load-ink: #c8f59a;
+}
+
+html[data-dc-skin="signal-dark"] {
+    --dc-load-bg: #0b0f0b;
+    --dc-load-ink: #a6dc6e;
+}
+
+html[data-dc-skin="sage"] {
+    --dc-load-bg: #070907;
+    --dc-load-ink: #8ba886;
+}
+
+html[data-dc-skin="sage-light"] {
+    --dc-load-bg: #dfe4d8;
+    --dc-load-ink: #5f7a5a;
+}
+
+html[data-dc-skin="gojo-dark"] {
+    --dc-load-bg: #050505;
+    --dc-load-ink: #f4f4f4;
+}
+
+/* (the extra :not() outranks the plain-colour rule further down) */
+html:not([data-dc-enabled="off"])[data-dc-family="gojo"] #preloader {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(120, 80, 220, 0.12), transparent 45%),
+        linear-gradient(rgba(5, 5, 5, 0.72), rgba(5, 5, 5, 0.72)),
+        url('../assets/gojo/cut/figure.webp') 100% 100% / min(80%, 380px) auto no-repeat,
+        #050505 !important;
+}
+
+/* The light one: the white manga page, Gojo from the panel sunk into it. */
+html:not([data-dc-enabled="off"])[data-dc-skin="gojo"] #preloader {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(120, 80, 220, 0.1), transparent 45%),
+        linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),
+        url('../assets/gojo/cut/figure-light.webp') 100% 100% / min(80%, 380px) auto no-repeat,
+        #ffffff !important;
+}
+
+html[data-dc-skin="gojo"] {
+    --dc-load-bg: #ffffff;
+    --dc-load-ink: #111111;
+}
+
+html[data-dc-skin="dossier-dark"] {
+    --dc-load-bg: #15110d;
+    --dc-load-ink: #e8c872;
+}
+
+html[data-dc-skin="dossier"] {
+    --dc-load-bg: #6a4832;
+    --dc-load-ink: #efe6c3;
+}
+
+html[data-dc-skin="y2k"] {
+    --dc-load-bg: #d2ccf8;
+    --dc-load-ink: #7d6be6;
+}
+
+html[data-dc-skin="y2k-dark"] {
+    --dc-load-bg: #161233;
+    --dc-load-ink: #b3a6ff;
+}
+
+html:not([data-dc-enabled="off"]) #preloader {
+    background: var(--dc-load-bg) !important;
+    transition: background-color 0.35s ease;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Each theme has its own mark: Discord's hopping logo, the Retro spinner.
+   Until boot.js has said which theme is on (html[data-dc-skin]), nothing
+   is drawn — a wrong theme's mark would flash otherwise. The preloader
+   draws it while it is alone; every blocking loader's #load-spinner draws
+   the same one. */
+html:not([data-dc-enabled="off"]) #preloader::before,
+html:not([data-dc-enabled="off"]) #load-spinner::before {
+    content: none;
+}
+
+/* Discord: the logo, a hop and a turn, over and over. */
+html[data-dc-skin="discord"] #preloader::before,
+html[data-dc-skin="discord"] #load-spinner::before {
+    content: '\f392';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 84px;
+    height: 84px;
+    margin: -42px 0 0 -42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Font Awesome 6 Brands' !important;
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 1;
+    color: #fff;
+    filter: drop-shadow(0 6px 18px rgba(88, 101, 242, 0.45));
+    animation: dc-splash-hop 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    transform-origin: 50% 85%;
+}
+
+/* Retro: a phone-style spinner. One pseudo-element: a conic gradient gives
+   the fading tail, the mask cuts it into twelve spokes on a ring. */
+html[data-dc-family="icq"] #preloader::before,
+html[data-dc-family="icq"] #load-spinner::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
+    border-radius: 50% !important;
+    background: conic-gradient(from 15deg, color-mix(in srgb, var(--dc-load-ink) 10%, transparent), var(--dc-load-ink) 345deg);
+    -webkit-mask:
+        repeating-conic-gradient(from -6deg, #000 0deg 12deg, transparent 12deg 30deg),
+        radial-gradient(farthest-side, transparent 44%, #000 46%, #000 97%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask:
+        repeating-conic-gradient(from -6deg, #000 0deg 12deg, transparent 12deg 30deg),
+        radial-gradient(farthest-side, transparent 44%, #000 46%, #000 97%, transparent 100%);
+    mask-composite: intersect;
+    filter: none;
+    animation: dc-splash-spin 1s steps(12) infinite;
+}
+
+/* Bubble: a glossy ring, violet fading into pink, turning
+   smoothly. */
+html[data-dc-family="y2k"] #preloader::before,
+html[data-dc-family="y2k"] #load-spinner::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 52px;
+    height: 52px;
+    margin: -26px 0 0 -26px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg, var(--dc-load-ink) 200deg, #e48ad8 340deg, transparent 360deg);
+    -webkit-mask: radial-gradient(farthest-side, transparent 62%, #000 65%, #000 97%, transparent 100%);
+    mask: radial-gradient(farthest-side, transparent 62%, #000 65%, #000 97%, transparent 100%);
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--dc-load-ink) 55%, transparent));
+    animation: dc-splash-spin 0.9s linear infinite;
+}
+
+/* Тема 5: a framed bar that fills block by block, like a progress readout. */
+html[data-dc-family="sage"] #preloader::before,
+html[data-dc-family="sage"] #load-spinner::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 132px;
+    height: 18px;
+    margin: -9px 0 0 -66px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--dc-load-ink);
+    border-radius: 3px;
+    background:
+        repeating-linear-gradient(90deg, var(--dc-load-ink) 0 10px, transparent 10px 13px) 3px 3px / 0 8px no-repeat;
+    animation: dc-splash-fill 1.6s steps(10) infinite;
+}
+
+@keyframes dc-splash-fill {
+    to {
+        background-size: 130px 8px;
+    }
+}
+
+/* Досье: a rubber stamp being pressed, again and again. */
+html[data-dc-family="dossier"] #preloader::before,
+html[data-dc-family="dossier"] #load-spinner::before {
+    content: 'CLASSIFIED';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 40px;
+    margin: -20px 0 0 -75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 3px solid #d23a3a;
+    border-radius: 4px;
+    color: #d23a3a;
+    font: 700 16px/1 'Courier New', monospace;
+    letter-spacing: 0.2em;
+    transform: rotate(-8deg);
+    animation: dc-splash-stamp 1.4s ease-in-out infinite;
+}
+
+@keyframes dc-splash-stamp {
+    0%, 100% {
+        transform: rotate(-8deg) scale(1.25);
+        opacity: 0;
+    }
+
+    30%, 75% {
+        transform: rotate(-8deg) scale(1);
+        opacity: 1;
+    }
+}
+
+/* No status line. */
+html:not([data-dc-enabled="off"]) #preloader::after {
+    content: none;
+}
+
+/* Годжо: Hollow Purple, drawn flat like an anime frame — blue and red fly
+   in on a spiral, each with a smooth tapering comet tail, meet, and burst
+   into purple with rings and rays. The whole thing is one SMIL-animated
+   picture (assets/gojo/hollow-purple.svg, built from mock-anim.html, kept outside the extension in _moonthemes-dev/mockups): the browser plays it
+   on its own, smoother than restyling pseudo-elements frame by frame. */
+html[data-dc-family="gojo"] #preloader::before,
+html[data-dc-family="gojo"] #load-spinner::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 360px;
+    height: 360px;
+    margin: -180px 0 0 -180px;
+    background: url('../assets/gojo/hollow-purple.svg?v=2') center / contain no-repeat;
+}
+
+html[data-dc-family="gojo"] #preloader::after,
+html[data-dc-family="gojo"] #load-spinner::after {
+    content: none;
+}
+
+/* Phase 2: ST's splash is up; it takes over the drawing. */
+html:not([data-dc-enabled="off"]) body:has(#loader.splash-screen) #preloader::before,
+html:not([data-dc-enabled="off"]) body:has(#loader.splash-screen) #preloader::after {
+    visibility: hidden;
+}
+
+html:not([data-dc-enabled="off"]) dialog.popup:has(#loader.splash-screen)::backdrop {
+    background: var(--dc-load-bg);
+    backdrop-filter: none;
+}
+
+html:not([data-dc-enabled="off"]) #loader.splash-screen {
+    position: relative;
+    gap: 0;
+    color: #949ba4;
+}
+
+html:not([data-dc-enabled="off"]) #loader.splash-screen .splash-logo {
+    display: none;
+}
+
+/* The gear (in every blocking loader ST shows) gives way to the spinner. */
+html:not([data-dc-enabled="off"]) #load-spinner {
+    --spinner-size: 84px;
+    font-size: 0 !important;
+    animation: none;
+    color: #fff;
+}
+
+/* In the splash the spinner sits dead centre of the screen (fixed, not inside
+   the popup's padding), exactly where the preloader drew it, and the texts
+   hang below it without pushing it up. */
+html:not([data-dc-enabled="off"]) #loader.splash-screen #load-spinner {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin: -42px 0 0 -42px;
+}
+
+html:not([data-dc-enabled="off"]) #loader.splash-screen .splash-message {
+    display: none !important;
+}
+
+@keyframes dc-splash-hop {
+    0%, 100% {
+        transform: translateY(0) scale(1.08, 0.9) rotateY(0deg);
+    }
+
+    15% {
+        transform: translateY(0) scale(1, 1) rotateY(0deg);
+    }
+
+    45% {
+        transform: translateY(-22px) scale(0.96, 1.04) rotateY(180deg);
+    }
+
+    75% {
+        transform: translateY(0) scale(1, 1) rotateY(360deg);
+    }
+
+    85% {
+        transform: translateY(0) scale(1.08, 0.9) rotateY(360deg);
+    }
+}
+
+@keyframes dc-splash-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dc-splash-fade {
+    from {
+        opacity: 0;
+    }
+}
+
+/* Without animations the spinner still turns (a frozen spinner reads as a
+   hang), just slower. */
+html[data-dc-motion="off"] #preloader::before,
+html[data-dc-motion="off"] #load-spinner::before {
+    animation-duration: 2s;
+}

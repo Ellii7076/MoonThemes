@@ -1,0 +1,802 @@
+/* ── "Персоны" server: SillyTavern's Persona Management ─────────────────
+ *
+ * Laid out like Discord's profile screen:
+ *
+ *   profile card   → banner (the avatar, blurred), big avatar in a ring
+ *                    with a status dot, display name and @handle
+ *                    (the card itself is added by src/persona.js), then
+ *                    ST's buttons as round icons, the description,
+ *                    position and connections
+ *   persona list   → an account switcher: avatar, name, one line of
+ *                    description, a blurple check on the current one
+ *   global options → a tile of switches
+ *
+ * On the phone the columns are flattened (display: contents) so the
+ * profile comes first, then the list, then the global settings.
+ */
+
+body.dc-on #PersonaManagement {
+    padding-bottom: 32px;
+}
+
+/* ── Title row: PERSONA MANAGEMENT + Usage Stats / Backup / Restore ─── */
+
+body.dc-on #PersonaManagement > .flex-container > .flex-container:first-child {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 2px 0 12px;
+}
+
+body.dc-on #PersonaManagement h3 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 2px;
+    font-family: var(--dc-font);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement h3 .note-link-span {
+    color: var(--dc-text-dim);
+    font-size: 12px;
+}
+
+body.dc-on #PersonaManagement > .flex-container > .flex-container:first-child > .flex-container {
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+    gap: 8px;
+}
+
+body.dc-on #PersonaManagement > .flex-container > .flex-container:first-child .menu_button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 36px;
+    margin: 0;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    filter: none;
+    opacity: 1;
+}
+
+/* ── Order on the phone ───────────────────────────────────────────── */
+
+body.dc-on #PersonaManagement #persona-management-block {
+    flex-direction: column;
+    gap: 14px;
+}
+
+body.dc-on #PersonaManagement .persona_management_right_column {
+    display: contents;
+}
+
+body.dc-on #PersonaManagement .persona_management_current_persona { order: 1; }
+body.dc-on #PersonaManagement .persona_management_left_column { order: 2; }
+body.dc-on #PersonaManagement .persona_management_global_settings { order: 3; }
+
+/* ── Profile card ─────────────────────────────────────────────────── */
+
+body.dc-on #PersonaManagement .persona_management_current_persona {
+    padding: 0 14px 16px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+    overflow: hidden;
+}
+
+body.dc-on #PersonaManagement .persona_management_current_persona > h4.standoutHeader {
+    display: none;
+}
+
+body.dc-on #PersonaManagement .dc-persona-hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    margin: 0 -14px 6px;
+}
+
+body.dc-on #PersonaManagement .dc-persona-banner {
+    grid-column: 1 / -1;
+    position: relative;
+    height: 112px;
+    overflow: hidden;
+    /* Dark while the picture loads (blurple flashed). */
+    background-color: var(--dc-bg-card);
+    background-size: cover;
+    background-position: center 30%;
+}
+
+body.dc-on #PersonaManagement .dc-persona-banner::before {
+    content: '';
+    position: absolute;
+    inset: -40px;
+    background: inherit;
+    filter: blur(18px) saturate(1.4) brightness(0.8);
+}
+
+body.dc-on #PersonaManagement .dc-persona-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent 45%, color-mix(in srgb, var(--dc-bg-float) 55%, transparent));
+}
+
+body.dc-on #PersonaManagement .dc-persona-avatar {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    margin: -50px 0 0 14px;
+    padding: 0;
+    border: 6px solid var(--dc-tile);
+    border-radius: 50%;
+    background: var(--dc-tile);
+    cursor: pointer;
+    transition: transform 0.18s var(--dc-ease);
+}
+
+body.dc-on #PersonaManagement .dc-persona-avatar:active {
+    transform: scale(0.95);
+}
+
+body.dc-on #PersonaManagement .dc-persona-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+body.dc-on #PersonaManagement .dc-persona-status {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 26px;
+    height: 26px;
+    border: 5px solid var(--dc-tile);
+    border-radius: 50%;
+    background: var(--dc-status-off);
+}
+
+body.dc-on #PersonaManagement .dc-persona-status.dc-online {
+    background: var(--dc-green);
+}
+
+body.dc-on #PersonaManagement .dc-persona-edit {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 3px solid var(--dc-tile);
+    border-radius: 50%;
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+    font-size: 10px;
+}
+
+body.dc-on #PersonaManagement .dc-persona-names {
+    grid-column: 1 / -1;
+    min-width: 0;
+    padding: 10px 16px 0;
+}
+
+body.dc-on #PersonaManagement .dc-persona-name {
+    overflow: hidden;
+    font-family: var(--dc-font-name);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--dc-text);
+}
+
+body.dc-on #PersonaManagement .dc-persona-handle {
+    overflow: hidden;
+    margin-top: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--dc-text-muted);
+}
+
+/* ST's own name line is in the card already; its buttons stay. */
+body.dc-on #PersonaManagement #persona_controls {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 4px;
+}
+
+body.dc-on #PersonaManagement #persona_controls > #your_name {
+    display: none;
+}
+
+body.dc-on #PersonaManagement #persona_controls .persona_controls_buttons_block {
+    flex: 1 1 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+body.dc-on #PersonaManagement #persona_controls .menu_button {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    font-size: 15px;
+    filter: none;
+    opacity: 1;
+    transition: transform 0.15s var(--dc-ease), background-color 0.15s ease;
+}
+
+body.dc-on #PersonaManagement #persona_controls .menu_button:active {
+    transform: scale(0.9);
+    background: var(--dc-bg-press);
+}
+
+body.dc-on #PersonaManagement #persona_controls #persona_rename_button {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #PersonaManagement #persona_controls .red_button {
+    color: var(--dc-red);
+}
+
+body.dc-on #PersonaManagement #persona_controls > label {
+    flex: 1 1 100%;
+    margin: 0;
+}
+
+body.dc-on #PersonaManagement #persona-management-dropdown {
+    width: 100%;
+    min-height: 40px;
+    margin: 0;
+    padding: 0 30px 0 14px;
+    border: 0;
+    border-radius: 20px;
+    background-color: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Section labels inside the card: PERSONA DESCRIPTION, POSITION… */
+body.dc-on #PersonaManagement .persona_management_current_persona h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 2px 8px;
+    font-family: var(--dc-font);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement .persona_management_current_persona .flex-container.justifySpaceBetween {
+    align-items: center;
+}
+
+body.dc-on #PersonaManagement .persona_management_current_persona .flex-container.justifySpaceBetween h4 {
+    margin-bottom: 8px;
+}
+
+body.dc-on #PersonaManagement .editor_maximize {
+    margin-left: auto;
+    padding: 4px;
+    font-size: 12px;
+    color: var(--dc-text-muted);
+    opacity: 1;
+}
+
+body.dc-on #PersonaManagement #persona_description {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px 14px;
+    font-size: 14.5px;
+}
+
+body.dc-on #PersonaManagement .extension_token_counter {
+    margin-top: 10px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: var(--dc-bg-card);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement :is(#persona_description_position, #persona_depth_role, #persona_depth_value) {
+    width: 100%;
+    min-height: 40px;
+    margin: 0;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background-color: var(--dc-field);
+    color: var(--dc-text);
+    font-family: var(--dc-font);
+    font-size: 14px;
+}
+
+body.dc-on #PersonaManagement #persona_depth_position_settings {
+    gap: 8px;
+    margin-top: 8px;
+}
+
+body.dc-on #PersonaManagement #persona_depth_position_settings label {
+    display: block;
+    margin: 0 2px 4px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement :is(select, input, textarea):focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1.5px var(--dc-blurple);
+}
+
+/* Connections: three toggle pills that light up when locked. */
+body.dc-on #PersonaManagement #persona_connections_buttons {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+body.dc-on #PersonaManagement #persona_connections_buttons .menu_button {
+    min-width: 0;
+    min-height: 40px;
+    margin: 0;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 13.5px;
+    font-weight: 700;
+    filter: none;
+    opacity: 1;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.dc-on #PersonaManagement #persona_connections_buttons .menu_button .icon {
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement #lock_persona_default.locked {
+    background: rgba(240, 178, 50, 0.16);
+    box-shadow: inset 0 0 0 1.5px rgba(240, 178, 50, 0.6);
+}
+
+body.dc-on #PersonaManagement #lock_persona_default.locked .icon {
+    color: var(--dc-yellow);
+}
+
+body.dc-on #PersonaManagement #lock_persona_to_char.locked {
+    background: color-mix(in srgb, var(--dc-green) 16%, transparent);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--dc-green) 60%, transparent);
+}
+
+body.dc-on #PersonaManagement #lock_persona_to_char.locked .icon {
+    color: var(--dc-green);
+}
+
+body.dc-on #PersonaManagement #lock_user_name.locked {
+    background: color-mix(in srgb, var(--dc-blurple) 20%, transparent);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--dc-blurple) 70%, transparent);
+}
+
+body.dc-on #PersonaManagement #lock_user_name.locked .icon {
+    color: #949cf7;
+}
+
+body.dc-on #PersonaManagement #persona_connections_info_block:not(:empty) {
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement #persona_connections_list {
+    gap: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #PersonaManagement #persona_connections_list .avatar {
+    border-radius: 50%;
+}
+
+/* ── Persona list: an account switcher ────────────────────────────── */
+
+body.dc-on #PersonaManagement .persona_management_left_column::before {
+    content: 'Персоны';
+    display: block;
+    margin: 6px 2px 8px;
+    font-family: var(--dc-font);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement .persona_management_left_column > .flex-container:first-child {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+body.dc-on #PersonaManagement #persona_search_bar {
+    order: -1;
+    flex: 1 1 100%;
+    min-height: 40px;
+    margin: 0;
+    padding: 0 12px 0 38px;
+    border: 0;
+    border-radius: 10px;
+    background:
+        no-repeat 13px 50% / 15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2380848e' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"),
+        var(--dc-field);
+    color: var(--dc-text);
+    font-family: var(--dc-font);
+    font-size: 14px;
+}
+
+body.dc-on #PersonaManagement #create_dummy_persona {
+    min-height: 36px;
+    margin: 0;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+    font-size: 13.5px;
+    font-weight: 700;
+    filter: none;
+    opacity: 1;
+}
+
+body.dc-on #PersonaManagement #persona_sort_order {
+    min-height: 36px;
+    margin: 0;
+    padding: 0 26px 0 12px;
+    border: 0;
+    border-radius: 18px;
+    background-color: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+body.dc-on #PersonaManagement #persona_grid_toggle {
+    width: 36px;
+    height: 36px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-icon);
+    filter: none;
+    opacity: 1;
+}
+
+/* Pagination row under the toolbar. */
+body.dc-on #PersonaManagement #persona_pagination_container {
+    order: 5;
+    flex: 1 1 100%;
+}
+
+body.dc-on #PersonaManagement #persona_pagination_container .paginationjs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement #persona_pagination_container .paginationjs-pages ul {
+    display: flex;
+    gap: 4px;
+}
+
+body.dc-on #PersonaManagement #persona_pagination_container .paginationjs-pages li > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+}
+
+body.dc-on #PersonaManagement #persona_pagination_container .paginationjs-pages li.disabled > a {
+    opacity: 0.4;
+}
+
+body.dc-on #PersonaManagement #persona_pagination_container select {
+    min-height: 30px;
+    padding: 0 24px 0 10px;
+    border: 0;
+    border-radius: 15px;
+    background-color: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 13px;
+}
+
+/* The list card. */
+body.dc-on #PersonaManagement #user_avatar_block:not(.gridView) {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 2px;
+    padding: 6px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on #PersonaManagement #user_avatar_block:not(.gridView) .avatar-container {
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 12px;
+    outline: 0;
+    transition: background-color 0.15s ease;
+}
+
+body.dc-on #PersonaManagement #user_avatar_block .avatar-container:active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dc-on #PersonaManagement #user_avatar_block:not(.gridView) .avatar-container .avatar {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    outline: 0;
+}
+
+body.dc-on #PersonaManagement #user_avatar_block .avatar-container .avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+body.dc-on #PersonaManagement #user_avatar_block .avatar-container .character_select_container {
+    min-width: 0;
+    gap: 2px;
+}
+
+body.dc-on #PersonaManagement #user_avatar_block .avatar-container .ch_name {
+    font-family: var(--dc-font);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on #PersonaManagement #user_avatar_block:not(.gridView) .avatar-container .ch_description {
+    overflow: hidden;
+    width: 100%;
+    font-size: 13px;
+    line-height: 1.35;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--dc-text-muted);
+}
+
+/* Current persona: tinted row and a blurple check. */
+body.dc-on #PersonaManagement #user_avatar_block .avatar-container.selected {
+    border: 0;
+    background: color-mix(in srgb, var(--dc-blurple) 14%, transparent);
+}
+
+body.dc-on #PersonaManagement #user_avatar_block:not(.gridView) .avatar-container.selected::after {
+    content: '\f00c';
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 11px;
+}
+
+/* Default persona: a small gold crown on the avatar instead of ST's ring. */
+body.dc-on #PersonaManagement #user_avatar_block .avatar-container.default_persona .avatar {
+    position: relative;
+    outline: 0;
+}
+
+body.dc-on #PersonaManagement #user_avatar_block .avatar-container.default_persona .avatar::after {
+    content: '\f521';
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--dc-tile);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-yellow);
+    color: #1a1a1e;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 8px;
+}
+
+/* Lock badges (chat / character) as tiny pills. */
+body.dc-on #PersonaManagement .avatar_container_states .menu_button {
+    min-height: 0;
+    margin: 0;
+    padding: 2px 7px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--dc-bg-card);
+    font-size: 11px;
+    filter: none;
+}
+
+/* "+" (upload a new persona). */
+body.dc-on #PersonaManagement #user_avatar_block .avatar_upload {
+    width: 44px;
+    height: 44px;
+    margin: 6px 10px;
+    border: 2px dashed rgba(255, 255, 255, 0.18);
+    background: none;
+    color: var(--dc-text-muted);
+    font-size: 26px;
+}
+
+/* Grid view: rounded tiles. */
+body.dc-on #PersonaManagement #user_avatar_block.gridView {
+    gap: 10px;
+    padding: 10px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on #PersonaManagement #user_avatar_block.gridView .avatar-container {
+    border: 0;
+    border-radius: 14px;
+    outline: 0;
+}
+
+/* ── Global settings ──────────────────────────────────────────────── */
+
+body.dc-on #PersonaManagement .persona_management_global_settings {
+    padding: 4px 14px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on #PersonaManagement .persona_management_global_settings > h4.standoutHeader {
+    margin: 10px 0 2px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--dc-font);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #PersonaManagement .persona_management_global_settings .range-block {
+    margin: 0;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #PersonaManagement .persona_management_global_settings .range-block:last-child {
+    border-bottom: 0;
+}
+
+body.dc-on #PersonaManagement .persona_management_global_settings .checkbox_label {
+    font-size: 14.5px;
+    font-weight: 600;
+}
+
+/* ── Fixes after a look on the phone ─────────────────────────────── */
+
+body.dc-on #PersonaManagement #persona_connections_buttons .menu_button {
+    width: 100%;
+}
+
+body.dc-on #PersonaManagement #persona_sort_order {
+    width: auto;
+    min-width: 76px;
+    max-width: none;
+}
+
+/* Russian labels are longer ("Статистика исп.", "По умолчанию"): buttons
+   size to their text and wrap to a second row instead of overflowing. */
+body.dc-on #PersonaManagement > .flex-container > .flex-container:first-child > .flex-container:has(> .menu_button) {
+    flex-wrap: wrap;
+}
+
+body.dc-on #PersonaManagement > .flex-container > .flex-container:first-child .menu_button {
+    flex: 1 1 auto;
+    min-width: max-content;
+    padding: 0 14px;
+}
+
+body.dc-on #PersonaManagement #persona_connections_buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+body.dc-on #PersonaManagement #persona_connections_buttons .menu_button {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: max-content;
+    padding: 0 12px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+body.dc-on #PersonaManagement #persona_connections_buttons .menu_button > div {
+    white-space: nowrap;
+}
+
+/* Outside the Discord skin the card keeps no Discord marks: no "online" dot,
+   no pencil badge on the picture (a tap on it still picks a new one), no
+   @handle. */
+html:not([data-dc-skin="discord"]) body.dc-on #PersonaManagement :is(.dc-persona-status, .dc-persona-edit, .dc-persona-handle) {
+    display: none !important;
+}

@@ -1,0 +1,625 @@
+/* Two more themes on Retro's windows (family icq, styles/themes/icq.css):
+ *
+ *   "Монохром" (mono, mono-dark) — a 1-bit desktop window: cream and black,
+ *       thick outlines, hard offset shadows instead of bevels, slightly
+ *       rounded corners, round window buttons on the left of a centred
+ *       title, avatars and chat pictures in greyscale. The dark one is the
+ *       same window inverted.
+ *   "Ретро розовая" (icq-pink) — a pink pixel messenger: blue title bar on a pink
+ *       window, a pixel font, messages in speech bubbles beside framed
+ *       avatars, coloured toolbar icons, a pastel holographic desktop.
+ *
+ * Retro's stylesheet draws everything from --icq-* variables; these blocks
+ * redefine them and add what Retro doesn't have. One more id-level :not()
+ * than Retro's prefix, so these win wherever both set something. */
+
+/* ── Монохром ─────────────────────────────────────────────────────────── */
+
+html[data-dc-skin^="mono"] body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c) {
+    --icq-face: #f3eedd;
+    --icq-light: #f3eedd;
+    --icq-white: #fffaee;
+    --icq-shadow: #1d1d1b;
+    --icq-dark: #1d1d1b;
+    --icq-field: #faf6ea;
+    --icq-ink: #1d1d1b;
+    --icq-muted: #4a4944;
+    --icq-dim: #8b887d;
+    --icq-tip: #faf6ea;
+    --icq-them: #1d1d1b;
+    --icq-you: #1d1d1b;
+    --icq-link: #1d1d1b;
+    --icq-code: #e9e3cf;
+    --icq-hold: #e6dfc9;
+    --icq-skel: #e6dfc9;
+    --icq-note: #1d1d1b;
+    --icq-desktop: #d8d2bf;
+    --icq-navy: #1d1d1b;
+    --icq-on-navy: #f3eedd;
+    --icq-title: var(--icq-face);
+    --icq-title-off: var(--icq-face);
+    --icq-on-title: var(--icq-ink);
+    --dc-on-accent: var(--icq-on-navy);
+    /* Flat: an outline and a hard shadow instead of Windows' bevels. */
+    --icq-raised: inset 0 0 0 2px var(--icq-ink), 2px 2px 0 var(--icq-ink);
+    --icq-pressed: inset 0 0 0 2px var(--icq-ink);
+    --icq-sunken: inset 0 0 0 2px var(--icq-ink);
+    --icq-window: inset 0 0 0 2px var(--icq-ink), 5px 5px 0 var(--icq-ink);
+    --icq-status: inset 0 0 0 1px var(--icq-ink);
+    --icq-font: 'Rubik', 'Noto Sans', sans-serif;
+    --icq-sel-caret: var(--icq-ink);
+    --dc-bg-press: var(--icq-hold);
+    --dc-green: var(--icq-ink);
+    --dc-red: var(--icq-ink);
+    /* A dotted desktop, like a 1-bit screen's grey. */
+    --m-dither: radial-gradient(color-mix(in srgb, var(--icq-ink) 22%, transparent) 1px, transparent 1.2px) 0 0 / 4px 4px;
+
+    /* A dotted desktop around the windows. */
+    background: var(--m-dither), var(--icq-desktop) !important;
+
+    /* Softly rounded corners, everywhere Retro made them square. */
+    & *,
+    & *::before,
+    & *::after {
+        border-radius: 7px !important;
+    }
+
+    /* Text itself stays square (a highlighted quote is a straight band). */
+    & :is(#chat .mes_text, #chat .mes_text *, .dc-dm-name, .dc-dm-sub, .name_text) {
+        border-radius: 0 !important;
+    }
+
+    & ::selection {
+        background: var(--icq-ink);
+        color: var(--icq-face);
+    }
+
+    /* Scrollbars: a dotted track, a solid thumb. */
+    & ::-webkit-scrollbar-track {
+        background: var(--m-dither), var(--icq-face) !important;
+        box-shadow: inset 2px 0 0 var(--icq-ink);
+    }
+
+    & ::-webkit-scrollbar-thumb {
+        background: var(--icq-ink) !important;
+        box-shadow: none !important;
+        border: 3px solid var(--icq-face) !important;
+    }
+
+    /* Window title: round buttons on the left, the title centred. A line
+       under it separates it from the window. */
+    & :is(.icq-title, .dc-chat-header, .dc-server-head) {
+        position: relative;
+        justify-content: center;
+        height: 30px !important;
+        min-height: 30px !important;
+        border-bottom: 2px solid var(--icq-ink) !important;
+        border-radius: 7px 7px 0 0 !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+    }
+
+    & :is(.icq-title-text, .dc-chat-name, .dc-server-title) {
+        flex: 0 1 auto;
+        font-size: 15px !important;
+        text-align: center;
+    }
+
+    & .icq-appicon {
+        display: none;
+    }
+
+    & .icq-winbtns {
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        gap: 4px;
+        margin: 0;
+    }
+
+    & .icq-winbtns b {
+        width: 14px !important;
+        height: 14px !important;
+        border-radius: 50% !important;
+        background: transparent !important;
+        box-shadow: inset 0 0 0 2px var(--icq-ink) !important;
+        font-size: 0 !important;
+        margin: 0 !important;
+    }
+
+    & .icq-winbtns b:first-child {
+        background: var(--icq-ink) !important;
+    }
+
+    & .dc-chat-header .icq-winbtns b:last-child {
+        display: block;
+    }
+
+    /* The chat window's header keeps its buttons on the right. */
+    & .dc-chat-header {
+        justify-content: flex-start;
+        padding-left: 64px !important;
+    }
+
+    & .dc-chat-header .dc-chat-peer {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    & .dc-chat-name::after {
+        content: '';
+    }
+
+    & .dc-chat-header .dc-icon-btn {
+        width: 24px;
+        height: 22px;
+        flex-basis: 24px;
+        border-radius: 6px !important;
+        font-size: 11px;
+    }
+
+    /* Group headers in the list: a tree, like a channel list. */
+    & .icq-group span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 12px;
+        height: 12px;
+        border-radius: 2px !important;
+        box-shadow: inset 0 0 0 2px var(--icq-ink);
+        font-size: 0;
+        background: linear-gradient(var(--icq-ink), var(--icq-ink)) center / 6px 2px no-repeat;
+    }
+
+    & .dc-dm-row {
+        position: relative;
+        padding-left: 22px;
+    }
+
+    & .dc-dm-row::before {
+        content: '';
+        position: absolute;
+        left: 9px;
+        top: -4px;
+        bottom: 50%;
+        width: 8px;
+        border-left: 2px dotted var(--icq-ink);
+        border-bottom: 2px dotted var(--icq-ink);
+        border-radius: 0 !important;
+        opacity: 0.6;
+    }
+
+    & .dc-dm-item:is(:active, .dc-holding, .dc-pressed, .active) .dc-dm-row {
+        border-color: var(--icq-ink);
+    }
+
+    /* Greyscale avatars and pictures, like a 1-bit screen. */
+    & :is(.avatar img, .dc-dm-avatar img, .dc-av-group img, .dc-chat-avatar img, .dc-userbar-avatar img, .dc-sheet-head img,
+        .dc-persona-avatar img, #avatar_div_div img, .dc-wl-person img, .dc-wl-continue-av, .dc-wl-me, #chat .mes_img, #chat .mes_text img) {
+        filter: grayscale(1) contrast(1.25) brightness(1.04);
+    }
+
+    /* Messages: avatar on the left (Retro hides it), name bold, time
+       after it, the text under both. */
+    & #chat .mes {
+        padding: 8px 8px 4px 52px !important;
+        position: relative;
+    }
+
+    & #chat .mesAvatarWrapper,
+    & #chat .mes.dc-cont .mesAvatarWrapper {
+        display: block !important;
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        width: 36px;
+        height: 36px;
+        margin: 0 !important;
+        visibility: visible;
+    }
+
+    & #chat .mes .avatar,
+    & #chat .mes .avatar img {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 7px !important;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    & #chat .mes .avatar {
+        box-shadow: 0 0 0 2px var(--icq-ink);
+    }
+
+    & #chat .mes.dc-cont .ch_name {
+        display: flex;
+    }
+
+    & #chat .name_text,
+    & #chat .mes .ch_name .dc-ts {
+        color: var(--icq-ink) !important;
+    }
+
+    & #chat .mes .ch_name .dc-ts {
+        font-weight: 500;
+        opacity: 0.7;
+    }
+
+    & #chat .mes .swipe_left {
+        left: 52px;
+    }
+
+    & #chat .mes .swipeRightBlock {
+        left: 82px;
+    }
+
+    & #chat .mes_text q {
+        background: var(--icq-ink);
+        color: var(--icq-face);
+    }
+
+    /* Pictures in a frame with a hard shadow. */
+    & #chat :is(.mes_img, .mes_text img) {
+        box-shadow: 0 0 0 2px var(--icq-ink), 4px 4px 0 var(--icq-ink);
+    }
+
+    /* Toolbar and menu bar: outlined icon buttons. */
+    & .icq-toolbar button {
+        border-radius: 7px !important;
+    }
+
+    & #send_but::before {
+        content: 'Send' !important;
+    }
+
+    & #dc-home,
+    & #sheld {
+        border-radius: 9px !important;
+    }
+}
+
+html[data-dc-skin="mono-dark"] body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c) {
+    --icq-face: #1d1d1b;
+    --icq-light: #1d1d1b;
+    --icq-white: #2a2a27;
+    --icq-shadow: #efe9d6;
+    --icq-dark: #efe9d6;
+    --icq-field: #151514;
+    --icq-ink: #efe9d6;
+    --icq-muted: #c4bfae;
+    --icq-dim: #8b877b;
+    --icq-tip: #151514;
+    --icq-them: #efe9d6;
+    --icq-you: #efe9d6;
+    --icq-link: #efe9d6;
+    --icq-code: #262624;
+    --icq-hold: #2e2e2b;
+    --icq-skel: #2a2a27;
+    --icq-note: #efe9d6;
+    --icq-desktop: #0f0f0e;
+    --icq-navy: #efe9d6;
+    --icq-on-navy: #1d1d1b;
+}
+
+/* ── Ретро розовая ──────────────────────────────────────────────────────────── */
+
+html[data-dc-skin^="icq-pink"] body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c) {
+    --icq-face: #f6d3e6;
+    --icq-light: #fbe6f1;
+    --icq-white: #ffffff;
+    --icq-shadow: #c48ab0;
+    --icq-dark: #6b3d63;
+    --icq-field: #fffafd;
+    --icq-ink: #3b2b5c;
+    --icq-muted: #6d5784;
+    --icq-dim: #a08aac;
+    --icq-tip: #fff3fa;
+    --icq-them: #3b62c9;
+    --icq-you: #d94b92;
+    --icq-link: #3b62c9;
+    --icq-code: #fdeef6;
+    --icq-hold: #fcdcec;
+    --icq-skel: #f7e3ee;
+    --icq-note: #b0791f;
+    --icq-desktop: #d9ccf2;
+    --icq-navy: #6f8ff0;
+    --icq-on-navy: #ffffff;
+    --icq-title: linear-gradient(90deg, #3456c4, #7da2f2);
+    --icq-title-off: linear-gradient(90deg, #a98fb8, #d9c6e4);
+    --icq-sel: #ffc0e4;
+    --icq-sel-ink: #2a1440;
+    --icq-sel-caret: #f0168c;
+    --icq-font: 'Pixelify Sans', 'Noto Sans', sans-serif;
+    --dc-green: #3fa36b;
+    /* Pastel holographic film. */
+    --p-holo: linear-gradient(125deg, #f7c9e3 0%, #cfd8ff 22%, #e3f6ff 38%, #f6d9ff 55%, #d6c8ff 72%, #ffe1f0 88%, #cfe9ff 100%);
+    --p-bubble-them: #dce6ff;
+    --p-bubble-them-line: #6f8ff0;
+    --p-bubble-you: #ffd9ea;
+    --p-bubble-you-line: #e26aa6;
+
+    background: var(--p-holo) fixed !important;
+
+    /* A heart in the title bar instead of the speech bubbles icon. */
+    & .icq-appicon::before {
+        content: '\f004';
+    }
+
+    & .icq-appicon {
+        color: #ffd2e8;
+    }
+
+    /* Coloured toolbar icons, like the reference's little pictures. */
+    & .icq-toolbar button:nth-child(1) i { color: #3b62c9; }
+    & .icq-toolbar button:nth-child(2) i { color: #c8902a; }
+    & .icq-toolbar button:nth-child(3) i { color: #6d5784; }
+    & .icq-toolbar button:nth-child(4) i { color: #e05a9c; }
+    & .icq-toolbar button:nth-child(5) i { color: #3fa36b; }
+
+    & .icq-toolbar i {
+        font-size: 17px;
+    }
+
+    /* Messages: a framed avatar, "Name [21:04]:" and the text in a speech
+       bubble — blue for them, pink for you. */
+    & #chat .mes {
+        position: relative;
+        padding: 8px 8px 4px 50px !important;
+    }
+
+    & #chat .mesAvatarWrapper,
+    & #chat .mes.dc-cont .mesAvatarWrapper {
+        display: block !important;
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        width: 34px;
+        height: 34px;
+        margin: 0 !important;
+        visibility: visible;
+    }
+
+    & #chat .mes .avatar,
+    & #chat .mes .avatar img {
+        width: 34px !important;
+        height: 34px !important;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    & #chat .mes .avatar {
+        box-shadow: var(--icq-raised);
+        padding: 2px;
+        background: var(--icq-face);
+    }
+
+    & #chat .mes.dc-cont .ch_name {
+        display: flex;
+    }
+
+    & #chat .mes .mes_text {
+        position: relative;
+        width: fit-content;
+        max-width: 100%;
+        padding: 5px 10px !important;
+        border: 2px solid var(--p-bubble-them-line);
+        border-radius: 9px !important;
+        background: var(--p-bubble-them);
+        box-shadow: 2px 2px 0 color-mix(in srgb, var(--p-bubble-them-line) 35%, transparent);
+    }
+
+    & #chat .mes[is_user="true"] .mes_text {
+        border-color: var(--p-bubble-you-line);
+        background: var(--p-bubble-you);
+        box-shadow: 2px 2px 0 color-mix(in srgb, var(--p-bubble-you-line) 35%, transparent);
+    }
+
+    /* The bubble's little tail towards the avatar. */
+    & #chat .mes .mes_text::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 7px;
+        width: 8px;
+        height: 10px;
+        background: var(--p-bubble-them-line);
+        clip-path: polygon(100% 0, 0 50%, 100% 100%);
+        border-radius: 0 !important;
+    }
+
+    & #chat .mes[is_user="true"] .mes_text::before {
+        background: var(--p-bubble-you-line);
+    }
+
+    & #chat .mes .ch_name .dc-ts::before {
+        content: '[';
+    }
+
+    & #chat .mes .ch_name .dc-ts::after {
+        content: ']:';
+    }
+
+    & #chat .mes .swipe_left {
+        left: 50px;
+    }
+
+    & #chat .mes .swipeRightBlock {
+        left: 80px;
+    }
+
+    /* The pixel font is for the chrome and names; its Cyrillic is hard to
+       read in long text, so messages and the field are a terminal mono. */
+    & :is(#chat .mes_text, #chat .mes_reasoning, #send_textarea, .dc-dm-sub) {
+        font-family: 'IBM Plex Mono', 'Noto Sans Mono', monospace !important;
+    }
+
+    & #chat .mes_text {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Quotes: picked out like selected text on a phone — a pink marker
+       band, a hot pink handle with a bead at each end. */
+    & #chat .mes_text q {
+        padding: 0 2px;
+        background: var(--icq-sel) !important;
+        box-shadow: none !important;
+        color: var(--icq-sel-ink) !important;
+        font-weight: 600;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+    }
+
+    & #chat .mes_text q :is(i, em, b, strong, u, a, span, font) {
+        background: transparent !important;
+        box-shadow: none !important;
+        color: var(--icq-sel-ink) !important;
+    }
+
+    & #chat .mes_text q::before,
+    & #chat .mes_text q::after {
+        content: '' !important;
+        display: inline-block;
+        width: 8px;
+        height: 1.35em;
+        vertical-align: -0.3em;
+        background:
+            radial-gradient(circle, var(--icq-sel-caret) 3.2px, transparent 3.8px) 50% 0 / 8px 8px no-repeat,
+            linear-gradient(var(--icq-sel-caret), var(--icq-sel-caret)) 50% 0 / 2px 100% no-repeat;
+    }
+
+    & #chat .mes_text q::before {
+        margin: 0 1px 0 -5px;
+    }
+
+    /* the closing handle hangs its bead at the bottom */
+    & #chat .mes_text q::after {
+        margin: 0 -5px 0 1px;
+        background:
+            radial-gradient(circle, var(--icq-sel-caret) 3.2px, transparent 3.8px) 50% 100% / 8px 8px no-repeat,
+            linear-gradient(var(--icq-sel-caret), var(--icq-sel-caret)) 50% 0 / 2px 100% no-repeat;
+    }
+
+    /* The status line ("… печатает") in the pixel font, pink. */
+    & .dc-typing {
+        color: var(--icq-you);
+    }
+
+    /* Desktop sparkles in a corner of the holographic background. */
+    &::after {
+        content: '✦  ✧\A   ✦';
+        white-space: pre;
+        position: fixed;
+        right: 18px;
+        bottom: 14px;
+        z-index: 0;
+        color: #f2c94c;
+        font-size: 22px;
+        line-height: 1.1;
+        text-shadow: 0 0 6px #fff !important;
+        pointer-events: none;
+    }
+}
+
+/* ── Монохром and Ретро розовая: messages, both layouts ─────────────────────
+ * The "Сообщения" option: classic keeps the text beside the avatar (the
+ * rules above); wide puts the avatar and name on one row and runs the text
+ * under both, edge to edge. Either way the last message keeps room under
+ * its text for the swipe buttons (the padding above replaced Retro's). */
+
+html:is([data-dc-skin^="mono"], [data-dc-skin^="icq-pink"]) body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c) {
+    &:not(.hideAllSwipeButtons) #chat .mes.last_mes:not([is_user="true"]),
+    &.swipeAllMessages #chat .mes.swipes_visible,
+    &.hideAllSwipeButtons #chat .mes.last_mes:not([is_user="true"]):has(.swipes-counter:not(:empty, [hidden])) {
+        padding-bottom: 42px !important;
+    }
+
+    & #chat .mes .swipe_left,
+    & #chat .mes .swipeRightBlock {
+        bottom: 8px;
+    }
+}
+
+html[data-dc-layout="wide"]:is([data-dc-skin^="mono"], [data-dc-skin^="icq-pink"]) body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c) {
+    & #chat .mes {
+        padding-left: 8px !important;
+    }
+
+    & #chat .mes .ch_name,
+    & #chat .mes.dc-cont .ch_name {
+        min-height: 36px;
+        margin: 0 0 6px 46px;
+        align-items: center;
+    }
+
+    & #chat .mes .swipe_left {
+        left: 8px;
+    }
+
+    & #chat .mes .swipeRightBlock {
+        left: 38px;
+    }
+}
+
+/* Ретро розовая, wide: the bubble's tail points up at the avatar. */
+html[data-dc-layout="wide"][data-dc-skin^="icq-pink"] body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c) {
+    & #chat .mes .mes_text {
+        margin-top: 10px;
+    }
+
+    & #chat .mes .mes_text::before {
+        left: 12px;
+        top: -9px;
+        width: 12px;
+        height: 9px;
+        clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    }
+}
+
+/* ── Ретро розовая тёмная ─────────────────────────────────────────────
+ * The pink window at night: plum casings, a dark holographic desktop, the
+ * quotes a hot pink band. Only colours; everything else is the pink theme. */
+
+html[data-dc-skin="icq-pink-dark"] body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c):not(#icq-d) {
+    --icq-face: #3a2440;
+    --icq-light: #4d3155;
+    --icq-white: #66426f;
+    --icq-shadow: #1c1020;
+    --icq-dark: #0c0610;
+    --icq-field: #24152a;
+    --icq-ink: #f6dcef;
+    --icq-muted: #d1a9c8;
+    --icq-dim: #9a7a96;
+    --icq-tip: #2e1a33;
+    --icq-them: #d2acf2;
+    --icq-you: #ff8cc6;
+    --icq-link: #9fb8ff;
+    --icq-code: #2c1a31;
+    --icq-hold: #4a2547;
+    --icq-skel: #2e1d33;
+    --icq-note: #f0c46a;
+    --icq-desktop: #160d1a;
+    --icq-navy: #5b78e0;
+    --icq-on-navy: #ffffff;
+    --icq-title: linear-gradient(90deg, #2b3f9e, #5b7fe0);
+    --icq-title-off: linear-gradient(90deg, #4b3352, #6c5272);
+    --icq-sel: #ff8cc6;
+    --icq-sel-ink: #1e0a1c;
+    --icq-sel-caret: #ff4fa7;
+    --dc-green: #6fd39a;
+    --p-holo: linear-gradient(125deg, #2a1533 0%, #1b1f45 22%, #142636 38%, #2d1640 55%, #20183f 72%, #331a2c 88%, #142238 100%);
+    /* Both bubbles in the plum family: the character's lilac, yours pink. */
+    --p-bubble-them: #33213d;
+    --p-bubble-them-line: #b18ad0;
+    --p-bubble-you: #4a1e3b;
+    --p-bubble-you-line: #e26aa6;
+
+    & .icq-toolbar button:nth-child(1) i { color: #9fb8ff; }
+    & .icq-toolbar button:nth-child(3) i { color: #d1a9c8; }
+
+    & #send_textarea::placeholder {
+        color: var(--icq-dim) !important;
+    }
+}
+

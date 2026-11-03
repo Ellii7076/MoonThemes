@@ -1,0 +1,3117 @@
+/* "Годжо" (internal id/family gojo): a film poster at night, after her
+ * reference — black, Gojo in round glasses fading up from the bottom right,
+ * Japanese in thin type at the edges, a thin line with a cut corner over
+ * each entry, thin line icons in his techniques' muted red, blue and purple
+ * on the composer keys. Built on Шалфей's pieces (src/sage.js: the list
+ * profile, the one-row composer) plus src/gojo.js (the menu key, the
+ * credits at the edges). Both variants draw the same poster for now.
+ *
+ * The first half is Шалфей's stylesheet on this family's selector
+ * (generated from sage.css); the "Gojo" section redraws the rest. */
+
+html[data-dc-family="gojo"] body.dc-on:not(#gj-a):not(#gj-b) {
+    --sg-page: #f4f3ef;
+    --sg-win: #fbfaf6;
+    --sg-tab-off: #e8e6df;
+    --sg-box: #ffffff;
+    --sg-card2: #efeee9;
+    --sg-frame: #0b0b0b;
+    --sg-line: #0b0b0b;
+    --sg-line-soft: #d3d1ca;
+    --sg-sage: #19a6ee;
+    --sg-sage-press: #0b8fd6;
+    --sg-sage-ink: #ffffff;
+    --sg-paper: #0b0b0b;
+    --sg-paper-press: #333333;
+    --sg-paper-ink: #ffffff;
+    --sg-bar: #0b0b0b;
+    --sg-ink: #0b0b0b;
+    --sg-text: #161616;
+    --sg-muted: #5b5b5b;
+    --sg-dim: #9a9a9a;
+    --sg-tint: #cfcfcf;
+    --sg-danger: #d0213a;
+    --sg-window-shadow: none;
+    --sg-tab-h: 36px;
+    --sg-font: 'M PLUS 1p', 'Noto Sans', sans-serif;
+    --sg-font-text: 'M PLUS 1p', 'Noto Sans', sans-serif;
+    --sg-font-name: 'Oswald', 'M PLUS 1p', sans-serif;
+
+    --dc-bg-lowest: var(--sg-page);
+    --dc-bg: var(--sg-win);
+    --dc-bg-raised: var(--sg-card2);
+    --dc-bg-card: var(--sg-card2);
+    --dc-bg-press: var(--sg-line-soft);
+    --dc-line: var(--sg-line-soft);
+    --dc-text: var(--sg-ink);
+    --dc-text-normal: var(--sg-text);
+    --dc-text-muted: var(--sg-muted);
+    --dc-text-dim: var(--sg-dim);
+    --dc-blurple: var(--sg-sage);
+    --dc-blurple-press: var(--sg-sage-press);
+    --dc-green: var(--sg-sage);
+    --dc-red: var(--sg-danger);
+    --dc-yellow: #b07a1f;
+    --dc-link: #0b78b8;
+    --dc-bg-float: var(--sg-win);
+    --dc-bg-sheet: var(--sg-win);
+    --dc-bg-field: var(--sg-box);
+    --dc-bg-code: var(--sg-card2);
+    --dc-bg-code-line: var(--sg-line-soft);
+    --dc-icon: var(--sg-muted);
+    --dc-handle: var(--sg-line-soft);
+    --dc-track: var(--sg-line-soft);
+    --dc-status-off: var(--sg-dim);
+    --dc-accent-text: var(--sg-sage);
+    --dc-on-accent: var(--sg-sage-ink);
+    --dc-rail-w: 0px;
+    --dc-head-h: 40px;
+    --dc-userbar-h: 0px;
+    --dc-font: var(--sg-font);
+    --dc-font-text: var(--sg-font-text);
+    --dc-font-name: var(--sg-font-name);
+
+    /* The page: near black, a green haze, faint scanlines. */
+    --sg-page-bg: var(--sg-page);
+    background: var(--sg-page-bg) !important;
+    background-attachment: fixed !important;
+    color: var(--sg-text);
+    font-family: var(--sg-font);
+
+    & ::selection {
+        background: var(--sg-sage);
+        color: var(--sg-sage-ink);
+    }
+
+    & :is(textarea, input) {
+        caret-color: var(--sg-sage);
+    }
+
+    & ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    & ::-webkit-scrollbar-thumb {
+        background: var(--sg-line-soft);
+        border-radius: 2px;
+    }
+
+    & ::-webkit-scrollbar-thumb:hover {
+        background: var(--sg-frame);
+    }
+
+    /* ── Tinted avatars ───────────────────────────────────────────────── */
+
+    & :is(.sg-avatar, .dc-chat-avatar, #chat .mes .avatar, .dc-dm-avatar, .dc-av-group, .sg-tab img) {
+        position: relative;
+        background: var(--sg-tint) !important;
+        overflow: hidden;
+    }
+
+    & :is(.sg-avatar img, .dc-chat-avatar img, #chat .mes .avatar img, .dc-dm-avatar img, .dc-av-group img, .sg-tab img) {
+        filter: grayscale(1) contrast(1.25) brightness(1.02);
+        mix-blend-mode: luminosity;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    & :is(.sg-avatar, .dc-chat-avatar, #chat .mes .avatar, .dc-dm-avatar)::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            repeating-linear-gradient(0deg, rgba(4, 10, 4, 0.28) 0 1px, transparent 1px 3px),
+            radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(4, 10, 4, 0.45));
+        pointer-events: none;
+    }
+
+    /* ── Keys ──────────────────────────────────────────────────────────── */
+
+    & :is(.sg-wide, .sg-link, #send_but, #mes_stop) {
+        border: 0;
+        border-radius: 5px;
+        background: var(--sg-sage);
+        color: var(--sg-sage-ink);
+        font-family: var(--sg-font);
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    & :is(.sg-wide, .sg-link):active {
+        background: var(--sg-sage-press);
+    }
+
+    /* ── Folder tabs ──────────────────────────────────────────────────── */
+
+    & .sg-tabs {
+        position: relative;
+        z-index: 2;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: stretch;
+        height: var(--sg-tab-h);
+        min-width: 0;
+    }
+
+    & .sg-tabs-scroll {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        padding-left: 6px;
+    }
+
+    & .sg-tabs-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    & .sg-tab {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-width: 38px;
+        height: calc(var(--sg-tab-h) - 7px);
+        margin-bottom: 1.5px;
+        padding: 0 10px;
+        border: 1.5px solid var(--sg-frame);
+        border-bottom: 0;
+        border-radius: 7px 7px 0 0;
+        background: var(--sg-tab-off);
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 13px;
+        cursor: pointer;
+        transition: height 0.15s ease, color 0.15s ease;
+    }
+
+    & .sg-tab i {
+        font-size: 14px;
+    }
+
+    & .sg-tab img {
+        flex: 0 0 18px;
+        width: 18px;
+        height: 18px;
+        border-radius: 3px;
+    }
+
+    & .sg-tab span {
+        display: none;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* The raised tab is the window's: its colour, over the frame line. */
+    & .sg-tab.active {
+        height: var(--sg-tab-h);
+        margin-bottom: 0;
+        padding-bottom: 1.5px;
+        background: var(--sg-win);
+        color: var(--sg-ink);
+        font-weight: 700;
+    }
+
+    & .sg-tab.active span {
+        display: inline;
+    }
+
+    & .sg-tab:not(.active):hover {
+        color: var(--sg-ink);
+    }
+
+    & .sg-dots {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 14px 0 8px;
+    }
+
+    & .sg-dot {
+        width: 15px;
+        height: 15px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: var(--sg-paper);
+        cursor: pointer;
+    }
+
+    & .sg-dot:nth-child(2) {
+        background: var(--sg-sage);
+    }
+
+    & .sg-dot:nth-child(3) {
+        background: var(--sg-dot3, #000);
+        box-shadow: 0 0 0 1px rgba(230, 236, 226, 0.35);
+    }
+
+    & .sg-dot:active {
+        transform: scale(0.85);
+    }
+
+    /* ── A window: the frame under the tabs ───────────────────────────── */
+
+    /* The screens slide over each other: each carries the page. */
+    & :is(#sheld, #dc-home) {
+        isolation: isolate;
+        background: var(--sg-page-bg) !important;
+        background-attachment: fixed !important;
+    }
+
+    & :is(#sheld, #dc-home)::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        top: calc(var(--dc-safe-top) + 8px + var(--sg-tab-h) - 1.5px);
+        bottom: calc(var(--dc-safe-bottom) + 8px);
+        z-index: -1;
+        border: 1.5px solid var(--sg-frame);
+        border-radius: 8px;
+        background: var(--sg-win);
+        box-shadow: var(--sg-window-shadow);
+        pointer-events: none;
+    }
+
+    /* ── Chat list window ─────────────────────────────────────────────── */
+
+    & #dc-home {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 1fr);
+        padding: calc(var(--dc-safe-top) + 8px) 8px calc(var(--dc-safe-bottom) + 8px);
+    }
+
+    & .dc-rail,
+    & .dc-userbar,
+    & .dc-home-dim,
+    & #dc-home::after,
+    & .dc-dm-titlebar,
+    & .dc-dm-actions {
+        display: none !important;
+    }
+
+    & #dc-home > .sg-tabs {
+        grid-row: 1;
+    }
+
+    & #dc-home > .sg-profile {
+        grid-row: 2;
+    }
+
+    & #dc-home > .dc-panel {
+        grid-row: 3;
+        min-height: 0;
+        margin: 0 !important;
+        border: 0;
+        border-radius: 0 0 8px 8px !important;
+        background: transparent;
+        overflow: hidden;
+    }
+
+    /* Profile block (your persona here, the character in the chat). */
+    & .sg-profile {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        column-gap: 12px;
+        row-gap: 10px;
+        margin: 0 1.5px;
+        padding: 12px 12px 12px;
+        border-bottom: 1.5px solid var(--sg-frame);
+    }
+
+    & .sg-avatar {
+        width: 84px;
+        height: 84px;
+        padding: 0;
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    & .sg-avatar img {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    & .sg-who {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    & .sg-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--sg-ink);
+        font-family: var(--sg-font-name);
+        font-size: 21px;
+        font-weight: 600;
+        font-style: normal;
+        letter-spacing: 0.01em;
+    }
+
+    & .sg-meta {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    & .sg-row {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 2px 0 3px;
+        border-bottom: 1px solid var(--sg-line-soft);
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 12px;
+    }
+
+    & .sg-row:last-child {
+        border-bottom: 0;
+    }
+
+    & .sg-row b {
+        color: var(--sg-text);
+        font-weight: 500;
+    }
+
+    & .sg-actions {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 36px;
+        gap: 10px;
+    }
+
+    & .sg-wide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        height: 36px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    & .sg-wide i {
+        font-size: 15px;
+    }
+
+    & .sg-wide.sg-key {
+        padding: 0;
+        background: var(--sg-paper);
+        color: var(--sg-paper-ink);
+    }
+
+    /* A panel open: its own title bar instead of the profile. */
+    &:not([data-dc-panel=""]) #dc-home > .sg-profile {
+        display: none;
+    }
+
+    & .dc-dm {
+        background: transparent;
+    }
+
+    & .dc-dm-head {
+        padding: 10px 12px 0;
+        background: transparent;
+    }
+
+    & .dc-dm-searchbar {
+        border: 1.5px solid var(--sg-line);
+        border-radius: 4px;
+        background: var(--sg-box);
+        font-family: var(--sg-font);
+    }
+
+    & .dc-dm-searchbar input {
+        font-family: var(--sg-font) !important;
+    }
+
+    & .dc-chip {
+        border: 0;
+        border-radius: 4px;
+        background: var(--sg-paper);
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font);
+        font-weight: 700;
+    }
+
+    & .dc-chip i {
+        color: var(--sg-paper-ink);
+    }
+
+    & .dc-chip.active {
+        background: var(--sg-sage);
+        color: var(--sg-sage-ink);
+    }
+
+    /* The list: a numbered track list under column heads. */
+    & .sg-listhead {
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr) auto;
+        gap: 8px;
+        margin: 10px 12px 0;
+        padding: 0 2px 6px;
+        border-bottom: 2.5px solid var(--sg-sage);
+        color: var(--sg-ink);
+        font-family: var(--sg-font);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    &:not([data-dc-panel=""]) .sg-listhead {
+        display: none;
+    }
+
+    & .dc-dm-list {
+        padding: 0 12px 12px;
+        counter-reset: sg-row;
+    }
+
+    & .dc-dm-item {
+        margin: 0;
+        border-radius: 0;
+        counter-increment: sg-row;
+        border-bottom: 1px solid var(--sg-line-soft);
+    }
+
+    & .dc-dm-row {
+        gap: 10px;
+        padding: 9px 2px;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    & .dc-dm-row::before {
+        content: counter(sg-row) '.';
+        flex: 0 0 24px;
+        align-self: flex-start;
+        padding-top: 2px;
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 13px;
+    }
+
+    & .dc-dm-item.active .dc-dm-row,
+    & .dc-dm-item.dc-pressed .dc-dm-row,
+    & .dc-dm-item.dc-holding .dc-dm-row {
+        background: var(--sg-card2);
+    }
+
+    & .dc-dm-item.active .dc-dm-row::before {
+        color: var(--sg-sage);
+        font-weight: 700;
+    }
+
+    & .dc-dm-avatar,
+    & .dc-dm-avatar img,
+    & .dc-av-group img {
+        border-radius: 4px !important;
+    }
+
+    & .dc-dm-avatar {
+        border: 1px solid var(--sg-line-soft);
+    }
+
+    & .dc-dm-avatar .dc-status {
+        display: none;
+    }
+
+    & .dc-dm-name {
+        color: var(--sg-ink);
+        font-family: var(--sg-font) !important;
+        font-weight: 700;
+    }
+
+    & .dc-dm-time {
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+    }
+
+    & .dc-dm-sub {
+        color: var(--sg-muted);
+        font-family: var(--sg-font-text);
+    }
+
+    & .dc-dm-tag {
+        border-radius: 3px;
+    }
+
+    & .dc-dm-note {
+        border-left: 2px solid var(--sg-sage);
+        border-radius: 0;
+        background: var(--sg-box);
+        font-family: var(--sg-font-text);
+    }
+
+    /* Panel title: a post's title bar, "Пресет • MoonThemes". */
+    & .dc-server-head {
+        height: 30px;
+        margin: 10px 12px 0;
+        padding: 0 10px;
+        gap: 8px;
+        border: 0;
+        border-radius: 3px;
+        background: var(--sg-bar);
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font);
+        font-weight: 700;
+    }
+
+    & .dc-server-head :is(.dc-server-icon, .dc-server-title, .dc-server-chevron, .dc-server-back) {
+        color: var(--sg-paper-ink) !important;
+        font-size: 13px !important;
+    }
+
+    & .dc-server-head .dc-server-title {
+        font-family: var(--sg-font) !important;
+    }
+
+    & .dc-server-head .dc-server-title::after {
+        content: ' • MoonThemes';
+        font-weight: 400;
+    }
+
+    /* ── Chat window ──────────────────────────────────────────────────── */
+
+    & #sheld {
+        padding: calc(var(--dc-safe-top) + 8px) 8px calc(var(--dc-safe-bottom) + 8px) !important;
+        gap: 0;
+        box-shadow: none !important;
+    }
+
+    & #sheld > .sg-tabs {
+        order: -2;
+    }
+
+    /* No header: who writes is on every post, and the chat's own tab
+       (tapped again) opens the character card. */
+    & #sheld > .dc-chat-header {
+        display: none !important;
+    }
+
+    /* The log: no box of its own, the window is the box. */
+    & #chat {
+        margin: 0 1.5px !important;
+        padding: 4px 12px 12px !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        font-family: var(--sg-font-text);
+    }
+
+    /* A message is a post: avatar, plates beside, the text framed under. */
+    & #chat .mes {
+        display: block;
+        position: relative;
+        align-self: stretch;
+        width: auto;
+        max-width: none;
+        margin: 14px 0 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+    }
+
+    & #chat .mes.dc-cont {
+        margin-top: 8px !important;
+    }
+
+    & #chat .mesAvatarWrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 72px;
+        height: 72px;
+        margin: 0 !important;
+        visibility: visible;
+        z-index: 1;
+    }
+
+    & #chat .mes .avatar,
+    & #chat .mes .avatar img {
+        width: 72px !important;
+        height: 72px !important;
+        border-radius: 4px !important;
+    }
+
+    & #chat .mes .avatar {
+        border: 1.5px solid var(--sg-line);
+    }
+
+    & #chat .mes .mes_block {
+        min-width: 0;
+        padding: 0 !important;
+    }
+
+    /* The plates: name, then "Posted:", then "Msg:" — three ruled rows. */
+    & #chat .mes .ch_name {
+        position: relative;
+        min-height: 72px;
+        margin: 0 0 8px 84px;
+        padding: 0 0 22px;
+        align-items: flex-start;
+    }
+
+    & #chat .mes .ch_name > .flex-container:first-child {
+        min-width: 0;
+        align-items: stretch !important;
+    }
+
+    & #chat .mes .ch_name > .flex-container:first-child > .flex-container {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0;
+        width: 100%;
+        min-width: 0;
+    }
+
+    & #chat .name_text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 1px 0 5px;
+        color: var(--sg-ink) !important;
+        font-family: var(--sg-font-name) !important;
+        font-size: 17px !important;
+        font-weight: 600 !important;
+        font-style: normal;
+    }
+
+    & #chat .mes .ch_name .dc-ts {
+        display: block;
+        margin: 0;
+        padding: 3px 0;
+        border-top: 1px solid var(--sg-line-soft);
+        border-bottom: 1px solid var(--sg-line-soft);
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 12px;
+    }
+
+    & #chat .mes .ch_name .dc-ts::before {
+        content: 'Posted: ';
+        color: var(--sg-text);
+        font-weight: 500;
+    }
+
+    & #chat .mes .ch_name .timestamp,
+    & #chat .mes .mes_ghost:not([style*="inline"]) {
+        display: none;
+    }
+
+    & #chat .mes::after {
+        content: 'Msg: #' attr(mesid);
+        position: absolute;
+        left: 84px;
+        top: 52px;
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 12px;
+        pointer-events: none;
+    }
+
+    & #chat .mes[is_user="true"]::after {
+        content: 'From: you · #' attr(mesid);
+    }
+
+    & #chat .mes .mes_buttons {
+        align-self: flex-start;
+        color: var(--sg-muted);
+    }
+
+    /* Grouped messages: no repeat of the avatar and plates. */
+    & #chat .mes.dc-cont .mesAvatarWrapper,
+    & #chat .mes.dc-cont .ch_name .flex-container:first-child,
+    & #chat .mes.dc-cont::after {
+        display: none !important;
+    }
+
+    & #chat .mes.dc-cont .ch_name {
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    & #chat .mes.dc-cont .ch_name .mes_buttons {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        z-index: 2;
+    }
+
+    /* The text itself: no box, straight on the window. */
+    & #chat .mes_text {
+        margin: 0;
+        padding: 2px 0 0 !important;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: var(--sg-text);
+        font-family: var(--sg-font-text) !important;
+        font-size: 15px;
+        line-height: 1.45;
+    }
+
+    & #chat .mes_text:empty {
+        display: none;
+    }
+
+    /* Yours: mirrored, the avatar on the right. */
+    & #chat .mes[is_user="true"] .mesAvatarWrapper {
+        left: auto;
+        right: 0;
+    }
+
+    & #chat .mes[is_user="true"] .ch_name {
+        margin: 0 84px 8px 0;
+        flex-direction: row-reverse;
+        text-align: right;
+    }
+
+    & #chat .mes[is_user="true"]::after {
+        left: auto;
+        right: 84px;
+    }
+
+    & #chat .mes_text :is(q, .dc-quote) {
+        color: var(--sg-ink);
+    }
+
+    & #chat .mes_text em {
+        color: var(--sg-muted);
+    }
+
+    & #chat .mes_text code {
+        border: 1px solid var(--sg-line-soft);
+        background: var(--sg-card2) !important;
+        color: var(--sg-ink) !important;
+    }
+
+    & #chat .mes_text blockquote {
+        border-left: 2px solid var(--sg-sage);
+        background: var(--sg-card2);
+    }
+
+    & #chat .dc-day {
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        letter-spacing: 0.08em;
+    }
+
+    & #chat .dc-day::before,
+    & #chat .dc-day::after {
+        background: var(--sg-line-soft);
+    }
+
+    /* Swipes: pale keys under the post, like "▶ Play  + Add". */
+    &:not(.hideAllSwipeButtons) #chat .mes.last_mes:not([is_user="true"]),
+    &.swipeAllMessages #chat .mes.swipes_visible,
+    &.hideAllSwipeButtons #chat .mes.last_mes:not([is_user="true"]):has(.swipes-counter:not(:empty, [hidden])) {
+        padding-bottom: 36px !important;
+    }
+
+    & #chat .mes .swipe_left,
+    & #chat .mes .swipe_right,
+    & #chat .mes .swipes-counter {
+        height: 26px !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0 !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+        box-shadow: none !important;
+        opacity: 1;
+    }
+
+    & #chat .mes :is(.swipe_left, .swipe_right) {
+        width: 32px !important;
+        font-size: 12px !important;
+    }
+
+    & #chat .mes .swipes-counter {
+        min-width: 46px;
+        padding: 0 8px !important;
+        font-family: var(--sg-font) !important;
+        font-size: 12px !important;
+        font-weight: 700;
+    }
+
+    & #chat .mes .swipe_left {
+        left: 0;
+        bottom: 2px;
+    }
+
+    & #chat .mes .swipeRightBlock {
+        align-items: center;
+        gap: 4px !important;
+        left: 36px;
+        bottom: 2px;
+    }
+
+    /* ◁ 2/3 ▷ : the block is [▷, counter] in the DOM, laid out explicitly. */
+    & #chat .mes .swipeRightBlock {
+        flex-direction: row !important;
+    }
+
+    & #chat .mes .swipeRightBlock .swipes-counter {
+        order: 1;
+    }
+
+    & #chat .mes .swipeRightBlock .swipe_right {
+        order: 2;
+    }
+
+    &.hideAllSwipeButtons #chat .mes .swipeRightBlock {
+        left: 0;
+    }
+
+    /* ── Composer ─────────────────────────────────────────────────────────
+     * One row in a framed box: [+]  text  [wand] [send]. */
+
+    & #form_sheld {
+        margin: 0 1.5px !important;
+        padding: 10px 12px 12px !important;
+        border-top: 1.5px solid var(--sg-frame);
+        background: transparent !important;
+    }
+
+    & #nonQRFormItems {
+        flex-wrap: nowrap;
+        align-items: flex-end;
+        gap: 6px;
+        min-height: 0;
+        margin-right: 0;
+        padding: 6px;
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+        box-shadow: none !important;
+    }
+
+    & #send_textarea {
+        order: 1 !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        min-height: 38px !important;
+        margin: 0 !important;
+        padding: 8px 4px !important;
+        color: var(--sg-text) !important;
+        font-family: var(--sg-font-text) !important;
+        font-size: 16px !important;
+        text-align: left !important;
+    }
+
+    & #send_textarea::placeholder {
+        color: var(--sg-dim) !important;
+        text-align: left;
+    }
+
+    /* ST's script controls (▶ ⏸ ■) stay out of the field in this theme. */
+    & #nonQRFormItems .stscript_btn {
+        display: none !important;
+    }
+
+    /* Keys: the menu on the left, the wand and send on the right. */
+    & :is(#options_button, #extensionsMenuButton, #send_but, #mes_stop) {
+        position: static !important;
+        flex: 0 0 40px;
+        width: 40px !important;
+        height: 38px !important;
+        align-items: center;
+        justify-content: center;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+        font-size: 16px !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    & :is(#options_button, #extensionsMenuButton) {
+        display: flex !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & #options_button {
+        order: 0 !important;
+    }
+
+    & #extensionsMenuButton {
+        order: 2 !important;
+    }
+
+    & #rightSendForm > :not(#send_but, #mes_stop) {
+        order: 2;
+    }
+
+    & #extensionsMenuButton::before {
+        content: '\e2ca' !important;  /* fa-wand-magic-sparkles */
+        font-family: 'Font Awesome 6 Free' !important;
+        font-weight: 900 !important;
+    }
+
+    & #send_but,
+    & #mes_stop {
+        order: 3 !important;
+    }
+
+    & #send_but:not(.displayNone) {
+        display: flex !important;
+    }
+
+    /* Generating: Stop takes Send's key, same place, same look. */
+    & #nonQRFormItems:has(#mes_stop[style*="flex"]) #send_but {
+        display: none !important;
+    }
+
+    & #mes_stop {
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+
+    & #mes_stop i {
+        font-size: 16px !important;
+    }
+
+    & #send_but:active {
+        background: var(--sg-sage-press);
+    }
+
+    /* ── Menus, popups, toasts ────────────────────────────────────────── */
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        background: var(--sg-win) !important;
+    }
+
+    & :is(.dc-sheet, #options .options-content, #extensionsMenu) {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 6px !important;
+        background: var(--sg-win) !important;
+        font-family: var(--sg-font);
+    }
+
+    & :is(#options .options-content a, #extensionsMenu .list-group-item, #extensionsMenu > div, .dc-sheet-item):hover {
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+
+    & dialog.popup:not(:has(#loader)) {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 8px !important;
+        background: var(--sg-win) !important;
+        color: var(--sg-text);
+    }
+
+    & #toast-container > .toast {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 6px !important;
+        background-color: var(--sg-win) !important;
+        font-family: var(--sg-font);
+    }
+
+    & .dc-sheet-head img {
+        border-radius: 4px !important;
+    }
+}
+
+/* ── Phone: panels inside the list window, under their title bar ──────── */
+
+html[data-dc-family="gojo"][data-dc-desk="off"] body.dc-on:not(#gj-a):not(#gj-b) {
+    /* page top + tabs + the title bar (10 + 30) + a gap */
+    --dc-drawer-top: calc(var(--dc-safe-top) + 8px + var(--sg-tab-h) + 46px);
+    --dc-drawer-left: 11px;
+    --dc-drawer-bottom: calc(var(--dc-safe-bottom) + 11px);
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        right: 11px !important;
+        border-radius: 0 0 7px 7px !important;
+    }
+
+    & .dc-chat-header .dc-list-toggle {
+        display: none !important;
+    }
+
+    & #gj-list-btn {
+        display: none !important;
+    }
+}
+
+/* ── Desktop: two windows side by side ────────────────────────────────── */
+
+html[data-dc-family="gojo"][data-dc-desk="on"] body.dc-on:not(#gj-a):not(#gj-b) {
+    /* The chat window's tabs are the only ones. */
+    & #dc-home > .sg-tabs {
+        visibility: hidden;
+    }
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 8px !important;
+    }
+
+    & #dc-deskhead {
+        border-radius: 3px;
+        background: var(--sg-bar);
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font);
+    }
+
+    & #dc-deskhead :is(.dc-server-icon, .dc-server-title, .dc-icon-btn) {
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & .dc-server-head {
+        display: none !important;
+    }
+
+    /* The hover bar of actions: over the top corner of the post away from
+       the avatar, so it never sits on the name plates. */
+    & #chat .mes .ch_name {
+        position: static;
+    }
+
+    & #chat .mes .mes_buttons {
+        top: -16px;
+        right: 0;
+        left: auto;
+        border: 1px solid var(--sg-line-soft);
+        border-radius: 4px;
+        background: var(--sg-win);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        scrollbar-width: none;
+    }
+
+    & #chat .mes .mes_buttons::-webkit-scrollbar,
+    & #chat .mes .mes_buttons *::-webkit-scrollbar {
+        display: none;
+    }
+
+    & #chat .mes .mes_buttons .extraMesButtons {
+        overflow: hidden;
+        scrollbar-width: none;
+    }
+
+    & #chat .mes[is_user="true"] .mes_buttons {
+        right: auto;
+        left: 0;
+    }
+
+    & #chat .mes[mesid="0"] .mes_buttons {
+        top: 2px;
+    }
+}
+
+html[data-dc-family="gojo"][data-dc-desk="on"][data-dc-list="hidden"] body.dc-on:not(#gj-a):not(#gj-b) #dc-home {
+    display: none !important;
+}
+
+/* ── Panels: posts and keys ───────────────────────────────────────────
+ * The shared panel styles (styles/panel-*.css) lay the panels out; this
+ * redraws their pieces, on the same selectors as Bubble's: tiles become
+ * framed black boxes, collapsible headers pale title bars, icon buttons
+ * pale keys, text buttons keys too, and the profile cards a title bar, a
+ * framed tinted avatar and the name beside it. */
+
+html[data-dc-family="gojo"] body.dc-on:not(#gj-a):not(#gj-b) {
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #rm_extensions_block, #movingDivs > .drawer-content, #character_popup) {
+        --dc-tile: var(--sg-box);
+        --dc-tile-line: var(--sg-line-soft);
+        --dc-field: var(--sg-box);
+    }
+
+    /* Tiles. */
+    & :is(#rm_api_block > .wide100p:first-child, #rm_api_block #main_api,
+        #rm_api_block .flex-container.flexFlowColumn > [id$="_api"]:not(select):not([style*="none"]), #rm_api_block > .flex-container:last-child,
+        #right-nav-panel #rm_print_characters_block, #right-nav-panel #avatar-and-name-block, #right-nav-panel #creators_note_desc_hidden,
+        #right-nav-panel :is(#descriptionWrapper, #firstMessageWrapper),
+        #rm_extensions_block :is(#extensions_settings, #extensions_settings2), #rm_extensions_block .extensions_block > hr ~ .flex-container,
+        #AdvancedFormatting :is(#ContextSettings, #InstructSettingsColumn, #SystemPromptColumn),
+        #PersonaManagement .persona_management_current_persona, #PersonaManagement #user_avatar_block, #PersonaManagement .persona_management_global_settings,
+        #left-nav-panel #respective-presets-block > div > div,
+        #left-nav-panel :is(#respective-ranges-and-temps, #advanced-ai-config-block) .range-block, #left-nav-panel #openai_settings > div > .range-block,
+        #left-nav-panel :is(.completion_prompt_manager_footer, #completion_prompt_manager_list),
+        #user-settings-block :is(#UI-language-block, #UI-Theme-Block, #UI-Customization, #power-user-options-block),
+        #WorldInfo :is(#wiTopBlock > .range-block, #WIMultiSelector, .wi-card-entry),
+        :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+    }
+
+    /* Section titles: a little square, then the title, like "☐ NAME". */
+    & :is(#PersonaManagement, #right-nav-panel, #user-settings-block, #rm_extensions_block, #AdvancedFormatting, #WorldInfo, #left-nav-panel, #rm_api_block) :is(h3, h4, .standoutHeader):not(:empty) {
+        color: var(--sg-sage) !important;
+        font-family: var(--sg-font-name) !important;
+        letter-spacing: 0.04em;
+    }
+
+    & :is(#PersonaManagement, #right-nav-panel, #user-settings-block, #AdvancedFormatting, #WorldInfo, #left-nav-panel) h4.standoutHeader:not(:empty)::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-right: 7px;
+        border: 1.5px solid var(--sg-sage-ink);
+        border-radius: 3px;
+        background: var(--sg-bar);
+        vertical-align: 0;
+    }
+
+    /* Collapsible tiles: the header is the slanted bar. */
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer > .inline-drawer-header {
+        margin: 8px 8px 0;
+        padding: 6px 30px 6px 12px !important;
+        border-radius: 3px;
+        background: var(--sg-bar) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer > .inline-drawer-header :is(b, span, i, .inline-drawer-icon) {
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer > .inline-drawer-header .menu_button {
+        background: rgba(0, 0, 0, 0.08) !important;
+        border-color: rgba(0, 0, 0, 0.35) !important;
+    }
+
+    /* Fields. */
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(.text_pole, textarea, input:is([type="number"], [type="text"], [type="search"])) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(select, select.text_pole) {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background-color: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    /* Lists that show several lines are boxes, not pills. */
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(select[multiple], select[size]:not([size="1"]), select.text_pole[multiple]) {
+        border-radius: 5px !important;
+    }
+
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(.text_pole, textarea, input, select):focus {
+        border-color: var(--sg-sage) !important;
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--sg-sage) 30%, transparent) !important;
+    }
+
+    /* Text buttons: pills. */
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #rm_extensions_block, #movingDivs > .drawer-content, #character_popup, dialog.popup) .menu_button:has(> span:not([style*="none"])),
+    & #rm_api_block .menu_button:not(.fa-solid):not(i),
+    & dialog.popup .popup-controls .menu_button {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        box-shadow: none !important;
+        color: var(--sg-paper-ink) !important;
+        font-family: var(--sg-font) !important;
+        font-weight: 700 !important;
+    }
+
+    & dialog.popup .popup-controls .menu_button.popup-button-ok {
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+
+    /* Icon buttons: pale keys; destructive ones dusty red. */
+    & :is(#rm_api_block :is(i.menu_button, .menu_button.fa-solid),
+        #right-nav-panel :is(i, div).menu_button.fa-solid, #right-nav-panel #result_info .right_menu_button, #right-nav-panel #rm_button_search,
+        :is(#AdvancedFormatting, #WorldInfo, #Backgrounds, #user-settings-block, #movingDivs > .drawer-content, #character_popup) :is(i.menu_button, div.menu_button.fa-solid, .menu_button.menu_button_icon:not(:has(> span:not([style*="none"])))),
+        #PersonaManagement #persona_controls .menu_button, #PersonaManagement #persona_grid_toggle,
+        #left-nav-panel .menu_button.menu_button_icon:not(:has(> span:not([style*="none"]))), #left-nav-panel .completion_prompt_manager_footer a.menu_button,
+        #user-settings-block :is(#ui-preset-update-button, #ui-preset-save-button, #ui-preset-delete-button, #ui_preset_import_button, #ui_preset_export_button)) {
+        border: 0 !important;
+        background: var(--sg-paper) !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#top-settings-holder .drawer-content, #PersonaManagement #persona_controls, #movingDivs) :is(.fa-trash-can, .fa-skull, .redWarningBG).menu_button {
+        background: var(--sg-danger) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#top-settings-holder .drawer-content, #movingDivs) :is(.menu_button.fa-save, .menu_button.fa-floppy-disk) {
+        background: var(--sg-sage) !important;
+    }
+
+    /* Small round controls: tag filters, pages, the list switch. */
+    & #right-nav-panel :is(.tag.actionable, .paginationjs-pages li > a, #rm_button_characters) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        background: var(--sg-paper) !important;
+        box-shadow: none !important;
+        color: var(--sg-sage) !important;
+    }
+
+    & #right-nav-panel .tag.actionable.selected {
+        border-color: var(--sg-sage) !important;
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+
+    /* ── Lists: cards ──────────────────────────────────────────────── */
+
+    & #right-nav-panel #rm_print_characters_block {
+        padding: 6px !important;
+    }
+
+    &:not(.charListGrid) #right-nav-panel #rm_print_characters_block > :is(.character_select, .group_select, .bogus_folder_select) {
+        margin: 0 0 6px !important;
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-card2) !important;
+    }
+
+    & #right-nav-panel #rm_print_characters_block > :is(.character_select, .group_select).is_fav {
+        border-color: var(--sg-danger) !important;
+    }
+
+    & :is(#right-nav-panel #rm_print_characters_block, #PersonaManagement #user_avatar_block) .avatar img {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 4px !important;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    & :is(#right-nav-panel #rm_print_characters_block, #PersonaManagement #user_avatar_block) .avatar {
+        border-radius: 4px !important;
+    }
+
+    & #PersonaManagement #user_avatar_block .avatar-container {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-card2) !important;
+    }
+
+    & #PersonaManagement #user_avatar_block .avatar-container.selected {
+        border-color: var(--sg-sage) !important;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--sg-sage) 35%, transparent) !important;
+    }
+
+    /* ── Profile cards (one character, the current persona) ─────────── */
+
+    /* A bar instead of the blurred banner. */
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner) {
+        height: 32px;
+        margin: 10px 0 14px;
+        border-radius: 3px;
+        background: var(--sg-bar) !important;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+    }
+
+    & #PersonaManagement .dc-persona-banner {
+        margin: 10px 14px 14px;
+    }
+
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner)::before {
+        position: static;
+        inset: auto;
+        background: none;
+        filter: none;
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font-name);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+    }
+
+    & #right-nav-panel .dc-char-banner::before {
+        content: 'В ролях';
+    }
+
+    & #PersonaManagement .dc-persona-banner::before {
+        content: 'Главная роль';
+    }
+
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner)::after {
+        content: none;
+    }
+
+    /* Avatar and name side by side. */
+    & #right-nav-panel #avatar-and-name-block {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        align-items: center;
+        column-gap: 14px;
+        padding: 0 12px 14px !important;
+    }
+
+    & #right-nav-panel #avatar-and-name-block :is(.dc-char-banner, #avatar_controls, #tags_div) {
+        flex: 0 0 100%;
+    }
+
+    & #right-nav-panel .dc-char-name {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) {
+        width: 92px;
+        height: 92px;
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 5px !important;
+        background: var(--sg-card2) !important;
+        box-shadow: none;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) img {
+        border-radius: 5px !important;
+        object-position: center top;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div::after, #PersonaManagement .dc-persona-edit) {
+        border: 1.5px solid var(--sg-sage-ink) !important;
+        background: var(--sg-danger) !important;
+    }
+
+    & #PersonaManagement .dc-persona-status {
+        border-color: var(--sg-box) !important;
+    }
+
+    & #PersonaManagement .dc-persona-hero {
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        column-gap: 14px;
+    }
+
+    & #right-nav-panel #avatar_div_div {
+        margin: 0 !important;
+    }
+
+    & #PersonaManagement .dc-persona-avatar {
+        margin: 0 0 0 14px !important;
+    }
+
+    & #PersonaManagement .dc-persona-names {
+        grid-column: 2;
+        padding: 0 14px 0 0;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name) {
+        color: var(--sg-ink) !important;
+        font-family: var(--sg-font-name) !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.03em;
+        overflow-wrap: anywhere;
+    }
+
+    & #PersonaManagement .dc-persona-handle {
+        color: var(--sg-muted) !important;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 12px !important;
+    }
+}
+
+/* The extensions list is one card cut in two (#extensions_settings and
+   #extensions_settings2), and the Extras API block one card in rows: no
+   seam in the middle, the frame and corners only on the outside. */
+html[data-dc-family="gojo"] body.dc-on:not(#gj-a):not(#gj-b) {
+    & #rm_extensions_block #extensions_settings#extensions_settings {
+        border-bottom-width: 0 !important;
+        border-radius: 5px 18px 0 0 !important;
+    }
+
+    & #rm_extensions_block #extensions_settings2#extensions_settings2 {
+        border-top-width: 0 !important;
+        border-radius: 0 0 5px 5px !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container {
+        border-top-width: 0 !important;
+        border-bottom-width: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr + .flex-container {
+        border-top-width: 2px !important;
+        border-radius: 5px 18px 0 0 !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container:last-child {
+        border-bottom-width: 2px !important;
+        border-radius: 0 0 5px 5px !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container .menu_button {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container :is(input.text_pole, input[type="text"]) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+    }
+}
+
+/* Panels take their text colour from the ST theme's main text colour. With
+   another ST theme still on (say Discord's light grey) that is unreadable
+   on Bubble's light windows, so panels use Bubble's own colours. The same
+   goes for select2's dropdowns, which SillyTavern hangs off <body>. */
+html[data-dc-family="gojo"] body.dc-on:not(#gj-a):not(#gj-b) {
+    & :is(#top-settings-holder .drawer-content, #movingDivs > .drawer-content, dialog.popup, .select2-container) {
+        --SmartThemeBodyColor: var(--sg-text);
+        --SmartThemeEmColor: var(--sg-muted);
+        color: var(--sg-text);
+    }
+
+    & .select2-container .select2-dropdown {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 5px !important;
+        background: var(--sg-win) !important;
+        box-shadow: none !important;
+        overflow: hidden;
+    }
+
+    & .select2-container .select2-results__option {
+        color: var(--sg-text) !important;
+        opacity: 1 !important;
+    }
+
+    & .select2-container .select2-results__option--highlighted,
+    & .select2-container .select2-results__option[aria-selected="true"] {
+        background: var(--sg-card2) !important;
+        color: var(--sg-ink) !important;
+    }
+
+    & .select2-container .select2-search__field {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 4px !important;
+        background: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    & .select2-container .select2-selection {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    & .select2-container .select2-selection--multiple {
+        border-radius: 5px !important;
+    }
+
+    & .select2-container :is(.select2-selection__rendered, .select2-selection__placeholder) {
+        color: var(--sg-text) !important;
+    }
+
+    & .select2-container .select2-selection__placeholder {
+        color: var(--sg-muted) !important;
+    }
+
+    & .select2-container .select2-selection__choice {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+
+    /* An opened extension's settings: a lavender band, not Discord's dark one. */
+    & #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer) > .inline-drawer-content {
+        background: var(--sg-card2) !important;
+    }
+
+    & #rm_extensions_block .inline-drawer-content .menu_button:not(.fa-solid):not(i) {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+}
+
+/* Profile cards in the panels: the same tinted, framed avatars as the chat,
+   names in the italic display face. */
+html[data-dc-family="gojo"] body.dc-on:not(#gj-a):not(#gj-b) {
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar, #right-nav-panel #rm_print_characters_block .avatar, #PersonaManagement #user_avatar_block .avatar) {
+        position: relative;
+        background: var(--sg-tint) !important;
+        border-color: var(--sg-line) !important;
+        overflow: hidden;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar, #right-nav-panel #rm_print_characters_block .avatar, #PersonaManagement #user_avatar_block .avatar) img {
+        filter: grayscale(1) contrast(1.25) brightness(1.02);
+        mix-blend-mode: luminosity;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name) {
+        font-style: normal;
+        font-weight: 600 !important;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div::after, #PersonaManagement .dc-persona-edit) {
+        border-color: var(--sg-sage-ink) !important;
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+}
+
+/* ── Gojo ──────────────────────────────────────────────────────────────── */
+
+/* A film poster at night (after her reference, the "Кадр" sketch): black,
+   Gojo in his round glasses fading up from the bottom right, Japanese in
+   thin type at the edges, a thin line with a cut corner over each entry.
+   No cards, no outlines, no slanted or script type — plain Raleway for
+   names, Montserrat (her pick) for the text, no italics (they bend Cyrillic letters).
+   The composer keys are thin line icons in muted red, blue and purple —
+   his three techniques. */
+html[data-dc-family="gojo"] body.dc-on:not(#gj-a):not(#gj-b) {
+    --gj-bg: #050505;
+    --gj-text: #f2f2f2;
+    --gj-strong: #ffffff;
+    --gj-muted: #8a8a8a;
+    --gj-faint: rgba(var(--gj-ink-rgb), 0.4);
+    --gj-line: rgba(var(--gj-ink-rgb), 0.5);
+    --gj-field: #121212;
+    --gj-red: #c97a7a;
+    --gj-blue: #7a9bd0;
+    --gj-purple: #a08ad0;
+    --gj-white: #e8e8e8;
+    --gj-on-white: #0b0b0b;
+    --gj-ink-rgb: 255, 255, 255;
+    --gj-tile: #161616;
+    --gj-sheet: #0e0e0e;
+    --gj-bar: #141414;
+    --gj-em: #b4b4b4;
+    --gj-text-w: 400;
+    --gj-bold-w: 600;
+    --gj-dim: #666;
+    --gj-line-c: #fff;
+    --gj-halo: 0 0 2px #000, 0 0 6px #000, 0 0 12px rgba(0, 0, 0, 0.8);
+    --gj-figure: url('../../assets/gojo/cut/figure.webp');
+    --gj-banner: url('../../assets/gojo/cut/banner.webp');
+    --gj-banner-pos: 50% 72%;
+    --gj-name: 'Raleway', 'Noto Sans', sans-serif;
+    --gj-jp: 'Noto Sans JP', sans-serif;
+    --gj-icon-menu: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Cpath d='M4 7h16M4 12h16M4 17h16'/%3E%3C/svg%3E");
+    --gj-icon-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7'%3E%3Crect x='4' y='4' width='7' height='7' rx='1.5'/%3E%3Crect x='13' y='4' width='7' height='7' rx='1.5'/%3E%3Crect x='4' y='13' width='7' height='7' rx='1.5'/%3E%3Crect x='13' y='13' width='7' height='7' rx='1.5'/%3E%3C/svg%3E");
+    --gj-icon-wand: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Cpath d='M5 19L15 9M17 3v4M15 5h4M19 11v2M18 12h2'/%3E%3C/svg%3E");
+    --gj-icon-send: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M4 12l16-8-6 16-2.5-6.5L4 12z'/%3E%3C/svg%3E");
+    --gj-icon-stop: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7'%3E%3Crect x='6' y='6' width='12' height='12' rx='2'/%3E%3C/svg%3E");
+
+    --sg-page: #050505;
+    --sg-win: #0b0b0b;
+    --sg-tab-off: #141414;
+    --sg-box: #111111;
+    --sg-card2: #161616;
+    --sg-frame: #2a2a2a;
+    --sg-line: #e6e6e6;
+    --sg-line-soft: #222222;
+    --sg-sage: #e8e8e8;
+    --sg-sage-press: #cfcfcf;
+    --sg-sage-ink: #0b0b0b;
+    --sg-paper: #161616;
+    --sg-paper-press: #222222;
+    --sg-paper-ink: #e8e8e8;
+    --sg-bar: #141414;
+    --sg-ink: #f2f2f2;
+    --sg-text: #e2e2e2;
+    --sg-muted: #8a8a8a;
+    --sg-dim: #5e5e5e;
+    --sg-tint: #333333;
+    --sg-danger: #c97a7a;
+    --sg-font: 'Montserrat', 'Noto Sans', sans-serif;
+    --sg-font-text: 'Montserrat', 'Noto Sans', sans-serif;
+    --sg-font-name: var(--gj-name);
+    --dc-link: var(--gj-blue);
+
+    & ::selection {
+        background: rgba(122, 155, 208, 0.45);
+        color: var(--gj-strong);
+    }
+
+    & em,
+    & i:not([class*="fa-"]) {
+        font-style: normal !important;
+    }
+
+    /* No window tabs: the menu key is the way around. */
+    & .sg-tabs {
+        display: none !important;
+    }
+
+    & :is(.sg-avatar, .dc-chat-avatar, #chat .mes .avatar, .dc-dm-avatar, .dc-av-group) {
+        background: var(--gj-tile) !important;
+    }
+
+    & :is(.sg-avatar img, .dc-chat-avatar img, #chat .mes .avatar img, .dc-dm-avatar img, .dc-av-group img) {
+        filter: none;
+        mix-blend-mode: normal;
+    }
+
+    & :is(.sg-avatar, .dc-chat-avatar, #chat .mes .avatar, .dc-dm-avatar)::after {
+        content: none !important;
+    }
+
+    /* ── The poster ───────────────────────────────────────────────────── */
+
+    & :is(#sheld, #dc-home) {
+        background: var(--gj-bg) !important;
+    }
+
+    /* Gojo, from the bottom right, fading out upwards. */
+    & :is(#sheld, #dc-home)::before {
+        inset: auto -36px calc(var(--dc-safe-bottom) + 44px) auto;
+        width: min(76%, 320px);
+        height: min(62%, 500px);
+        border: 0;
+        border-radius: 0;
+        background: var(--gj-figure) 100% 100% / contain no-repeat;
+        filter: grayscale(1);
+        opacity: 0.42;
+        box-shadow: none;
+        -webkit-mask-image: linear-gradient(180deg, transparent, #000 38%);
+        mask-image: linear-gradient(180deg, transparent, #000 38%);
+    }
+
+    /* Not behind the chat list: Gojo is its banner there. */
+    & #dc-home::before {
+        content: none !important;
+    }
+
+    /* The Japanese at the edges: his name down the left, the credit at the
+       top right, the series down the right. */
+    & :is(#sheld, #dc-home)::after {
+        content: '呪術廻戦';
+        display: block !important;
+        inset: auto;
+        background: none !important;
+        opacity: 1 !important;
+        transition: none !important;
+        position: absolute;
+        left: 3px;
+        top: calc(var(--dc-safe-top) + 20px);
+        z-index: -1;
+        writing-mode: vertical-rl;
+        color: rgba(var(--gj-ink-rgb), 0.16);
+        font: 500 17px/1 var(--gj-jp);
+        letter-spacing: 0.35em;
+        pointer-events: none;
+    }
+
+    & .gj-credit {
+        position: absolute;
+        z-index: -1;
+        pointer-events: none;
+        font-family: var(--gj-jp);
+        color: rgba(var(--gj-ink-rgb), 0.45);
+    }
+
+    & .gj-credit-top {
+        right: 8px;
+        top: calc(var(--dc-safe-top) + 22px);
+        font-size: 13px;
+        font-weight: 300;
+        letter-spacing: 0.2em;
+        text-align: right;
+        line-height: 1.6;
+    }
+
+    & .gj-credit-side {
+        right: 6px;
+        bottom: calc(var(--dc-safe-bottom) + 160px);
+        writing-mode: vertical-rl;
+        font-size: 12px;
+        font-weight: 300;
+        letter-spacing: 0.3em;
+        color: rgba(var(--gj-ink-rgb), 0.3);
+    }
+
+    & #sheld {
+        padding: calc(var(--dc-safe-top) + 6px) 0 calc(var(--dc-safe-bottom) + 4px) !important;
+    }
+
+    & #dc-home {
+        grid-template-rows: auto minmax(0, 1fr);
+        padding: var(--dc-safe-top) 12px calc(var(--dc-safe-bottom) + 8px);
+    }
+
+    & #dc-home > .sg-profile {
+        grid-row: 1;
+    }
+
+    & #dc-home > .dc-panel {
+        grid-row: 2;
+    }
+
+    /* ── Entries: no avatar, a thin line with a cut corner over each ──── */
+
+    & #chat {
+        padding: 6px 4px 12px !important;
+        font-family: var(--sg-font-text);
+    }
+
+    & #chat .mes {
+        margin: 20px 0 0 !important;
+        padding: 12px 0 0 8px !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+    }
+
+    /* A thin line with a cut corner over each entry, like the poster's. */
+    & #chat .mes::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 72%;
+        height: 22px;
+        background: var(--gj-line-c);
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' preserveAspectRatio='none'%3E%3Cpath d='M0.6 22 V8 L8 0.6 H200' fill='none' stroke='black' stroke-opacity='.5' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' preserveAspectRatio='none'%3E%3Cpath d='M0.6 22 V8 L8 0.6 H200' fill='none' stroke='black' stroke-opacity='.5' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+        pointer-events: none;
+    }
+
+    /* The character's line is the user's mirrored: the cut corner on the
+       right, just past the name and time — so it is drawn on the name row
+       itself (shrunk to fit them), at the user's line's height over it. */
+    & #chat .mes:not([is_user="true"])::before {
+        content: none;
+    }
+
+    /* The text block clips what pokes out of it; make room for the line. */
+    & #chat .mes:not([is_user="true"]):not(.dc-cont) .mes_block {
+        margin: -8px 0 0 -8px !important;
+        padding: 8px 0 0 8px !important;
+    }
+
+    & #chat .mes:not([is_user="true"]):not(.dc-cont) .ch_name > .flex-container:first-child {
+        flex: 0 1 auto;
+        min-width: 0;
+    }
+
+    & #chat .mes:not([is_user="true"]):not(.dc-cont) .ch_name > .flex-container:first-child > .flex-container {
+        position: relative;
+        flex: 0 1 auto;
+        min-width: 0;
+    }
+
+    & #chat .mes:not([is_user="true"]):not(.dc-cont) .ch_name > .flex-container:first-child > .flex-container::after {
+        content: '';
+        position: absolute;
+        left: -8px;
+        right: -18px;
+        top: -7px;
+        height: 22px;
+        background: var(--gj-line-c);
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' preserveAspectRatio='none'%3E%3Cpath d='M0 0.6 H192 L199.4 8 V22' fill='none' stroke='black' stroke-opacity='.5' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' preserveAspectRatio='none'%3E%3Cpath d='M0 0.6 H192 L199.4 8 V22' fill='none' stroke='black' stroke-opacity='.5' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+        pointer-events: none;
+    }
+
+    /* The user's sits a little lower, over the name with a little air. */
+    & #chat .mes[is_user="true"]::before {
+        top: 5px;
+    }
+
+    & #chat .mes.dc-cont {
+        margin-top: 10px !important;
+        padding-top: 0 !important;
+    }
+
+    & #chat .mes.dc-cont::before {
+        content: none;
+    }
+
+    & #chat .mes[is_user="true"] {
+        margin-left: 12px !important;
+    }
+
+    & #chat .mesAvatarWrapper,
+    & #chat .mes::after {
+        display: none !important;
+    }
+
+    & #chat .mes .ch_name,
+    & #chat .mes[is_user="true"] .ch_name {
+        min-height: 0;
+        margin: 0 0 4px;
+        padding: 0;
+        flex-direction: row;
+        text-align: left;
+    }
+
+    & #chat .mes .ch_name > .flex-container:first-child > .flex-container {
+        flex-direction: row;
+        align-items: baseline !important;
+        gap: 8px;
+    }
+
+    & #chat .name_text {
+        width: auto;
+        padding: 0 !important;
+        color: var(--gj-strong) !important;
+        font-family: var(--gj-name) !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        font-style: normal;
+        letter-spacing: 0.06em;
+    }
+
+    & #chat .mes .ch_name .dc-ts {
+        flex: none;
+        padding: 0;
+        border: 0;
+        color: var(--gj-muted);
+        font: 400 11px var(--gj-name);
+        letter-spacing: 0.15em;
+    }
+
+    & #chat .mes .ch_name .dc-ts::before {
+        content: none !important;
+    }
+
+    & #chat .mes .ch_name .dc-ts::after {
+        content: ' «';
+    }
+
+    /* A soft dark shadow keeps the letters clear where Gojo shows through. */
+    & #chat .mes_text {
+        color: var(--gj-text);
+        font: var(--gj-text-w) 15px/1.62 var(--sg-font-text) !important;
+        text-shadow: var(--gj-halo);
+    }
+
+    /* Pictures in messages: no frame (ST draws one in the theme's border
+       colour), plain rounded corners. */
+    & #chat :is(.mes_text, .mes_media_wrapper, .mes_img_container) img,
+    & #chat .mes_img {
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        border-radius: 10px !important;
+    }
+
+    & #chat :is(.mes_media_wrapper, .mes_img_container) {
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+
+    & #chat .mes[is_user="true"] .mes_text {
+        color: var(--gj-text);
+    }
+
+    & #chat .mes_text :is(q, .dc-quote) {
+        color: var(--gj-strong);
+        font-weight: var(--gj-bold-w);
+    }
+
+    /* *Actions*: no slant (it bends Cyrillic) — a clearly dimmer grey, so
+       they stand apart from the plain text in every message. */
+    & #chat .mes_text em {
+        color: var(--gj-em);
+    }
+
+    & #chat .mes_text strong {
+        color: var(--gj-strong);
+        font-weight: var(--gj-bold-w);
+    }
+
+    & #chat .mes_text code {
+        border: 0;
+        background: var(--gj-tile) !important;
+        color: var(--gj-strong) !important;
+    }
+
+    & #chat .mes_text blockquote {
+        border-left: 1px solid var(--gj-line);
+        background: transparent;
+    }
+
+    & #chat .dc-day {
+        color: var(--gj-muted);
+        font: 300 11px var(--gj-name);
+        letter-spacing: 0.3em;
+    }
+
+    & #chat .dc-day::before,
+    & #chat .dc-day::after {
+        background: rgba(var(--gj-ink-rgb), 0.18);
+    }
+
+    & #chat .mes .mes_buttons {
+        color: var(--gj-muted);
+    }
+
+    &:not(.hideAllSwipeButtons) #chat .mes.last_mes:not([is_user="true"]),
+    &.swipeAllMessages #chat .mes.swipes_visible,
+    &.hideAllSwipeButtons #chat .mes.last_mes:not([is_user="true"]):has(.swipes-counter:not(:empty, [hidden])) {
+        padding-bottom: 34px !important;
+    }
+
+    & #chat .mes .swipe_left,
+    & #chat .mes .swipe_right,
+    & #chat .mes .swipes-counter {
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: var(--gj-muted) !important;
+    }
+
+    & #chat .mes .swipes-counter {
+        font-family: var(--gj-name) !important;
+        font-weight: 400;
+        letter-spacing: 0.15em;
+    }
+
+    & #chat .mes .swipe_left {
+        left: 14px;
+        bottom: 2px;
+    }
+
+    & #chat .mes .swipeRightBlock {
+        left: 50px;
+        bottom: 2px;
+    }
+
+    /* ── Composer: [menu] text [sections] [wand] [send], thin icons ──── */
+
+    & #form_sheld {
+        padding: 8px 10px 10px !important;
+        border-top: 0;
+        background: transparent !important;
+    }
+
+    & #nonQRFormItems {
+        padding: 5px 6px;
+        border: 0 !important;
+        border-radius: 24px !important;
+        background: var(--gj-field) !important;
+        box-shadow: none !important;
+    }
+
+    & #send_textarea {
+        color: var(--gj-text) !important;
+        font: 400 15px var(--sg-font-text) !important;
+    }
+
+    & #send_textarea::placeholder {
+        color: var(--gj-dim) !important;
+    }
+
+    & :is(#options_button, #extensionsMenuButton, #send_but, #mes_stop, #gj-menu-btn) {
+        flex-basis: 36px;
+        width: 36px !important;
+        height: 38px !important;
+        border-radius: 50% !important;
+        background: transparent !important;
+        font-size: 0 !important;
+    }
+
+    & :is(#options_button, #extensionsMenuButton, #send_but, #mes_stop, #gj-menu-btn) > i {
+        display: none !important;
+    }
+
+    & :is(#options_button, #extensionsMenuButton, #send_but, #mes_stop, #gj-menu-btn)::before {
+        content: '' !important;
+        display: block;
+        width: 21px;
+        height: 21px;
+        background: var(--gj-key-color);
+        -webkit-mask: var(--gj-key-icon) center / contain no-repeat;
+        mask: var(--gj-key-icon) center / contain no-repeat;
+    }
+
+    & #options_button {
+        --gj-key-color: var(--gj-red);
+        --gj-key-icon: var(--gj-icon-menu);
+        /* first on the left, then the sections: [menu] [sections] text [wand] [send] */
+        order: -2 !important;
+    }
+
+    & #gj-menu-btn {
+        --gj-key-color: var(--gj-blue);
+        --gj-key-icon: var(--gj-icon-grid);
+        order: -1 !important;
+        display: flex;
+        flex: 0 0 36px;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    & #extensionsMenuButton {
+        --gj-key-color: var(--gj-purple);
+        --gj-key-icon: var(--gj-icon-wand);
+        order: 3 !important;
+    }
+
+    & #send_but,
+    & #mes_stop {
+        order: 4 !important;
+    }
+
+    & #send_but {
+        --gj-key-color: var(--gj-white);
+        --gj-key-icon: var(--gj-icon-send);
+    }
+
+    & #mes_stop {
+        --gj-key-color: var(--gj-red);
+        --gj-key-icon: var(--gj-icon-stop);
+    }
+
+    & :is(#options_button, #extensionsMenuButton, #send_but, #mes_stop, #gj-menu-btn):active,
+    & #gj-menu-btn.active {
+        background: rgba(var(--gj-ink-rgb), 0.07) !important;
+    }
+
+    /* ── The menu: a strip of icons along the composer ────────────────── */
+
+    /* Every icon at once in even columns, no names (they show on hover),
+       growing up from the composer. It only fades in, and a pressed icon
+       changes colour only — nothing moves under the finger. */
+    & #gj-menu {
+        position: fixed;
+        z-index: 10050;
+        left: var(--gj-menu-left, 8px);
+        right: var(--gj-menu-right, 8px);
+        bottom: var(--gj-menu-bottom, 80px);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 40px);
+        justify-content: space-between;
+        gap: 2px;
+        padding: 3px 8px;
+        overflow: hidden;
+        border-radius: 24px;
+        background: var(--gj-sheet);
+        box-shadow: 0 0 0 1px rgba(var(--gj-ink-rgb), 0.16), 0 14px 34px rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.12s, visibility 0s 0.12s;
+    }
+
+    &.gj-menu-open #gj-menu {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition: opacity 0.12s;
+    }
+
+    & .gj-mi {
+        flex: 0 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--gj-text);
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    & .gj-mi i {
+        font-size: 17px;
+        color: var(--gj-blue);
+    }
+
+    & .gj-mi[data-key="list"] i,
+    & .gj-mi[data-key="shelf"] i,
+    & .gj-mi[data-key="card"] i,
+    & .gj-mi[data-key="art"] i {
+        color: var(--gj-red);
+    }
+
+    & .gj-mi[data-key^="slot:"] i {
+        color: var(--gj-purple);
+    }
+
+    & .gj-mi span {
+        display: none;
+    }
+
+    & .gj-mi:active {
+        background: rgba(var(--gj-ink-rgb), 0.12);
+    }
+
+    & .gj-mi.active {
+        background: var(--gj-white);
+        color: var(--gj-on-white);
+    }
+
+    & .gj-mi.active i {
+        color: var(--gj-on-white);
+    }
+
+    & .gj-fab {
+        position: fixed;
+        right: 18px;
+        bottom: calc(var(--dc-safe-bottom) + 18px);
+        z-index: 10040;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--gj-field);
+        box-shadow: 0 0 0 1px rgba(var(--gj-ink-rgb), 0.12), 0 8px 18px rgba(0, 0, 0, 0.5);
+        font-size: 0;
+        cursor: pointer;
+    }
+
+    & .gj-fab > i {
+        display: none;
+    }
+
+    & .gj-fab::before {
+        content: '';
+        width: 22px;
+        height: 22px;
+        background: var(--gj-blue);
+        -webkit-mask: var(--gj-icon-grid) center / contain no-repeat;
+        mask: var(--gj-icon-grid) center / contain no-repeat;
+    }
+
+    &[data-dc-screen="home"] .gj-fab {
+        display: flex;
+    }
+
+    /* ── Chat list: the same poster, plain rows ───────────────────────── */
+
+    /* The list's head: no persona card — Gojo from the poster as a banner,
+       and under it the three keys as thin line icons, like the composer's. */
+    & #dc-home > .sg-profile {
+        display: block;
+        margin: 0 -12px 10px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    & #dc-home > .sg-profile::before {
+        content: '';
+        display: block;
+        height: calc(var(--dc-safe-top) + 170px);
+        margin-top: calc(-1 * var(--dc-safe-top));
+        background: var(--gj-banner) var(--gj-banner-pos) / cover no-repeat;
+        -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent);
+        mask-image: linear-gradient(180deg, #000 78%, transparent);
+    }
+
+    & #dc-home > .sg-profile :is(.sg-avatar, .sg-who) {
+        display: none !important;
+    }
+
+    & #dc-home > .sg-profile .sg-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0;
+        padding: 4px 12px 8px;
+        border-bottom: 1px solid rgba(var(--gj-ink-rgb), 0.1);
+    }
+
+    & #dc-home > .sg-profile .sg-wide {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: auto !important;
+        min-height: 38px;
+        padding: 0 12px 0 6px !important;
+        background: transparent !important;
+        color: var(--gj-text) !important;
+        font: 600 13px var(--gj-name) !important;
+        letter-spacing: 0.06em;
+    }
+
+    & #dc-home > .sg-profile .sg-wide.sg-key {
+        margin-left: auto;
+        padding: 0 6px !important;
+    }
+
+    & #dc-home > .sg-profile .sg-wide > i {
+        display: none !important;
+    }
+
+    & #dc-home > .sg-profile .sg-wide::before {
+        content: '';
+        flex: none;
+        width: 21px;
+        height: 21px;
+        background: var(--gj-key-color);
+        -webkit-mask: var(--gj-key-icon) center / contain no-repeat;
+        mask: var(--gj-key-icon) center / contain no-repeat;
+    }
+
+    & #dc-home > .sg-profile .sg-wide[data-sg="new"] {
+        --gj-key-color: var(--gj-blue);
+        --gj-key-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M4 5h16v11H9l-5 4z'/%3E%3Cpath d='M12 8v5M9.5 10.5h5'/%3E%3C/svg%3E");
+    }
+
+    & #dc-home > .sg-profile .sg-wide[data-sg="chars"] {
+        --gj-key-color: var(--gj-purple);
+        --gj-key-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E");
+    }
+
+    & #dc-home > .sg-profile .sg-wide[data-sg="search"] {
+        --gj-key-color: var(--gj-red);
+        --gj-key-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='M15 15l5 5'/%3E%3C/svg%3E");
+    }
+
+    & #dc-home > .sg-profile .sg-wide:active {
+        background: rgba(var(--gj-ink-rgb), 0.07) !important;
+    }
+
+    & .sg-profile .sg-avatar {
+        border: 0 !important;
+        border-radius: 50% !important;
+    }
+
+    & .sg-profile .sg-name {
+        color: var(--gj-strong);
+        font-family: var(--gj-name) !important;
+        font-style: normal !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.06em;
+    }
+
+    /* Your card on the list: photo, name and the two keys — no form rows. */
+    & .sg-profile .sg-meta {
+        display: none !important;
+    }
+
+    & .sg-row {
+        border-color: rgba(var(--gj-ink-rgb), 0.08) !important;
+        color: var(--gj-muted);
+    }
+
+    & .sg-row b {
+        color: var(--gj-text);
+        font-weight: 400;
+    }
+
+    & .sg-wide {
+        border: 0 !important;
+        border-radius: 12px !important;
+        background: var(--gj-bar) !important;
+        color: var(--gj-text) !important;
+        box-shadow: none !important;
+        font-family: var(--gj-name) !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.06em;
+    }
+
+    & .sg-wide i {
+        color: var(--gj-blue);
+    }
+
+    & #dc-home > .dc-panel {
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    & .sg-listhead {
+        border-color: rgba(var(--gj-ink-rgb), 0.12) !important;
+        color: var(--gj-muted);
+        font-family: var(--gj-name);
+        letter-spacing: 0.2em;
+    }
+
+    & .dc-dm-item {
+        border-radius: 0 !important;
+        border-color: rgba(var(--gj-ink-rgb), 0.07) !important;
+        background: transparent !important;
+    }
+
+    & .dc-dm-item.active {
+        background: rgba(var(--gj-ink-rgb), 0.05) !important;
+    }
+
+    & .dc-dm-avatar,
+    & .dc-dm-avatar img {
+        border: 0 !important;
+        border-radius: 50% !important;
+    }
+
+    & .dc-dm-name {
+        color: var(--gj-strong);
+        font-family: var(--gj-name) !important;
+        font-style: normal !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.04em;
+        text-transform: none !important;
+    }
+
+    & .dc-dm-sub {
+        color: var(--gj-muted);
+        font-weight: 400;
+    }
+
+    /* ── Panels and popups: plain black sheets ────────────────────────── */
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        border: 0 !important;
+        background: var(--gj-bg) !important;
+    }
+
+    & :is(.dc-sheet, #options .options-content, #extensionsMenu, dialog.popup:not(:has(#loader))) {
+        border: 0 !important;
+        border-radius: 16px !important;
+        background: var(--gj-sheet) !important;
+        box-shadow: 0 0 0 1px rgba(var(--gj-ink-rgb), 0.12), 0 14px 34px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    & .dc-server-head .dc-server-title {
+        font-family: var(--gj-name);
+        letter-spacing: 0.1em;
+    }
+}
+
+/* Phone: panels on the page, under their title, edge to edge — the
+   preset's prompt names need every pixel. */
+html[data-dc-family="gojo"][data-dc-desk="off"] body.dc-on:not(#gj-a):not(#gj-b) {
+    --dc-drawer-top: calc(var(--dc-safe-top) + 10px + 44px);
+    --dc-drawer-left: 0px;
+    --dc-drawer-bottom: calc(var(--dc-safe-bottom) + 6px);
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        right: 0 !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    & #top-settings-holder .drawer-content .scrollableInner {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer > .inline-drawer-header {
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+    }
+
+    & #completion_prompt_manager_list_head,
+    & #completion_prompt_manager_list li {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    &:not([data-dc-panel=""]) #dc-home {
+        padding-top: calc(var(--dc-safe-top) + 10px);
+    }
+}
+
+/* Desktop: the composer's key is always on screen; the poster's lettering
+   only around the chat (the list column keeps neither him nor it), with the text kept
+   clear of it. */
+html[data-dc-family="gojo"][data-dc-desk="on"] body.dc-on .gj-fab {
+    display: none !important;
+}
+
+html[data-dc-family="gojo"][data-dc-desk="on"] body.dc-on:not(#gj-a):not(#gj-b) {
+    & #dc-home::before,
+    & #dc-home::after,
+    & #dc-home > .gj-credit {
+        display: none !important;
+    }
+
+    & #chat {
+        padding-left: 26px !important;
+        padding-right: 26px !important;
+    }
+
+    & #form_sheld {
+        padding-left: 26px !important;
+        padding-right: 26px !important;
+    }
+
+    & #dc-home {
+        padding-top: calc(var(--dc-safe-top) + 14px);
+    }
+
+    /* The chat has no header here: the list's key sits alone in its top
+       corner, in the gap beside the text, the lettering moved down under it. */
+    & #gj-list-btn {
+        position: absolute;
+        z-index: 60;
+        left: 2px;
+        top: calc(var(--dc-safe-top) + 6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    & #gj-list-btn:active {
+        background: rgba(var(--gj-ink-rgb), 0.07);
+    }
+
+    & #gj-list-btn::before {
+        content: '';
+        width: 18px;
+        height: 18px;
+        background: var(--gj-muted);
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Crect x='4' y='5' width='16' height='14' rx='2'/%3E%3Cpath d='M10 5v14'/%3E%3C/svg%3E") center / contain no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Crect x='4' y='5' width='16' height='14' rx='2'/%3E%3Cpath d='M10 5v14'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+
+    & #sheld::after {
+        top: calc(var(--dc-safe-top) + 38px);
+    }
+
+    /* A panel opens beside the list here, so the list keeps its head. */
+    &:not([data-dc-panel=""]) #dc-home > .sg-profile {
+        display: block;
+    }
+}
+
+/* ── Gojo by day ───────────────────────────────────────────────────────── */
+
+/* The same poster on a white manga page (her pick, mockup «Б»): a fine
+   halftone in the top corner fading out, Gojo in his glasses from a manga
+   panel at the bottom right, black lines and type; the keys keep their
+   muted red, blue and purple, a shade deeper so they hold on white. */
+@font-face {
+    font-family: 'QR Comic';
+    src: url('../../assets/gojo/fonts/QrComicBetaRegular.otf') format('opentype');
+    font-display: swap;
+}
+
+html[data-dc-skin="gojo"] body.dc-on:not(#gj-a):not(#gj-b):not(#gj-c) {
+    /* The lettering of a manga page (her pick): capitals only, a single
+       weight, so bold is the browser's. The dark poster keeps its type. */
+    --sg-font: 'QR Comic', 'M PLUS 1p', 'Noto Sans', sans-serif;
+    --sg-font-text: 'QR Comic', 'M PLUS 1p', 'Noto Sans', sans-serif;
+    --sg-font-name: 'QR Comic', 'Oswald', 'M PLUS 1p', sans-serif;
+    --gj-name: 'QR Comic', 'Raleway', 'Noto Sans', sans-serif;
+
+    --gj-bg: #ffffff;
+    --gj-text: #141414;
+    --gj-strong: #0b0b0b;
+    --gj-muted: #8a8a8a;
+    --gj-faint: rgba(0, 0, 0, 0.4);
+    --gj-line: rgba(0, 0, 0, 0.5);
+    --gj-field: #f2f2f2;
+    --gj-red: #b56565;
+    --gj-blue: #5f82bd;
+    --gj-purple: #8a72c0;
+    --gj-white: #111111;
+    --gj-on-white: #ffffff;
+    --gj-ink-rgb: 0, 0, 0;
+    --gj-tile: #efefef;
+    --gj-sheet: #ffffff;
+    --gj-bar: #ffffff;
+    --gj-em: #575757;
+    --gj-text-w: 500;
+    --gj-bold-w: 700;
+    --gj-dim: #9a9a9a;
+    --gj-line-c: #111;
+    --gj-halo: 0 0 2px #fff, 0 0 6px #fff, 0 0 12px rgba(255, 255, 255, 0.9);
+    --gj-figure: url('../../assets/gojo/cut/figure-light.webp');
+    --gj-banner: url('../../assets/gojo/cut/banner-light.webp');
+    --gj-banner-pos: 60% 40%;
+
+    --sg-page: #ffffff;
+    --sg-win: #ffffff;
+    --sg-tab-off: #f0f0f0;
+    --sg-box: #ffffff;
+    --sg-card2: #f2f2f2;
+    --sg-frame: #d6d6d6;
+    --sg-line: #1a1a1a;
+    --sg-line-soft: #e2e2e2;
+    --sg-sage: #111111;
+    --sg-sage-press: #333333;
+    --sg-sage-ink: #ffffff;
+    --sg-paper: #f2f2f2;
+    --sg-paper-press: #e4e4e4;
+    --sg-paper-ink: #111111;
+    --sg-bar: #ffffff;
+    --sg-ink: #0b0b0b;
+    --sg-text: #1c1c1c;
+    --sg-muted: #6b6b6b;
+    --sg-dim: #9a9a9a;
+    --sg-tint: #d0d0d0;
+    --sg-danger: #b56565;
+
+    /* the halftone: dots in the top right corner, fading into white */
+    & :is(#sheld, #dc-home) {
+        background:
+            linear-gradient(200deg, rgba(255, 255, 255, 0) 0%, #fff 45%),
+            radial-gradient(circle, rgba(0, 0, 0, 0.16) 1.1px, transparent 1.6px) 0 0 / 7px 7px,
+            #fff !important;
+    }
+
+    /* the manga panel is drawn black on white: it sinks into the page */
+    & :is(#sheld, #dc-home)::before {
+        filter: grayscale(1);
+        mix-blend-mode: multiply;
+        opacity: 0.4;
+    }
+
+    & .gj-mi:active {
+        background: rgba(0, 0, 0, 0.08);
+    }
+
+    /* *Actions* on strips of clean white over the picture (her pick, «Б»):
+       grey on white, so they read even over his dark jacket and stand
+       apart from the plain text at a glance. */
+    & #chat .mes_text em {
+        padding: 1px 4px;
+        border-radius: 3px;
+        background: #fff;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+        color: #5c5c5c;
+        text-shadow: none;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+    }
+}
+
+/* ── Gojo by day: the start page, a shelf of manga ─────────────────────── */
+
+/* Each character is a title on the shelf, each chat with them a volume: the
+   cover, its number in the corner, the name on a black band. */
+html[data-dc-skin="gojo"] body.dc-on:not(#gj-a):not(#gj-b):not(#gj-c) {
+    & .dc-welcome {
+        max-width: 880px;
+        padding: 22px 14px 20px;
+        gap: 22px;
+    }
+
+    /* This lettering sits high in its line, and a normal line is shorter than
+       the field: an even line and a nudge down centre it. */
+    & #send_textarea {
+        padding-top: 9px !important;
+        padding-bottom: 7px !important;
+        line-height: 22px !important;
+    }
+
+    /* The lettering would run over the shelf's title. */
+    &.dc-welcome-on #sheld > .gj-credit {
+        display: none;
+    }
+
+    & .gj-sh-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--gj-line-c);
+    }
+
+    & .gj-sh-head h2 {
+        margin: 0;
+        color: var(--gj-strong);
+        font: 400 26px var(--gj-name);
+    }
+
+    & .gj-sh-head span {
+        flex: none;
+        color: var(--gj-em);
+        font-size: 13px;
+    }
+
+    & .gj-sh-title {
+        margin: 0 0 12px;
+        color: var(--gj-strong);
+        font: 400 15px var(--gj-name);
+    }
+
+    & .gj-sh-now {
+        display: flex;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    & .gj-sh-now .gj-vol {
+        flex: 0 0 118px;
+    }
+
+    & .gj-sh-now-text {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    & .gj-sh-now-text b {
+        color: var(--gj-strong);
+        font: 400 20px var(--gj-name);
+    }
+
+    & .gj-sh-now-text small {
+        color: var(--gj-em);
+        font-size: 13px;
+    }
+
+    & .gj-sh-now-text p {
+        display: -webkit-box;
+        margin: 0;
+        overflow: hidden;
+        color: var(--gj-text);
+        font-size: 14px;
+        line-height: 1.4;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+
+    & .gj-sh-go {
+        margin-top: auto;
+        padding: 8px 16px;
+        border: 1.5px solid var(--gj-line-c);
+        background: var(--gj-line-c);
+        color: #fff;
+        font: 400 14px var(--gj-name);
+        cursor: pointer;
+    }
+
+    & .gj-sh-shelf {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+        gap: 18px 16px;
+    }
+
+    & .gj-vol {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--gj-em);
+        font: 400 12px var(--gj-name);
+        text-align: left;
+        cursor: pointer;
+    }
+
+    & .gj-vol-cover {
+        position: relative;
+        display: block;
+        aspect-ratio: 2 / 3;
+        overflow: hidden;
+        border: 1.5px solid var(--gj-line-c);
+        border-left-width: 7px;
+        background: var(--gj-tile);
+        box-shadow: 3px 3px 0 var(--gj-line-c);
+    }
+
+    & .gj-vol:active .gj-vol-cover {
+        box-shadow: 1px 1px 0 var(--gj-line-c);
+    }
+
+    & .gj-vol-cover img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    & .gj-vol-no {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 3px 6px;
+        border-bottom: 1.5px solid var(--gj-line-c);
+        border-left: 1.5px solid var(--gj-line-c);
+        background: #fff;
+        color: var(--gj-strong);
+        font-size: 12px;
+    }
+
+    & .gj-vol-name {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        padding: 4px 6px;
+        background: var(--gj-line-c);
+        color: #fff;
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    & .gj-sh-keys {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    & .gj-sh-keys .dc-wl-action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border: 1.5px solid var(--gj-line-c);
+        background: #fff;
+        color: var(--gj-strong);
+        font: 400 13px var(--gj-name);
+        cursor: pointer;
+    }
+
+    & .gj-sh-keys .dc-wl-action i {
+        color: var(--gj-blue);
+        font-size: 13px;
+    }
+}
+
+/* ── Gojo at night: the start page, a cinema bill ──────────────────────── */
+
+/* The shelf's pieces as the panels of a manga page: black-and-white
+   pictures in hard white frames (colour comes back under the pointer), the
+   part in the corner in the techniques' red, the title on a fade to black. */
+html[data-dc-skin="gojo-dark"] body.dc-on:not(#gj-a):not(#gj-b):not(#gj-c) {
+    & .dc-welcome {
+        max-width: 880px;
+        padding: 26px 16px 20px;
+        gap: 24px;
+    }
+
+    /* The lettering would run over the bill's title. */
+    &.dc-welcome-on #sheld > .gj-credit {
+        display: none;
+    }
+
+    &.dc-welcome-on #sheld::after {
+        visibility: hidden;
+    }
+
+    & .gj-sh-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--gj-line);
+    }
+
+    & .gj-sh-head h2 {
+        margin: 0;
+        color: var(--gj-strong);
+        font: 300 26px var(--gj-name);
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+    }
+
+    & .gj-sh-head h2::after {
+        content: '上映中';
+        margin-left: 10px;
+        white-space: nowrap;
+        color: var(--gj-red);
+        font: 300 12px var(--gj-jp);
+        letter-spacing: 0.3em;
+    }
+
+    & .gj-sh-head span {
+        flex: none;
+        color: var(--gj-muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+    }
+
+    & .gj-sh-title {
+        margin: 0 0 14px;
+        color: var(--gj-muted);
+        font: 600 12px var(--gj-name);
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+    }
+
+    & .gj-sh-now {
+        display: flex;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    & .gj-sh-now .gj-vol {
+        flex: 0 0 122px;
+    }
+
+    & .gj-sh-now-text {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    & .gj-sh-now-text small {
+        color: var(--gj-red);
+        font: 600 11px var(--gj-name);
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+    }
+
+    & .gj-sh-now-text b {
+        color: var(--gj-strong);
+        font: 600 20px var(--gj-name);
+        letter-spacing: 0.08em;
+    }
+
+    & .gj-sh-now-text p {
+        display: -webkit-box;
+        margin: 0;
+        overflow: hidden;
+        color: var(--gj-text);
+        font-size: 14px;
+        line-height: 1.45;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+
+    & .gj-sh-go {
+        margin-top: auto;
+        padding: 8px 14px;
+        border: 1px solid var(--gj-line);
+        background: transparent;
+        color: var(--gj-strong);
+        font: 600 12px var(--gj-name);
+        letter-spacing: 0.16em;
+        white-space: nowrap;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    & .gj-sh-go:active {
+        background: rgba(var(--gj-ink-rgb), 0.08);
+    }
+
+    & .gj-sh-shelf {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+        gap: 18px 14px;
+    }
+
+    & .gj-vol {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--gj-muted);
+        font: 400 11px var(--gj-name);
+        letter-spacing: 0.06em;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    & .gj-vol-cover {
+        position: relative;
+        display: block;
+        aspect-ratio: 2 / 3;
+        overflow: hidden;
+        border: 2.5px solid var(--gj-white);
+        background: var(--gj-tile);
+    }
+
+    & .gj-vol:active .gj-vol-cover {
+        opacity: 0.8;
+    }
+
+    & .gj-vol-cover img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(1) contrast(1.15);
+        transition: filter 0.25s ease;
+    }
+
+    & .gj-vol:hover .gj-vol-cover img {
+        filter: none;
+    }
+
+    & .gj-vol-no {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 4px 7px;
+        background: rgba(0, 0, 0, 0.72);
+        color: var(--gj-red);
+        font: 600 10px var(--gj-name);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+    }
+
+    & .gj-vol-name {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        padding: 26px 7px 7px;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.88));
+        color: #fff;
+        font: 600 12px var(--gj-name);
+        letter-spacing: 0.12em;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    & .gj-sh-keys {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    & .gj-sh-keys .dc-wl-action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border: 1px solid rgba(var(--gj-ink-rgb), 0.25);
+        background: transparent;
+        color: var(--gj-text);
+        font: 600 12px var(--gj-name);
+        letter-spacing: 0.08em;
+        cursor: pointer;
+    }
+
+    & .gj-sh-keys .dc-wl-action i {
+        color: var(--gj-blue);
+        font-size: 13px;
+    }
+}
+
+/* ── Profile cards: a cast credit and a manga cover ────────────────────── */
+
+/* At night: a portrait in a thin frame with the poster's cut corner, the
+   name in spaced capitals, "出演" (featuring) over it. */
+html[data-dc-skin="gojo-dark"] body.dc-on:not(#gj-a):not(#gj-b):not(#gj-c) {
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner) {
+        height: auto;
+        margin: 12px 0 14px;
+        padding: 0 0 8px;
+        border-bottom: 1px solid var(--gj-line);
+        border-radius: 0;
+        background: transparent !important;
+    }
+
+    & #PersonaManagement .dc-persona-banner {
+        margin: 12px 14px 14px;
+    }
+
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner)::before {
+        color: var(--gj-muted);
+        font: 600 11px var(--gj-name);
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) {
+        width: 104px;
+        height: 138px;
+        border: 0 !important;
+        border-radius: 0 !important;
+        clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) img {
+        border-radius: 0 !important;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name) {
+        color: var(--gj-strong) !important;
+        font: 600 19px var(--gj-name) !important;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        white-space: normal;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name)::before {
+        content: '出演';
+        display: block;
+        margin-bottom: 6px;
+        color: var(--gj-red);
+        font: 300 12px var(--gj-jp);
+        letter-spacing: 0.3em;
+    }
+}
+
+/* By day: the shelf's manga cover — a black frame with a thick spine and a
+   hard shadow, the name on the comic lettering. */
+html[data-dc-skin="gojo"] body.dc-on:not(#gj-a):not(#gj-b):not(#gj-c) {
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner) {
+        border-radius: 0;
+        background: var(--gj-line-c) !important;
+    }
+
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner)::before {
+        color: #fff;
+        font: 400 14px var(--gj-name);
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) {
+        width: 96px;
+        height: 144px;
+        border: 1.5px solid var(--gj-line-c) !important;
+        border-left-width: 7px !important;
+        border-radius: 0 !important;
+        box-shadow: 3px 3px 0 var(--gj-line-c);
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) img {
+        border-radius: 0 !important;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name) {
+        font: 400 24px var(--gj-name) !important;
+        white-space: normal;
+    }
+}

@@ -1,0 +1,838 @@
+/* Theme picker window (src/gallery.js). Lives outside body.dc-on: it opens
+   from the settings panel even with the extension switched off, so its own
+   colours fall back to ST's theme variables. */
+
+#dc-gallery {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+#dc-gallery .dcg-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(720px, 100%);
+    max-height: min(86dvh, 820px);
+    background: var(--dc-bg-sheet, var(--SmartThemeBlurTintColor, #1e1e22));
+    color: var(--dc-text, var(--SmartThemeBodyColor, #f2f3f5));
+    border: 1px solid var(--dc-line, var(--SmartThemeBorderColor, rgba(255, 255, 255, 0.1)));
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+#dc-gallery .dcg-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px 6px 16px;
+    font-size: 1.1em;
+}
+
+#dc-gallery .dcg-close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+#dc-gallery .dcg-close:hover {
+    opacity: 1;
+    background: rgba(127, 127, 127, 0.18);
+}
+
+#dc-gallery .dcg-scroll {
+    overflow-y: auto;
+    padding: 0 14px 6px;
+}
+
+#dc-gallery .dcg-group {
+    margin: 10px 2px 6px;
+    font-size: 0.8em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+#dc-gallery .dcg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+#dc-gallery .dcg-hint {
+    padding: 8px 16px 12px;
+    opacity: 0.6;
+}
+
+/* a card: miniature + name */
+.dcg-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    background: rgba(127, 127, 127, 0.08);
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s, background 0.15s;
+}
+
+.dcg-card:hover {
+    background: rgba(127, 127, 127, 0.16);
+    transform: translateY(-2px);
+}
+
+.dcg-card.dcg-current {
+    border-color: var(--dc-blurple, var(--SmartThemeQuoteColor, #5865f2));
+}
+
+.dcg-card .dcg-label {
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.dcg-card .dcg-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+    background: var(--dc-blurple, var(--SmartThemeQuoteColor, #5865f2));
+    color: var(--dc-on-accent, #fff);
+}
+
+#dc-gallery.dcg-busy .dcg-card:not(.dcg-picked) {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+#dc-gallery .dcg-picked .dcg-mock::after {
+    content: '';
+    position: absolute;
+    inset: calc(50% - 12px);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: dcg-spin 0.8s linear infinite;
+}
+
+@keyframes dcg-spin {
+    to {
+        rotate: 1turn;
+    }
+}
+
+/* ── The miniature ─────────────────────────────────────────────────────── */
+
+.dcg-mock {
+    position: relative;
+    display: flex;
+    height: 112px;
+    padding: 8px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--g-page);
+    pointer-events: none;
+}
+
+.dcg-mock i {
+    display: block;
+    font-style: normal;
+}
+
+.dcg-mock .dcg-win {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--g-win);
+}
+
+.dcg-mock .dcg-top {
+    flex: none;
+    height: 13px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 0 4px;
+    background: var(--g-top);
+}
+
+.dcg-mock .dcg-chat {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+    background: var(--g-chat);
+}
+
+.dcg-mock .dcg-msg {
+    display: flex;
+    gap: 4px;
+}
+
+.dcg-mock .dcg-av {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--g-accent);
+}
+
+.dcg-mock .dcg-me .dcg-av {
+    background: var(--g-line);
+}
+
+.dcg-mock .dcg-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.dcg-mock .dcg-name {
+    display: block;
+    width: 36%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--g-name);
+}
+
+.dcg-mock .dcg-me .dcg-name {
+    background: var(--g-me);
+}
+
+.dcg-mock .dcg-line {
+    width: 92%;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--g-line);
+}
+
+.dcg-mock .dcg-line.dcg-short {
+    width: 58%;
+}
+
+.dcg-mock .dcg-form {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 4px 4px;
+}
+
+.dcg-mock .dcg-field {
+    flex: 1;
+    height: 10px;
+    background: var(--g-field);
+}
+
+.dcg-mock .dcg-send {
+    flex: none;
+    width: 12px;
+    height: 10px;
+    background: var(--g-send);
+}
+
+.dcg-mock .dcg-rail {
+    display: none;
+}
+
+/* Discord: server rail on the left, pill composer, blurple send */
+.dcg-discord {
+    padding: 0;
+}
+
+.dcg-discord .dcg-rail {
+    order: -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 18px;
+    padding: 4px 0;
+    background: var(--g-top);
+}
+
+.dcg-discord .dcg-rail i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #2b2b31;
+}
+
+.dcg-discord .dcg-rail i:first-child {
+    border-radius: 4px;
+    background: var(--g-accent);
+}
+
+.dcg-discord .dcg-top {
+    background: var(--g-win);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.dcg-discord .dcg-top i:first-child {
+    width: 30px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--g-line);
+}
+
+.dcg-discord .dcg-field {
+    border-radius: 6px;
+}
+
+.dcg-discord .dcg-send {
+    width: 10px;
+    border-radius: 50%;
+}
+
+/* Retro: a Win98 window on a desktop */
+.dcg-retro .dcg-win,
+.dcg-pink .dcg-win {
+    padding: 2px;
+    box-shadow: inset -1px -1px var(--g-dark), inset 1px 1px var(--g-light), inset -2px -2px var(--g-shade);
+}
+
+.dcg-retro .dcg-top,
+.dcg-pink .dcg-top {
+    height: 11px;
+    justify-content: flex-end;
+    gap: 1px;
+    padding: 0 2px;
+}
+
+.dcg-retro .dcg-top i,
+.dcg-pink .dcg-top i {
+    width: 7px;
+    height: 6px;
+    background: var(--g-win);
+    box-shadow: inset -1px -1px var(--g-dark), inset 1px 1px var(--g-light);
+}
+
+.dcg-retro .dcg-chat,
+.dcg-pink .dcg-chat {
+    margin: 3px 2px 0;
+    box-shadow: inset 1px 1px var(--g-shade), inset -1px -1px var(--g-light);
+}
+
+.dcg-retro .dcg-av {
+    border-radius: 0;
+}
+
+.dcg-retro .dcg-name,
+.dcg-pink .dcg-name {
+    border-radius: 0;
+}
+
+.dcg-retro .dcg-field,
+.dcg-pink .dcg-field {
+    height: 11px;
+    box-shadow: inset 1px 1px var(--g-shade), inset -1px -1px var(--g-light);
+}
+
+.dcg-retro .dcg-send,
+.dcg-pink .dcg-send {
+    width: 20px;
+    height: 11px;
+    box-shadow: inset -1px -1px var(--g-dark), inset 1px 1px var(--g-light);
+}
+
+/* pink: speech bubbles */
+.dcg-pink .dcg-body {
+    padding: 3px 4px;
+    border-radius: 5px 5px 5px 1px;
+    background: var(--g-bubble);
+    box-shadow: inset 0 0 0 1px var(--g-shade);
+}
+
+.dcg-pink .dcg-me .dcg-body {
+    border-radius: 5px 5px 1px 5px;
+    background: var(--g-bubbleMe);
+}
+
+/* Monochrome: 1-bit window with a hard shadow */
+.dcg-mono .dcg-win {
+    margin: 0 4px 4px 0;
+    border: 1.5px solid var(--g-ink);
+    border-radius: 6px;
+    box-shadow: 3px 3px 0 var(--g-ink);
+}
+
+.dcg-mono .dcg-top {
+    border-bottom: 1.5px solid var(--g-ink);
+    background: repeating-linear-gradient(var(--g-ink) 0 1px, transparent 1px 3px) 22px 3px / calc(100% - 26px) 6px no-repeat, var(--g-top);
+}
+
+.dcg-mono .dcg-top i {
+    width: 5px;
+    height: 5px;
+    border: 1px solid var(--g-ink);
+    border-radius: 50%;
+    background: var(--g-win);
+}
+
+.dcg-mono .dcg-av {
+    border-radius: 3px;
+    background: var(--g-line);
+    box-shadow: 0 0 0 1px var(--g-ink);
+}
+
+.dcg-mono .dcg-name {
+    border-radius: 0;
+}
+
+.dcg-mono .dcg-field {
+    border: 1.5px solid var(--g-ink);
+    border-radius: 3px;
+}
+
+.dcg-mono .dcg-send {
+    border-radius: 3px;
+}
+
+/* Bubble: rounded window, tab pills, cards with slanted name bars, a dock */
+.dcg-bubble,
+.dcg-signal {
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+}
+
+.dcg-bubble .dcg-win,
+.dcg-signal .dcg-win {
+    border: 1.5px solid var(--g-edge);
+    border-radius: 10px;
+}
+
+.dcg-bubble .dcg-top,
+.dcg-signal .dcg-top {
+    height: 14px;
+    background: var(--g-win);
+    padding: 0 5px;
+}
+
+.dcg-bubble .dcg-top i,
+.dcg-signal .dcg-top i {
+    width: 22px;
+    height: 8px;
+    border-radius: 99px;
+    background: var(--g-card);
+    box-shadow: inset 0 0 0 1px var(--g-line);
+}
+
+.dcg-bubble .dcg-top i:first-child,
+.dcg-signal .dcg-top i:first-child {
+    background: var(--g-top);
+    box-shadow: none;
+}
+
+.dcg-bubble .dcg-chat,
+.dcg-signal .dcg-chat {
+    padding-top: 2px;
+}
+
+.dcg-bubble .dcg-body,
+.dcg-signal .dcg-body {
+    padding: 0 4px 3px;
+    border-radius: 5px;
+    background: var(--g-card);
+    box-shadow: inset 0 0 0 1px var(--g-line);
+    overflow: hidden;
+}
+
+.dcg-bubble .dcg-name,
+.dcg-signal .dcg-name {
+    width: 46%;
+    height: 5px;
+    margin-left: -4px;
+    border-radius: 0;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+}
+
+.dcg-bubble .dcg-av,
+.dcg-signal .dcg-av {
+    box-shadow: 0 0 0 1px var(--g-edge);
+}
+
+.dcg-bubble .dcg-field,
+.dcg-signal .dcg-field {
+    border-radius: 99px;
+    box-shadow: inset 0 0 0 1px var(--g-line);
+}
+
+.dcg-bubble .dcg-send,
+.dcg-signal .dcg-send {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+}
+
+.dcg-bubble .dcg-rail,
+.dcg-signal .dcg-rail {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.dcg-bubble .dcg-rail i,
+.dcg-signal .dcg-rail i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse 55% 35% at 50% 25%, rgba(255, 255, 255, 0.75), transparent), var(--g-orb);
+}
+
+.dcg-bubble .dcg-rail i:first-child,
+.dcg-signal .dcg-rail i:first-child {
+    background: radial-gradient(ellipse 55% 35% at 50% 25%, rgba(255, 255, 255, 0.75), transparent), var(--g-send);
+}
+
+/* the green gadget: squarer, LCD composer, metal keys */
+.dcg-signal .dcg-win {
+    border-radius: 5px;
+}
+
+.dcg-signal .dcg-body {
+    border-radius: 3px;
+}
+
+.dcg-signal .dcg-field {
+    border-radius: 3px;
+    background: linear-gradient(var(--g-lcd), var(--g-lcd)) 4px 50% / 40% 2px no-repeat, var(--g-field);
+}
+
+.dcg-signal .dcg-rail i:not(:first-child) {
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+/* Тема 5: a framed window with folder tabs, big tinted avatars, framed posts */
+.dcg-sage {
+    padding: 7px 7px 6px;
+}
+
+.dcg-sage .dcg-win {
+    position: relative;
+    margin-top: 9px;
+    overflow: visible;
+    border: 1px solid var(--g-frame);
+    border-radius: 4px;
+}
+
+.dcg-sage .dcg-top {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: -10px;
+    height: 10px;
+    padding: 0;
+    gap: 2px;
+    align-items: flex-end;
+    background: transparent;
+}
+
+.dcg-sage .dcg-top i {
+    width: 14px;
+    height: 7px;
+    border: 1px solid var(--g-frame);
+    border-bottom: 0;
+    border-radius: 3px 3px 0 0;
+    background: var(--g-top);
+}
+
+.dcg-sage .dcg-top i:first-child {
+    width: 26px;
+    height: 10px;
+    margin-bottom: -1px;
+    background: var(--g-win);
+}
+
+.dcg-sage .dcg-top::after {
+    content: '';
+    margin-left: auto;
+    align-self: center;
+    width: 22px;
+    height: 5px;
+    background:
+        radial-gradient(circle, var(--g-paper) 2.2px, transparent 2.6px) 0 50% / 7px 5px no-repeat,
+        radial-gradient(circle, var(--g-send) 2.2px, transparent 2.6px) 7.5px 50% / 7px 5px no-repeat,
+        radial-gradient(circle, #000 2.2px, transparent 2.6px) 15px 50% / 7px 5px no-repeat;
+}
+
+.dcg-sage .dcg-msg {
+    flex-wrap: wrap;
+    gap: 3px 5px;
+}
+
+.dcg-sage .dcg-me {
+    flex-direction: row-reverse;
+}
+
+.dcg-sage .dcg-av {
+    width: 17px;
+    height: 17px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 1px, transparent 1px 2px), var(--g-accent);
+    box-shadow: 0 0 0 1px var(--g-boxline);
+}
+
+.dcg-sage .dcg-body {
+    display: contents;
+}
+
+.dcg-sage .dcg-name {
+    width: 40%;
+    align-self: flex-start;
+    margin-top: 2px;
+    box-shadow: 0 5px 0 -1px var(--g-line), 0 9px 0 -1px var(--g-line);
+}
+
+.dcg-sage .dcg-line {
+    flex: 0 0 100%;
+    width: auto;
+    height: 5px;
+    border-radius: 1px;
+    background: linear-gradient(var(--g-line), var(--g-line)) 2px 1.5px / 70% 2px no-repeat, var(--g-box);
+    box-shadow: 0 0 0 1px var(--g-boxline);
+}
+
+.dcg-sage .dcg-line.dcg-short {
+    display: none;
+}
+
+.dcg-sage .dcg-form {
+    border-top: 1px solid var(--g-frame);
+}
+
+.dcg-sage .dcg-field {
+    height: 9px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px var(--g-boxline);
+}
+
+.dcg-sage .dcg-send {
+    width: 18px;
+    height: 9px;
+    border-radius: 2px;
+}
+
+/* Досье: a kraft folder, a typed sheet on a stack, index tabs on the right */
+.dcg-dossier {
+    padding: 7px 4px 7px 7px;
+    gap: 0;
+}
+
+.dcg-dossier .dcg-win {
+    border-radius: 1px;
+    box-shadow: 2px 2px 0 var(--g-stack1, #e3d8ad), 4px 4px 0 var(--g-stack2, #d8cc9e);
+    background: repeating-linear-gradient(180deg, transparent 0 9px, rgba(42, 33, 24, 0.07) 9px 10px), var(--g-win);
+}
+
+.dcg-dossier .dcg-top {
+    height: 12px;
+    justify-content: center;
+    background: transparent;
+    border-bottom: 2px double var(--g-ink);
+}
+
+.dcg-dossier .dcg-top i {
+    display: none;
+}
+
+.dcg-dossier .dcg-top::before {
+    content: '';
+    width: 46%;
+    height: 4px;
+    background: var(--g-ink);
+}
+
+.dcg-dossier .dcg-chat {
+    gap: 6px;
+    background: transparent;
+}
+
+.dcg-dossier .dcg-av {
+    position: relative;
+    width: 14px;
+    height: 16px;
+    border-radius: 0;
+    background: linear-gradient(var(--g-avph, #a8957a), var(--g-avph, #a8957a)) 2px 2px / 10px 10px no-repeat, var(--g-photo, #fbf8ec);
+    box-shadow: 0 1px 2px rgba(70, 45, 20, 0.4);
+    transform: rotate(-4deg);
+}
+
+.dcg-dossier .dcg-av::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 5px;
+    width: 3px;
+    height: 7px;
+    border: 1px solid var(--g-red);
+    border-radius: 2px;
+}
+
+.dcg-dossier .dcg-me {
+    flex-direction: row-reverse;
+}
+
+.dcg-dossier .dcg-me .dcg-av {
+    transform: rotate(4deg);
+}
+
+.dcg-dossier .dcg-name {
+    border-radius: 0;
+    box-shadow: 0 4px 0 -1px var(--g-line);
+}
+
+.dcg-dossier .dcg-line {
+    height: 2px;
+    border-radius: 0;
+    background: var(--g-ln, #6e604c);
+}
+
+.dcg-dossier .dcg-me .dcg-body::before {
+    content: '';
+    align-self: flex-start;
+    width: 22px;
+    height: 6px;
+    border: 1px solid var(--g-red);
+    border-radius: 1px;
+    transform: rotate(-8deg);
+}
+
+.dcg-dossier .dcg-form {
+    margin: 0 4px 2px;
+    padding: 2px 0;
+    border-bottom: 1px solid var(--g-ink);
+}
+
+.dcg-dossier .dcg-field {
+    height: 7px;
+    background: transparent;
+}
+
+.dcg-dossier .dcg-send {
+    width: 10px;
+    height: 8px;
+    border: 1.5px solid var(--g-red);
+    border-radius: 1px;
+    background: transparent;
+}
+
+.dcg-dossier .dcg-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 9px;
+    padding-top: 10px;
+}
+
+.dcg-dossier .dcg-rail i {
+    width: 7px;
+    height: 16px;
+    border-radius: 0 3px 3px 0;
+    background: var(--g-tab, #cfae84);
+    box-shadow: 0 0 0 0.5px rgba(42, 33, 24, 0.4);
+}
+
+.dcg-dossier .dcg-rail i:first-child {
+    width: 9px;
+    height: 20px;
+    background: var(--g-win);
+}
+
+/* ── The button in the settings block ──────────────────────────────────── */
+
+#dc-settings .dc-skin-pick {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 6px 0;
+    padding: 6px;
+    text-align: left;
+    cursor: pointer;
+}
+
+#dc-settings .dc-skin-pick .dcg-mock {
+    flex: none;
+    width: 92px;
+    height: 64px;
+    padding: 4px;
+    border-radius: 7px;
+}
+
+#dc-settings .dc-skin-pick .dcg-mock .dcg-chat {
+    gap: 3px;
+    padding: 3px;
+}
+
+#dc-settings .dc-skin-pick .dcg-msg.dcg-me {
+    display: none;
+}
+
+#dc-settings .dc-skin-pick .dc-skin-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+#dc-settings .dc-skin-pick .dc-skin-text small {
+    opacity: 0.65;
+}
+
+/* Годжо: the wallpaper, soft cards on it */
+.dcg-gojo .dcg-win {
+    border-radius: 0;
+    background: var(--g-art) 100% 100% / 70% auto no-repeat, var(--g-win);
+}
+
+.dcg-gojo .dcg-top {
+    display: none;
+}
+
+.dcg-gojo .dcg-chat {
+    justify-content: flex-end;
+}
+
+.dcg-gojo .dcg-msg {
+    padding-top: 3px;
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dcg-gojo .dcg-form {
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--g-win) 78%, transparent);
+}
+
+.dcg-gojo .dcg-send {
+    border-radius: 50%;
+}

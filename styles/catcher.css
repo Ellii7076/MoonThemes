@@ -1,0 +1,165 @@
+/* The catcher of floating buttons (src/catcher.js): a thin see-through tab on
+   the edge of the screen and a tray that slides out from behind it. Colours
+   come from the tokens, so it dresses like whichever theme is on. */
+
+#dc-catch-tray {
+    position: fixed;
+    z-index: 9000;
+    box-sizing: border-box;
+    background: var(--dc-bg-sheet);
+    border: 1px solid var(--dc-line);
+    transition: transform 0.2s ease;
+}
+
+#dc-catch-tray[hidden],
+#dc-catch-tab[hidden] {
+    display: none;
+}
+
+#dc-catch-tray[data-side="right"] {
+    right: 0;
+    border-right: 0;
+    border-radius: 14px 0 0 14px;
+    transform: translateX(calc(100% + 12px));
+}
+
+#dc-catch-tray[data-side="left"] {
+    left: 0;
+    border-left: 0;
+    border-radius: 0 14px 14px 0;
+    transform: translateX(calc(-100% - 12px));
+}
+
+html.dc-catch-open #dc-catch-tray {
+    transform: none;
+}
+
+/* 12px wide: no wider than the gap the chat text leaves at the edge. */
+#dc-catch-tab {
+    position: fixed;
+    z-index: 9002;
+    width: 12px;
+    height: 54px;
+    background: var(--dc-text-muted);
+    opacity: 0.32;
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: right 0.2s ease, left 0.2s ease, opacity 0.15s ease;
+}
+
+/* A slightly bigger target than the sliver, only along the edge. */
+#dc-catch-tab::before {
+    content: '';
+    position: absolute;
+    inset: -8px 0;
+}
+
+#dc-catch-tab[data-side="right"] {
+    right: 0;
+    border-radius: 7px 0 0 7px;
+}
+
+#dc-catch-tab[data-side="left"] {
+    left: 0;
+    border-radius: 0 7px 7px 0;
+}
+
+html.dc-catch-open #dc-catch-tab[data-side="right"] {
+    right: var(--dc-catch-w);
+}
+
+html.dc-catch-open #dc-catch-tab[data-side="left"] {
+    left: var(--dc-catch-w);
+}
+
+html.dc-catch-open #dc-catch-tab,
+html.dc-catch-dragging #dc-catch-tab {
+    opacity: 0.6;
+}
+
+html body [data-dc-catch] {
+    position: fixed !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    transform: none !important;
+    z-index: 9001 !important;
+    transition: left 0.2s ease !important;
+}
+
+/* Hidden by its extension: if it reappears, it stays out of sight until the
+   next scan puts it back in a slot. */
+html body [data-dc-catch="asleep"] {
+    left: -9999px !important;
+}
+
+/* The tab of Dream Album's own dock: the tray does that job now. */
+html body [data-dc-catch] .DA-floating-handle {
+    display: none !important;
+}
+
+html body [data-dc-catch] .DA-floating-shift {
+    transform: none !important;
+}
+
+html.dc-catch-quiet body [data-dc-catch],
+html.dc-catch-dragging body [data-dc-catch],
+html.dc-catch-dragging #dc-catch-tray {
+    transition: none !important;
+}
+
+html body [data-dc-catch-one] {
+    box-sizing: border-box !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 1px solid var(--dc-line) !important;
+    border-radius: 50% !important;
+    background: var(--dc-bg-card) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: var(--dc-text) !important;
+}
+
+html body [data-dc-catch-one] i {
+    color: var(--dc-text) !important;
+}
+
+html[data-dc-motion="off"] #dc-catch-tray,
+html[data-dc-motion="off"] #dc-catch-tab,
+html[data-dc-motion="off"] body [data-dc-catch] {
+    transition: none !important;
+}
+
+/* The list in the settings. */
+.dc-catch-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dc-catch-row .checkbox_label {
+    flex: 1;
+    min-width: 0;
+}
+
+.dc-catch-row .menu_button {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dc-catch-row .menu_button[data-off] {
+    opacity: 0.3;
+    pointer-events: none;
+}

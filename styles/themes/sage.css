@@ -1,0 +1,1677 @@
+/* "Тема 5" (internal id sage): a dark green profile page, after a carrd
+ * reference. src/sage.js adds the pieces the shared layout has no element
+ * for (folder tabs, the profile blocks, the list's column heads).
+ *
+ *   - each screen is one window: a sage frame, folder tabs on its top edge
+ *     (the raised one joins the window), three dots at the right;
+ *   - avatars are tinted green: grey luminosity over a sage ground, with
+ *     scanlines;
+ *   - a message is a post: the big avatar, the name and "Posted / Msg"
+ *     plates beside it, the text in a framed box under both;
+ *   - buttons are keys: sage ones with dark text, pale grey ones with black
+ *     icons, rectangles with small rounded corners;
+ *   - type: Unbounded for names and titles, JetBrains Mono for the chrome,
+ *     PT Mono for long text.
+ *
+ * Specificity: two id-level :not()s, like Bubble's, to outrank the Discord
+ * rules underneath. */
+
+html[data-dc-family="sage"] body.dc-on:not(#sg-a):not(#sg-b) {
+    --sg-page: #070907;
+    --sg-win: #111611;
+    --sg-tab-off: #0b0e0b;
+    --sg-box: #060806;
+    --sg-card2: #161d16;
+    --sg-frame: #7f9c7a;
+    --sg-line: #c9d3c5;
+    --sg-line-soft: #3e4d3b;
+    --sg-sage: #8ba886;
+    --sg-sage-press: #a3bf9e;
+    --sg-sage-ink: #0b110a;
+    --sg-paper: #d9dbd5;
+    --sg-paper-press: #f0f1ec;
+    --sg-paper-ink: #0c0e0b;
+    --sg-bar: #c9cfc5;
+    --sg-ink: #e6ece2;
+    --sg-text: #d7dfd3;
+    --sg-muted: #9fb09a;
+    --sg-dim: #6b7d67;
+    --sg-tint: #8fae89;
+    --sg-danger: #d98b8b;
+    --sg-window-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 18px 50px rgba(0, 0, 0, 0.55);
+    --sg-tab-h: 36px;
+    --sg-font: 'JetBrains Mono', 'Noto Sans Mono', monospace;
+    --sg-font-text: 'PT Mono', 'JetBrains Mono', monospace;
+    --sg-font-name: 'Unbounded', 'Noto Sans', sans-serif;
+
+    --dc-bg-lowest: var(--sg-page);
+    --dc-bg: var(--sg-win);
+    --dc-bg-raised: var(--sg-card2);
+    --dc-bg-card: var(--sg-card2);
+    --dc-bg-press: var(--sg-line-soft);
+    --dc-line: var(--sg-line-soft);
+    --dc-text: var(--sg-ink);
+    --dc-text-normal: var(--sg-text);
+    --dc-text-muted: var(--sg-muted);
+    --dc-text-dim: var(--sg-dim);
+    --dc-blurple: var(--sg-sage);
+    --dc-blurple-press: var(--sg-sage-press);
+    --dc-green: var(--sg-sage);
+    --dc-red: var(--sg-danger);
+    --dc-yellow: #d8c27a;
+    --dc-link: #a9d3a2;
+    --dc-bg-float: var(--sg-win);
+    --dc-bg-sheet: var(--sg-win);
+    --dc-bg-field: var(--sg-box);
+    --dc-bg-code: var(--sg-card2);
+    --dc-bg-code-line: var(--sg-line-soft);
+    --dc-icon: var(--sg-muted);
+    --dc-handle: var(--sg-line-soft);
+    --dc-track: var(--sg-line-soft);
+    --dc-status-off: var(--sg-dim);
+    --dc-accent-text: var(--sg-sage);
+    --dc-on-accent: var(--sg-sage-ink);
+    --dc-rail-w: 0px;
+    --dc-head-h: 40px;
+    --dc-userbar-h: 0px;
+    --dc-font: var(--sg-font);
+    --dc-font-text: var(--sg-font-text);
+    --dc-font-name: var(--sg-font-name);
+
+    /* The page: near black, a green haze, faint scanlines. */
+    --sg-page-bg:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px),
+        radial-gradient(ellipse 70% 40% at 15% 10%, rgba(120, 160, 110, 0.16), transparent 70%),
+        radial-gradient(ellipse 60% 45% at 90% 85%, rgba(90, 130, 85, 0.14), transparent 70%),
+        var(--sg-page);
+    background: var(--sg-page-bg) !important;
+    background-attachment: fixed !important;
+    color: var(--sg-text);
+    font-family: var(--sg-font);
+
+    & ::selection {
+        background: var(--sg-sage);
+        color: var(--sg-sage-ink);
+    }
+
+    & :is(textarea, input) {
+        caret-color: var(--sg-sage);
+    }
+
+    & ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    & ::-webkit-scrollbar-thumb {
+        background: var(--sg-line-soft);
+        border-radius: 2px;
+    }
+
+    & ::-webkit-scrollbar-thumb:hover {
+        background: var(--sg-frame);
+    }
+
+    /* ── Tinted avatars ───────────────────────────────────────────────── */
+
+    & :is(.sg-avatar, .dc-chat-avatar, #chat .mes .avatar, .dc-dm-avatar, .dc-av-group, .sg-tab img) {
+        position: relative;
+        background: var(--sg-tint) !important;
+        overflow: hidden;
+    }
+
+    & :is(.sg-avatar img, .dc-chat-avatar img, #chat .mes .avatar img, .dc-dm-avatar img, .dc-av-group img, .sg-tab img) {
+        filter: grayscale(1) contrast(1.25) brightness(1.02);
+        mix-blend-mode: luminosity;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    & :is(.sg-avatar, .dc-chat-avatar, #chat .mes .avatar, .dc-dm-avatar)::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            repeating-linear-gradient(0deg, rgba(4, 10, 4, 0.28) 0 1px, transparent 1px 3px),
+            radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(4, 10, 4, 0.45));
+        pointer-events: none;
+    }
+
+    /* ── Keys ──────────────────────────────────────────────────────────── */
+
+    & :is(.sg-wide, .sg-link, #send_but, #mes_stop) {
+        border: 0;
+        border-radius: 5px;
+        background: var(--sg-sage);
+        color: var(--sg-sage-ink);
+        font-family: var(--sg-font);
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    & :is(.sg-wide, .sg-link):active {
+        background: var(--sg-sage-press);
+    }
+
+    /* ── Folder tabs ──────────────────────────────────────────────────── */
+
+    & .sg-tabs {
+        position: relative;
+        z-index: 2;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: stretch;
+        height: var(--sg-tab-h);
+        min-width: 0;
+    }
+
+    & .sg-tabs-scroll {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        padding-left: 6px;
+    }
+
+    & .sg-tabs-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    & .sg-tab {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-width: 38px;
+        height: calc(var(--sg-tab-h) - 7px);
+        margin-bottom: 1.5px;
+        padding: 0 10px;
+        border: 1.5px solid var(--sg-frame);
+        border-bottom: 0;
+        border-radius: 7px 7px 0 0;
+        background: var(--sg-tab-off);
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 13px;
+        cursor: pointer;
+        transition: height 0.15s ease, color 0.15s ease;
+    }
+
+    & .sg-tab i {
+        font-size: 14px;
+    }
+
+    & .sg-tab img {
+        flex: 0 0 18px;
+        width: 18px;
+        height: 18px;
+        border-radius: 3px;
+    }
+
+    & .sg-tab span {
+        display: none;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* The raised tab is the window's: its colour, over the frame line. */
+    & .sg-tab.active {
+        height: var(--sg-tab-h);
+        margin-bottom: 0;
+        padding-bottom: 1.5px;
+        background: var(--sg-win);
+        color: var(--sg-ink);
+        font-weight: 700;
+    }
+
+    & .sg-tab.active span {
+        display: inline;
+    }
+
+    & .sg-tab:not(.active):hover {
+        color: var(--sg-ink);
+    }
+
+    & .sg-dots {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 14px 0 8px;
+    }
+
+    & .sg-dot {
+        width: 15px;
+        height: 15px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: var(--sg-paper);
+        cursor: pointer;
+    }
+
+    & .sg-dot:nth-child(2) {
+        background: var(--sg-sage);
+    }
+
+    & .sg-dot:nth-child(3) {
+        background: var(--sg-dot3, #000);
+        box-shadow: 0 0 0 1px rgba(230, 236, 226, 0.35);
+    }
+
+    & .sg-dot:active {
+        transform: scale(0.85);
+    }
+
+    /* ── A window: the frame under the tabs ───────────────────────────── */
+
+    /* The screens slide over each other: each carries the page. */
+    & :is(#sheld, #dc-home) {
+        isolation: isolate;
+        background: var(--sg-page-bg) !important;
+        background-attachment: fixed !important;
+    }
+
+    & :is(#sheld, #dc-home)::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        top: calc(var(--dc-safe-top) + 8px + var(--sg-tab-h) - 1.5px);
+        bottom: calc(var(--dc-safe-bottom) + 8px);
+        z-index: -1;
+        border: 1.5px solid var(--sg-frame);
+        border-radius: 8px;
+        background: var(--sg-win);
+        box-shadow: var(--sg-window-shadow);
+        pointer-events: none;
+    }
+
+    /* ── Chat list window ─────────────────────────────────────────────── */
+
+    & #dc-home {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 1fr);
+        padding: calc(var(--dc-safe-top) + 8px) 8px calc(var(--dc-safe-bottom) + 8px);
+    }
+
+    & .dc-rail,
+    & .dc-userbar,
+    & .dc-home-dim,
+    & #dc-home::after,
+    & .dc-dm-titlebar,
+    & .dc-dm-actions {
+        display: none !important;
+    }
+
+    & #dc-home > .sg-tabs {
+        grid-row: 1;
+    }
+
+    & #dc-home > .sg-profile {
+        grid-row: 2;
+    }
+
+    & #dc-home > .dc-panel {
+        grid-row: 3;
+        min-height: 0;
+        margin: 0 !important;
+        border: 0;
+        border-radius: 0 0 8px 8px !important;
+        background: transparent;
+        overflow: hidden;
+    }
+
+    /* Profile block (your persona here, the character in the chat). */
+    & .sg-profile {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        column-gap: 12px;
+        row-gap: 10px;
+        margin: 0 1.5px;
+        padding: 12px 12px 12px;
+        border-bottom: 1.5px solid var(--sg-frame);
+    }
+
+    & .sg-avatar {
+        width: 84px;
+        height: 84px;
+        padding: 0;
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    & .sg-avatar img {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    & .sg-who {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    & .sg-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--sg-ink);
+        font-family: var(--sg-font-name);
+        font-size: 21px;
+        font-weight: 600;
+        font-style: normal;
+        letter-spacing: 0.01em;
+    }
+
+    & .sg-meta {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    & .sg-row {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 2px 0 3px;
+        border-bottom: 1px solid var(--sg-line-soft);
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 12px;
+    }
+
+    & .sg-row:last-child {
+        border-bottom: 0;
+    }
+
+    & .sg-row b {
+        color: var(--sg-text);
+        font-weight: 500;
+    }
+
+    & .sg-actions {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 36px;
+        gap: 10px;
+    }
+
+    & .sg-wide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        height: 36px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    & .sg-wide i {
+        font-size: 15px;
+    }
+
+    & .sg-wide.sg-key {
+        padding: 0;
+        background: var(--sg-paper);
+        color: var(--sg-paper-ink);
+    }
+
+    /* A panel open: its own title bar instead of the profile. */
+    &:not([data-dc-panel=""]) #dc-home > .sg-profile {
+        display: none;
+    }
+
+    & .dc-dm {
+        background: transparent;
+    }
+
+    & .dc-dm-head {
+        padding: 10px 12px 0;
+        background: transparent;
+    }
+
+    & .dc-dm-searchbar {
+        border: 1.5px solid var(--sg-line);
+        border-radius: 4px;
+        background: var(--sg-box);
+        font-family: var(--sg-font);
+    }
+
+    & .dc-dm-searchbar input {
+        font-family: var(--sg-font) !important;
+    }
+
+    & .dc-chip {
+        border: 0;
+        border-radius: 4px;
+        background: var(--sg-paper);
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font);
+        font-weight: 700;
+    }
+
+    & .dc-chip i {
+        color: var(--sg-paper-ink);
+    }
+
+    & .dc-chip.active {
+        background: var(--sg-sage);
+        color: var(--sg-sage-ink);
+    }
+
+    /* The list: a numbered track list under column heads. */
+    & .sg-listhead {
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr) auto;
+        gap: 8px;
+        margin: 10px 12px 0;
+        padding: 0 2px 6px;
+        border-bottom: 2.5px solid var(--sg-sage);
+        color: var(--sg-ink);
+        font-family: var(--sg-font);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    &:not([data-dc-panel=""]) .sg-listhead {
+        display: none;
+    }
+
+    & .dc-dm-list {
+        padding: 0 12px 12px;
+        counter-reset: sg-row;
+    }
+
+    & .dc-dm-item {
+        margin: 0;
+        border-radius: 0;
+        counter-increment: sg-row;
+        border-bottom: 1px solid var(--sg-line-soft);
+    }
+
+    & .dc-dm-row {
+        gap: 10px;
+        padding: 9px 2px;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    & .dc-dm-row::before {
+        content: counter(sg-row) '.';
+        flex: 0 0 24px;
+        align-self: flex-start;
+        padding-top: 2px;
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 13px;
+    }
+
+    & .dc-dm-item.active .dc-dm-row,
+    & .dc-dm-item.dc-pressed .dc-dm-row,
+    & .dc-dm-item.dc-holding .dc-dm-row {
+        background: var(--sg-card2);
+    }
+
+    & .dc-dm-item.active .dc-dm-row::before {
+        color: var(--sg-sage);
+        font-weight: 700;
+    }
+
+    & .dc-dm-avatar,
+    & .dc-dm-avatar img,
+    & .dc-av-group img {
+        border-radius: 4px !important;
+    }
+
+    & .dc-dm-avatar {
+        border: 1px solid var(--sg-line-soft);
+    }
+
+    & .dc-dm-avatar .dc-status {
+        display: none;
+    }
+
+    & .dc-dm-name {
+        color: var(--sg-ink);
+        font-family: var(--sg-font) !important;
+        font-weight: 700;
+    }
+
+    & .dc-dm-time {
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+    }
+
+    & .dc-dm-sub {
+        color: var(--sg-muted);
+        font-family: var(--sg-font-text);
+    }
+
+    & .dc-dm-tag {
+        border-radius: 3px;
+    }
+
+    & .dc-dm-note {
+        border-left: 2px solid var(--sg-sage);
+        border-radius: 0;
+        background: var(--sg-box);
+        font-family: var(--sg-font-text);
+    }
+
+    /* Panel title: a post's title bar, "Пресет • MoonThemes". */
+    & .dc-server-head {
+        height: 30px;
+        margin: 10px 12px 0;
+        padding: 0 10px;
+        gap: 8px;
+        border: 0;
+        border-radius: 3px;
+        background: var(--sg-bar);
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font);
+        font-weight: 700;
+    }
+
+    & .dc-server-head :is(.dc-server-icon, .dc-server-title, .dc-server-chevron, .dc-server-back) {
+        color: var(--sg-paper-ink) !important;
+        font-size: 13px !important;
+    }
+
+    & .dc-server-head .dc-server-title {
+        font-family: var(--sg-font) !important;
+    }
+
+    & .dc-server-head .dc-server-title::after {
+        content: ' • MoonThemes';
+        font-weight: 400;
+    }
+
+    /* ── Chat window ──────────────────────────────────────────────────── */
+
+    & #sheld {
+        padding: calc(var(--dc-safe-top) + 8px) 8px calc(var(--dc-safe-bottom) + 8px) !important;
+        gap: 0;
+        box-shadow: none !important;
+    }
+
+    & #sheld > .sg-tabs {
+        order: -2;
+    }
+
+    /* No header: who writes is on every post, and the chat's own tab
+       (tapped again) opens the character card. */
+    & #sheld > .dc-chat-header {
+        display: none !important;
+    }
+
+    /* The log: no box of its own, the window is the box. */
+    & #chat {
+        margin: 0 1.5px !important;
+        padding: 4px 12px 12px !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        font-family: var(--sg-font-text);
+    }
+
+    /* A message is a post: avatar, plates beside, the text framed under. */
+    & #chat .mes {
+        display: block;
+        position: relative;
+        align-self: stretch;
+        width: auto;
+        max-width: none;
+        margin: 14px 0 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+    }
+
+    & #chat .mes.dc-cont {
+        margin-top: 8px !important;
+    }
+
+    & #chat .mesAvatarWrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 72px;
+        height: 72px;
+        margin: 0 !important;
+        visibility: visible;
+        z-index: 1;
+    }
+
+    & #chat .mes .avatar,
+    & #chat .mes .avatar img {
+        width: 72px !important;
+        height: 72px !important;
+        border-radius: 4px !important;
+    }
+
+    & #chat .mes .avatar {
+        border: 1.5px solid var(--sg-line);
+    }
+
+    & #chat .mes .mes_block {
+        min-width: 0;
+        padding: 0 !important;
+    }
+
+    /* The plates: name, then "Posted:", then "Msg:" — three ruled rows. */
+    & #chat .mes .ch_name {
+        position: relative;
+        min-height: 72px;
+        margin: 0 0 8px 84px;
+        padding: 0 0 22px;
+        align-items: flex-start;
+    }
+
+    & #chat .mes .ch_name > .flex-container:first-child {
+        min-width: 0;
+        align-items: stretch !important;
+    }
+
+    & #chat .mes .ch_name > .flex-container:first-child > .flex-container {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0;
+        width: 100%;
+        min-width: 0;
+    }
+
+    & #chat .name_text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 1px 0 5px;
+        color: var(--sg-ink) !important;
+        font-family: var(--sg-font-name) !important;
+        font-size: 17px !important;
+        font-weight: 600 !important;
+        font-style: normal;
+    }
+
+    & #chat .mes .ch_name .dc-ts {
+        display: block;
+        margin: 0;
+        padding: 3px 0;
+        border-top: 1px solid var(--sg-line-soft);
+        border-bottom: 1px solid var(--sg-line-soft);
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 12px;
+    }
+
+    & #chat .mes .ch_name .dc-ts::before {
+        content: 'Posted: ';
+        color: var(--sg-text);
+        font-weight: 500;
+    }
+
+    & #chat .mes .ch_name .timestamp,
+    & #chat .mes .mes_ghost:not([style*="inline"]) {
+        display: none;
+    }
+
+    & #chat .mes::after {
+        content: 'Msg: #' attr(mesid);
+        position: absolute;
+        left: 84px;
+        top: 52px;
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        font-size: 12px;
+        pointer-events: none;
+    }
+
+    & #chat .mes[is_user="true"]::after {
+        content: 'From: you · #' attr(mesid);
+    }
+
+    & #chat .mes .mes_buttons {
+        align-self: flex-start;
+        color: var(--sg-muted);
+    }
+
+    /* Grouped messages: no repeat of the avatar and plates. */
+    & #chat .mes.dc-cont .mesAvatarWrapper,
+    & #chat .mes.dc-cont .ch_name .flex-container:first-child,
+    & #chat .mes.dc-cont::after {
+        display: none !important;
+    }
+
+    & #chat .mes.dc-cont .ch_name {
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    & #chat .mes.dc-cont .ch_name .mes_buttons {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        z-index: 2;
+    }
+
+    /* The text itself: no box, straight on the window. */
+    & #chat .mes_text {
+        margin: 0;
+        padding: 2px 0 0 !important;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: var(--sg-text);
+        font-family: var(--sg-font-text) !important;
+        font-size: 15px;
+        line-height: 1.45;
+    }
+
+    & #chat .mes_text:empty {
+        display: none;
+    }
+
+    /* Yours: mirrored, the avatar on the right. */
+    & #chat .mes[is_user="true"] .mesAvatarWrapper {
+        left: auto;
+        right: 0;
+    }
+
+    & #chat .mes[is_user="true"] .ch_name {
+        margin: 0 84px 8px 0;
+        flex-direction: row-reverse;
+        text-align: right;
+    }
+
+    & #chat .mes[is_user="true"]::after {
+        left: auto;
+        right: 84px;
+    }
+
+    & #chat .mes_text :is(q, .dc-quote) {
+        color: var(--sg-ink);
+    }
+
+    & #chat .mes_text em {
+        color: var(--sg-muted);
+    }
+
+    & #chat .mes_text code {
+        border: 1px solid var(--sg-line-soft);
+        background: var(--sg-card2) !important;
+        color: var(--sg-ink) !important;
+    }
+
+    & #chat .mes_text blockquote {
+        border-left: 2px solid var(--sg-sage);
+        background: var(--sg-card2);
+    }
+
+    & #chat .dc-day {
+        color: var(--sg-muted);
+        font-family: var(--sg-font);
+        letter-spacing: 0.08em;
+    }
+
+    & #chat .dc-day::before,
+    & #chat .dc-day::after {
+        background: var(--sg-line-soft);
+    }
+
+    /* Swipes: pale keys under the post, like "▶ Play  + Add". */
+    &:not(.hideAllSwipeButtons) #chat .mes.last_mes:not([is_user="true"]),
+    &.swipeAllMessages #chat .mes.swipes_visible,
+    &.hideAllSwipeButtons #chat .mes.last_mes:not([is_user="true"]):has(.swipes-counter:not(:empty, [hidden])) {
+        padding-bottom: 36px !important;
+    }
+
+    & #chat .mes .swipe_left,
+    & #chat .mes .swipe_right,
+    & #chat .mes .swipes-counter {
+        height: 26px !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0 !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+        box-shadow: none !important;
+        opacity: 1;
+    }
+
+    & #chat .mes :is(.swipe_left, .swipe_right) {
+        width: 32px !important;
+        font-size: 12px !important;
+    }
+
+    & #chat .mes .swipes-counter {
+        min-width: 46px;
+        padding: 0 8px !important;
+        font-family: var(--sg-font) !important;
+        font-size: 12px !important;
+        font-weight: 700;
+    }
+
+    & #chat .mes .swipe_left {
+        left: 0;
+        bottom: 2px;
+    }
+
+    & #chat .mes .swipeRightBlock {
+        align-items: center;
+        gap: 4px !important;
+        left: 36px;
+        bottom: 2px;
+    }
+
+    /* ◁ 2/3 ▷ : the block is [▷, counter] in the DOM, laid out explicitly. */
+    & #chat .mes .swipeRightBlock {
+        flex-direction: row !important;
+    }
+
+    & #chat .mes .swipeRightBlock .swipes-counter {
+        order: 1;
+    }
+
+    & #chat .mes .swipeRightBlock .swipe_right {
+        order: 2;
+    }
+
+    &.hideAllSwipeButtons #chat .mes .swipeRightBlock {
+        left: 0;
+    }
+
+    /* ── Composer ─────────────────────────────────────────────────────────
+     * One row in a framed box: [+]  text  [wand] [send]. */
+
+    & #form_sheld {
+        margin: 0 1.5px !important;
+        padding: 10px 12px 12px !important;
+        border-top: 1.5px solid var(--sg-frame);
+        background: transparent !important;
+    }
+
+    & #nonQRFormItems {
+        flex-wrap: nowrap;
+        align-items: flex-end;
+        gap: 6px;
+        min-height: 0;
+        margin-right: 0;
+        padding: 6px;
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+        box-shadow: none !important;
+    }
+
+    & #send_textarea {
+        order: 1 !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        min-height: 38px !important;
+        margin: 0 !important;
+        padding: 8px 4px !important;
+        color: var(--sg-text) !important;
+        font-family: var(--sg-font-text) !important;
+        font-size: 16px !important;
+        text-align: left !important;
+    }
+
+    & #send_textarea::placeholder {
+        color: var(--sg-dim) !important;
+        text-align: left;
+    }
+
+    /* ST's script controls (▶ ⏸ ■) stay out of the field in this theme. */
+    & #nonQRFormItems .stscript_btn {
+        display: none !important;
+    }
+
+    /* Keys: the menu on the left, the wand and send on the right. */
+    & :is(#options_button, #extensionsMenuButton, #send_but, #mes_stop) {
+        position: static !important;
+        flex: 0 0 40px;
+        width: 40px !important;
+        height: 38px !important;
+        align-items: center;
+        justify-content: center;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+        font-size: 16px !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    & :is(#options_button, #extensionsMenuButton) {
+        display: flex !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & #options_button {
+        order: 0 !important;
+    }
+
+    & #extensionsMenuButton {
+        order: 2 !important;
+    }
+
+    & #rightSendForm > :not(#send_but, #mes_stop) {
+        order: 2;
+    }
+
+    & #extensionsMenuButton::before {
+        content: '\e2ca' !important;  /* fa-wand-magic-sparkles */
+        font-family: 'Font Awesome 6 Free' !important;
+        font-weight: 900 !important;
+    }
+
+    & #send_but,
+    & #mes_stop {
+        order: 3 !important;
+    }
+
+    & #send_but:not(.displayNone) {
+        display: flex !important;
+    }
+
+    /* Generating: Stop takes Send's key, same place, same look. */
+    & #nonQRFormItems:has(#mes_stop[style*="flex"]) #send_but {
+        display: none !important;
+    }
+
+    & #mes_stop {
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+
+    & #mes_stop i {
+        font-size: 16px !important;
+    }
+
+    & #send_but:active {
+        background: var(--sg-sage-press);
+    }
+
+    /* ── Menus, popups, toasts ────────────────────────────────────────── */
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        background: var(--sg-win) !important;
+    }
+
+    & :is(.dc-sheet, #options .options-content, #extensionsMenu) {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 6px !important;
+        background: var(--sg-win) !important;
+        font-family: var(--sg-font);
+    }
+
+    & :is(#options .options-content a, #extensionsMenu .list-group-item, #extensionsMenu > div, .dc-sheet-item):hover {
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+
+    & dialog.popup:not(:has(#loader)) {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 8px !important;
+        background: var(--sg-win) !important;
+        color: var(--sg-text);
+    }
+
+    & #toast-container > .toast {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 6px !important;
+        background-color: var(--sg-win) !important;
+        font-family: var(--sg-font);
+    }
+
+    & .dc-sheet-head img {
+        border-radius: 4px !important;
+    }
+}
+
+/* Light: the same profile page by day — a pale sage page, white posts,
+   dark lines; the pale keys turn dark so they still stand out, the sage
+   keys stay. */
+html[data-dc-skin="sage-light"] body.dc-on:not(#sg-a):not(#sg-b):not(#sg-c) {
+    --sg-page: #dfe4d8;
+    --sg-win: #f4f5ef;
+    --sg-tab-off: #e4e8dd;
+    --sg-box: #ffffff;
+    --sg-card2: #e8ece2;
+    --sg-frame: #5f7a5a;
+    --sg-line: #2c3729;
+    --sg-line-soft: #c4cdbc;
+    --sg-sage: #8ba886;
+    --sg-sage-press: #7a9875;
+    --sg-sage-ink: #0b110a;
+    --sg-paper: #27311f;
+    --sg-paper-press: #3a4632;
+    --sg-paper-ink: #eef2ea;
+    --sg-bar: #2c3729;
+    --sg-ink: #141c12;
+    --sg-text: #222c1f;
+    --sg-muted: #56664f;
+    --sg-dim: #8a9785;
+    --sg-tint: #9dbb97;
+    --sg-danger: #b04a4a;
+    --sg-dot3: #f4f5ef;
+    --sg-window-shadow: 0 0 0 1px rgba(60, 80, 55, 0.12), 0 14px 40px rgba(60, 80, 55, 0.18);
+    --sg-page-bg:
+        repeating-linear-gradient(0deg, rgba(40, 60, 35, 0.05) 0 1px, transparent 1px 3px),
+        radial-gradient(ellipse 70% 40% at 15% 10%, rgba(139, 168, 134, 0.35), transparent 70%),
+        radial-gradient(ellipse 60% 45% at 90% 85%, rgba(139, 168, 134, 0.28), transparent 70%),
+        var(--sg-page);
+    --dc-link: #3f6e39;
+
+    & .sg-dot:nth-child(3) {
+        box-shadow: 0 0 0 1.5px var(--sg-line);
+    }
+}
+
+/* ── Phone: panels inside the list window, under their title bar ──────── */
+
+html[data-dc-family="sage"][data-dc-desk="off"] body.dc-on:not(#sg-a):not(#sg-b) {
+    /* page top + tabs + the title bar (10 + 30) + a gap */
+    --dc-drawer-top: calc(var(--dc-safe-top) + 8px + var(--sg-tab-h) + 46px);
+    --dc-drawer-left: 11px;
+    --dc-drawer-bottom: calc(var(--dc-safe-bottom) + 11px);
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        right: 11px !important;
+        border-radius: 0 0 7px 7px !important;
+    }
+
+    & .dc-chat-header .dc-list-toggle {
+        display: none !important;
+    }
+}
+
+/* ── Desktop: two windows side by side ────────────────────────────────── */
+
+html[data-dc-family="sage"][data-dc-desk="on"] body.dc-on:not(#sg-a):not(#sg-b) {
+    /* The chat window's tabs are the only ones. */
+    & #dc-home > .sg-tabs {
+        visibility: hidden;
+    }
+
+    & #top-settings-holder .drawer-content:not(#dc-x) {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 8px !important;
+    }
+
+    & #dc-deskhead {
+        border-radius: 3px;
+        background: var(--sg-bar);
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font);
+    }
+
+    & #dc-deskhead :is(.dc-server-icon, .dc-server-title, .dc-icon-btn) {
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & .dc-server-head {
+        display: none !important;
+    }
+
+    /* The hover bar of actions: over the top corner of the post away from
+       the avatar, so it never sits on the name plates. */
+    & #chat .mes .ch_name {
+        position: static;
+    }
+
+    & #chat .mes .mes_buttons {
+        top: -16px;
+        right: 0;
+        left: auto;
+        border: 1px solid var(--sg-line-soft);
+        border-radius: 4px;
+        background: var(--sg-win);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        scrollbar-width: none;
+    }
+
+    & #chat .mes .mes_buttons::-webkit-scrollbar,
+    & #chat .mes .mes_buttons *::-webkit-scrollbar {
+        display: none;
+    }
+
+    & #chat .mes .mes_buttons .extraMesButtons {
+        overflow: hidden;
+        scrollbar-width: none;
+    }
+
+    & #chat .mes[is_user="true"] .mes_buttons {
+        right: auto;
+        left: 0;
+    }
+
+    & #chat .mes[mesid="0"] .mes_buttons {
+        top: 2px;
+    }
+}
+
+html[data-dc-family="sage"][data-dc-desk="on"][data-dc-list="hidden"] body.dc-on:not(#sg-a):not(#sg-b) #dc-home {
+    display: none !important;
+}
+
+/* ── Panels: posts and keys ───────────────────────────────────────────
+ * The shared panel styles (styles/panel-*.css) lay the panels out; this
+ * redraws their pieces, on the same selectors as Bubble's: tiles become
+ * framed black boxes, collapsible headers pale title bars, icon buttons
+ * pale keys, text buttons keys too, and the profile cards a title bar, a
+ * framed tinted avatar and the name beside it. */
+
+html[data-dc-family="sage"] body.dc-on:not(#sg-a):not(#sg-b) {
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #rm_extensions_block, #movingDivs > .drawer-content, #character_popup) {
+        --dc-tile: var(--sg-box);
+        --dc-tile-line: var(--sg-line-soft);
+        --dc-field: var(--sg-box);
+    }
+
+    /* Tiles. */
+    & :is(#rm_api_block > .wide100p:first-child, #rm_api_block #main_api,
+        #rm_api_block .flex-container.flexFlowColumn > [id$="_api"]:not(select):not([style*="none"]), #rm_api_block > .flex-container:last-child,
+        #right-nav-panel #rm_print_characters_block, #right-nav-panel #avatar-and-name-block, #right-nav-panel #creators_note_desc_hidden,
+        #right-nav-panel :is(#descriptionWrapper, #firstMessageWrapper),
+        #rm_extensions_block :is(#extensions_settings, #extensions_settings2), #rm_extensions_block .extensions_block > hr ~ .flex-container,
+        #AdvancedFormatting :is(#ContextSettings, #InstructSettingsColumn, #SystemPromptColumn),
+        #PersonaManagement .persona_management_current_persona, #PersonaManagement #user_avatar_block, #PersonaManagement .persona_management_global_settings,
+        #left-nav-panel #respective-presets-block > div > div,
+        #left-nav-panel :is(#respective-ranges-and-temps, #advanced-ai-config-block) .range-block, #left-nav-panel #openai_settings > div > .range-block,
+        #left-nav-panel :is(.completion_prompt_manager_footer, #completion_prompt_manager_list),
+        #user-settings-block :is(#UI-language-block, #UI-Theme-Block, #UI-Customization, #power-user-options-block),
+        #WorldInfo :is(#wiTopBlock > .range-block, #WIMultiSelector, .wi-card-entry),
+        :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+    }
+
+    /* Section titles: a little square, then the title, like "☐ NAME". */
+    & :is(#PersonaManagement, #right-nav-panel, #user-settings-block, #rm_extensions_block, #AdvancedFormatting, #WorldInfo, #left-nav-panel, #rm_api_block) :is(h3, h4, .standoutHeader):not(:empty) {
+        color: var(--sg-sage) !important;
+        font-family: var(--sg-font-name) !important;
+        letter-spacing: 0.04em;
+    }
+
+    & :is(#PersonaManagement, #right-nav-panel, #user-settings-block, #AdvancedFormatting, #WorldInfo, #left-nav-panel) h4.standoutHeader:not(:empty)::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-right: 7px;
+        border: 1.5px solid var(--sg-sage-ink);
+        border-radius: 3px;
+        background: var(--sg-bar);
+        vertical-align: 0;
+    }
+
+    /* Collapsible tiles: the header is the slanted bar. */
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer > .inline-drawer-header {
+        margin: 8px 8px 0;
+        padding: 6px 30px 6px 12px !important;
+        border-radius: 3px;
+        background: var(--sg-bar) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer > .inline-drawer-header :is(b, span, i, .inline-drawer-icon) {
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #movingDivs > .drawer-content, #character_popup) .inline-drawer > .inline-drawer-header .menu_button {
+        background: rgba(0, 0, 0, 0.08) !important;
+        border-color: rgba(0, 0, 0, 0.35) !important;
+    }
+
+    /* Fields. */
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(.text_pole, textarea, input:is([type="number"], [type="text"], [type="search"])) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(select, select.text_pole) {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background-color: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    /* Lists that show several lines are boxes, not pills. */
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(select[multiple], select[size]:not([size="1"]), select.text_pole[multiple]) {
+        border-radius: 5px !important;
+    }
+
+    & :is(.drawer-content, dialog.popup, #movingDivs) :is(.text_pole, textarea, input, select):focus {
+        border-color: var(--sg-sage) !important;
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--sg-sage) 30%, transparent) !important;
+    }
+
+    /* Text buttons: pills. */
+    & :is(#left-nav-panel, #rm_api_block, #AdvancedFormatting, #WorldInfo, #Backgrounds, #PersonaManagement, #right-nav-panel, #user-settings-block, #rm_extensions_block, #movingDivs > .drawer-content, #character_popup, dialog.popup) .menu_button:has(> span:not([style*="none"])),
+    & #rm_api_block .menu_button:not(.fa-solid):not(i),
+    & dialog.popup .popup-controls .menu_button {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        box-shadow: none !important;
+        color: var(--sg-paper-ink) !important;
+        font-family: var(--sg-font) !important;
+        font-weight: 700 !important;
+    }
+
+    & dialog.popup .popup-controls .menu_button.popup-button-ok {
+        background: var(--sg-sage) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    /* Icon buttons: pale keys; destructive ones dusty red. */
+    & :is(#rm_api_block :is(i.menu_button, .menu_button.fa-solid),
+        #right-nav-panel :is(i, div).menu_button.fa-solid, #right-nav-panel #result_info .right_menu_button, #right-nav-panel #rm_button_search,
+        :is(#AdvancedFormatting, #WorldInfo, #Backgrounds, #user-settings-block, #movingDivs > .drawer-content, #character_popup) :is(i.menu_button, div.menu_button.fa-solid, .menu_button.menu_button_icon:not(:has(> span:not([style*="none"])))),
+        #PersonaManagement #persona_controls .menu_button, #PersonaManagement #persona_grid_toggle,
+        #left-nav-panel .menu_button.menu_button_icon:not(:has(> span:not([style*="none"]))), #left-nav-panel .completion_prompt_manager_footer a.menu_button,
+        #user-settings-block :is(#ui-preset-update-button, #ui-preset-save-button, #ui-preset-delete-button, #ui_preset_import_button, #ui_preset_export_button)) {
+        border: 0 !important;
+        background: var(--sg-paper) !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#top-settings-holder .drawer-content, #PersonaManagement #persona_controls, #movingDivs) :is(.fa-trash-can, .fa-skull, .redWarningBG).menu_button {
+        background: var(--sg-danger) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & :is(#top-settings-holder .drawer-content, #movingDivs) :is(.menu_button.fa-save, .menu_button.fa-floppy-disk) {
+        background: var(--sg-sage) !important;
+    }
+
+    /* Small round controls: tag filters, pages, the list switch. */
+    & #right-nav-panel :is(.tag.actionable, .paginationjs-pages li > a, #rm_button_characters) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        background: var(--sg-paper) !important;
+        box-shadow: none !important;
+        color: var(--sg-sage) !important;
+    }
+
+    & #right-nav-panel .tag.actionable.selected {
+        border-color: var(--sg-sage) !important;
+        background: var(--sg-sage) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    /* ── Lists: cards ──────────────────────────────────────────────── */
+
+    & #right-nav-panel #rm_print_characters_block {
+        padding: 6px !important;
+    }
+
+    &:not(.charListGrid) #right-nav-panel #rm_print_characters_block > :is(.character_select, .group_select, .bogus_folder_select) {
+        margin: 0 0 6px !important;
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-card2) !important;
+    }
+
+    & #right-nav-panel #rm_print_characters_block > :is(.character_select, .group_select).is_fav {
+        border-color: var(--sg-danger) !important;
+    }
+
+    & :is(#right-nav-panel #rm_print_characters_block, #PersonaManagement #user_avatar_block) .avatar img {
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 4px !important;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    & :is(#right-nav-panel #rm_print_characters_block, #PersonaManagement #user_avatar_block) .avatar {
+        border-radius: 4px !important;
+    }
+
+    & #PersonaManagement #user_avatar_block .avatar-container {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-card2) !important;
+    }
+
+    & #PersonaManagement #user_avatar_block .avatar-container.selected {
+        border-color: var(--sg-sage) !important;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--sg-sage) 35%, transparent) !important;
+    }
+
+    /* ── Profile cards (one character, the current persona) ─────────── */
+
+    /* A bar instead of the blurred banner. */
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner) {
+        height: 32px;
+        margin: 10px 0 14px;
+        border-radius: 3px;
+        background: var(--sg-bar) !important;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+    }
+
+    & #PersonaManagement .dc-persona-banner {
+        margin: 10px 14px 14px;
+    }
+
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner)::before {
+        position: static;
+        inset: auto;
+        background: none;
+        filter: none;
+        color: var(--sg-paper-ink);
+        font-family: var(--sg-font-name);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+    }
+
+    & #right-nav-panel .dc-char-banner::before {
+        content: 'Профиль';
+    }
+
+    & #PersonaManagement .dc-persona-banner::before {
+        content: 'Мой профиль';
+    }
+
+    & :is(#right-nav-panel .dc-char-banner, #PersonaManagement .dc-persona-banner)::after {
+        content: none;
+    }
+
+    /* Avatar and name side by side. */
+    & #right-nav-panel #avatar-and-name-block {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        align-items: center;
+        column-gap: 14px;
+        padding: 0 12px 14px !important;
+    }
+
+    & #right-nav-panel #avatar-and-name-block :is(.dc-char-banner, #avatar_controls, #tags_div) {
+        flex: 0 0 100%;
+    }
+
+    & #right-nav-panel .dc-char-name {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) {
+        width: 92px;
+        height: 92px;
+        border: 1.5px solid var(--sg-frame) !important;
+        border-radius: 5px !important;
+        background: var(--sg-card2) !important;
+        box-shadow: none;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) img {
+        border-radius: 5px !important;
+        object-position: center top;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div::after, #PersonaManagement .dc-persona-edit) {
+        border: 1.5px solid var(--sg-sage-ink) !important;
+        background: var(--sg-danger) !important;
+    }
+
+    & #PersonaManagement .dc-persona-status {
+        border-color: var(--sg-box) !important;
+    }
+
+    & #PersonaManagement .dc-persona-hero {
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        column-gap: 14px;
+    }
+
+    & #right-nav-panel #avatar_div_div {
+        margin: 0 !important;
+    }
+
+    & #PersonaManagement .dc-persona-avatar {
+        margin: 0 0 0 14px !important;
+    }
+
+    & #PersonaManagement .dc-persona-names {
+        grid-column: 2;
+        padding: 0 14px 0 0;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name) {
+        color: var(--sg-ink) !important;
+        font-family: var(--sg-font-name) !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.03em;
+        overflow-wrap: anywhere;
+    }
+
+    & #PersonaManagement .dc-persona-handle {
+        color: var(--sg-muted) !important;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 12px !important;
+    }
+}
+
+/* The extensions list is one card cut in two (#extensions_settings and
+   #extensions_settings2), and the Extras API block one card in rows: no
+   seam in the middle, the frame and corners only on the outside. */
+html[data-dc-family="sage"] body.dc-on:not(#sg-a):not(#sg-b) {
+    & #rm_extensions_block #extensions_settings#extensions_settings {
+        border-bottom-width: 0 !important;
+        border-radius: 5px 18px 0 0 !important;
+    }
+
+    & #rm_extensions_block #extensions_settings2#extensions_settings2 {
+        border-top-width: 0 !important;
+        border-radius: 0 0 5px 5px !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container {
+        border-top-width: 0 !important;
+        border-bottom-width: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr + .flex-container {
+        border-top-width: 2px !important;
+        border-radius: 5px 18px 0 0 !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container:last-child {
+        border-bottom-width: 2px !important;
+        border-radius: 0 0 5px 5px !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container .menu_button {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    & #rm_extensions_block#rm_extensions_block .extensions_block > hr ~ .flex-container :is(input.text_pole, input[type="text"]) {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 5px !important;
+        background: var(--sg-box) !important;
+    }
+}
+
+/* Panels take their text colour from the ST theme's main text colour. With
+   another ST theme still on (say Discord's light grey) that is unreadable
+   on Bubble's light windows, so panels use Bubble's own colours. The same
+   goes for select2's dropdowns, which SillyTavern hangs off <body>. */
+html[data-dc-family="sage"] body.dc-on:not(#sg-a):not(#sg-b) {
+    & :is(#top-settings-holder .drawer-content, #movingDivs > .drawer-content, dialog.popup, .select2-container) {
+        --SmartThemeBodyColor: var(--sg-text);
+        --SmartThemeEmColor: var(--sg-muted);
+        color: var(--sg-text);
+    }
+
+    & .select2-container .select2-dropdown {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 5px !important;
+        background: var(--sg-win) !important;
+        box-shadow: none !important;
+        overflow: hidden;
+    }
+
+    & .select2-container .select2-results__option {
+        color: var(--sg-text) !important;
+        opacity: 1 !important;
+    }
+
+    & .select2-container .select2-results__option--highlighted,
+    & .select2-container .select2-results__option[aria-selected="true"] {
+        background: var(--sg-card2) !important;
+        color: var(--sg-ink) !important;
+    }
+
+    & .select2-container .select2-search__field {
+        border: 1.5px solid var(--sg-line-soft) !important;
+        border-radius: 4px !important;
+        background: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    & .select2-container .select2-selection {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-box) !important;
+        color: var(--sg-text) !important;
+    }
+
+    & .select2-container .select2-selection--multiple {
+        border-radius: 5px !important;
+    }
+
+    & .select2-container :is(.select2-selection__rendered, .select2-selection__placeholder) {
+        color: var(--sg-text) !important;
+    }
+
+    & .select2-container .select2-selection__placeholder {
+        color: var(--sg-muted) !important;
+    }
+
+    & .select2-container .select2-selection__choice {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-sage) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+
+    /* An opened extension's settings: a lavender band, not Discord's dark one. */
+    & #rm_extensions_block :is(#extensions_settings, #extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer) > .inline-drawer-content {
+        background: var(--sg-card2) !important;
+    }
+
+    & #rm_extensions_block .inline-drawer-content .menu_button:not(.fa-solid):not(i) {
+        border: 1.5px solid var(--sg-line) !important;
+        border-radius: 4px !important;
+        background: var(--sg-paper) !important;
+        color: var(--sg-paper-ink) !important;
+    }
+}
+
+/* Profile cards in the panels: the same tinted, framed avatars as the chat,
+   names in the italic display face. */
+html[data-dc-family="sage"] body.dc-on:not(#sg-a):not(#sg-b) {
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar, #right-nav-panel #rm_print_characters_block .avatar, #PersonaManagement #user_avatar_block .avatar) {
+        position: relative;
+        background: var(--sg-tint) !important;
+        border-color: var(--sg-line) !important;
+        overflow: hidden;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar, #right-nav-panel #rm_print_characters_block .avatar, #PersonaManagement #user_avatar_block .avatar) img {
+        filter: grayscale(1) contrast(1.25) brightness(1.02);
+        mix-blend-mode: luminosity;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name) {
+        font-style: normal;
+        font-weight: 600 !important;
+    }
+
+    & :is(#right-nav-panel #avatar_div_div::after, #PersonaManagement .dc-persona-edit) {
+        border-color: var(--sg-sage-ink) !important;
+        background: var(--sg-sage) !important;
+        color: var(--sg-sage-ink) !important;
+    }
+}
+
+/* The start page's shortcuts in the theme's one colour. */
+html[data-dc-family="sage"] body.dc-on .dc-wl-action {
+    --dc-wl-color: var(--sg-sage) !important;
+}
+
+/* ── Profile cards: an artist's page ───────────────────────────────────── */
+
+/* The picture as an album cover, a mono caption over the name: the
+   character is the artist, you are the listener. */
+html[data-dc-family="sage"] body.dc-on:not(#sg-a):not(#sg-b):not(#sg-c) {
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) {
+        width: 116px;
+        height: 116px;
+        border: 0 !important;
+        border-radius: 4px !important;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    & :is(#right-nav-panel #avatar_div_div, #PersonaManagement .dc-persona-avatar) img {
+        border-radius: 4px !important;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name) {
+        font-size: 22px !important;
+        line-height: 1.15;
+        white-space: normal;
+    }
+
+    & :is(#right-nav-panel .dc-char-name, #PersonaManagement .dc-persona-name)::before {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--sg-muted);
+        font: 500 11px var(--sg-font);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    & #right-nav-panel .dc-char-name::before {
+        content: 'Исполнитель';
+    }
+
+    & #PersonaManagement .dc-persona-name::before {
+        content: 'Слушатель';
+    }
+}

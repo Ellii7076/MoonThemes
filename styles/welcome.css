@@ -1,0 +1,400 @@
+/* "Главная" (src/welcome.js) in place of SillyTavern's welcome screen.
+ * ST's own panel and greeting messages stay in #chat, hidden, unless the
+ * "welcome" option asks for the classic page. */
+
+html:not([data-dc-welcome="classic"]) body.dc-on #chat:has(> .dc-welcome) > :not(.dc-welcome) {
+    display: none !important;
+}
+
+/* Start Page hides everything in #chat but ST's own panel; the doubled id
+   outranks that rule. */
+html:not([data-dc-welcome="classic"]) body.dc-on #chat#chat > .dc-welcome {
+    display: flex !important;
+}
+
+html[data-dc-welcome="classic"] body.dc-on #chat > .dc-welcome {
+    display: none !important;
+}
+
+/* Header: a home icon instead of a character. */
+html:not([data-dc-welcome="classic"]) body.dc-on .dc-chat-header.dc-peer-home .dc-chat-avatar img,
+html:not([data-dc-welcome="classic"]) body.dc-on .dc-chat-header.dc-peer-home .dc-chat-avatar .dc-status,
+html:not([data-dc-welcome="classic"]) body.dc-on .dc-chat-header.dc-peer-home .dc-chat-chevron {
+    display: none;
+}
+
+html:not([data-dc-welcome="classic"]) body.dc-on .dc-chat-header.dc-peer-home .dc-chat-avatar::before {
+    content: '\f015';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: var(--dc-on-accent, #fff);
+    background: var(--dc-blurple);
+}
+
+body.dc-on .dc-welcome {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    user-select: none;
+    animation: dc-wl-in 0.35s var(--dc-ease) both;
+}
+
+@keyframes dc-wl-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+/* Greeting. */
+body.dc-on .dc-wl-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+body.dc-on .dc-wl-me {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 4px var(--dc-bg), 0 0 0 6px var(--dc-blurple);
+}
+
+body.dc-on .dc-wl-hero h2 {
+    margin: 0 0 4px;
+    font-family: var(--dc-font-name);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--dc-text);
+}
+
+body.dc-on .dc-wl-hero p {
+    margin: 0;
+    font-size: 14.5px;
+    color: var(--dc-text-muted);
+}
+
+/* Section titles: Discord's small caps headings. */
+body.dc-on .dc-wl-section h3 {
+    margin: 0 0 10px 2px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+/* "Продолжить": the newest chat as one big card. */
+body.dc-on .dc-wl-continue {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--dc-line);
+    border-radius: 14px;
+    background: var(--dc-bg-raised);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s var(--dc-ease);
+}
+
+body.dc-on .dc-wl-continue:active {
+    transform: scale(0.99);
+}
+
+body.dc-on .dc-wl-continue-av {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--dc-bg-card);
+}
+
+body.dc-on .dc-wl-continue-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+body.dc-on .dc-wl-continue-top {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+body.dc-on .dc-wl-continue-top b {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--dc-font-name);
+    font-size: 17px;
+    color: var(--dc-text);
+}
+
+body.dc-on .dc-wl-continue-top small,
+body.dc-on .dc-wl-continue-file {
+    font-size: 12px;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on .dc-wl-continue-file {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.dc-on .dc-wl-continue-snippet {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 2px;
+    font-family: var(--dc-font-text);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-wl-continue-go {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+    font-size: 16px;
+    transition: transform 0.2s var(--dc-spring);
+}
+
+/* Recent people: avatars with names, like "Активные сейчас". */
+body.dc-on .dc-wl-people {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 6px;
+}
+
+body.dc-on .dc-wl-person {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 4px 8px;
+    border: 0;
+    border-radius: 12px;
+    background: none;
+    color: var(--dc-text-normal);
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.15s var(--dc-ease);
+}
+
+body.dc-on .dc-wl-person:active {
+    transform: scale(0.95);
+}
+
+body.dc-on .dc-wl-person img {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--dc-bg-card);
+    transition: border-radius 0.2s var(--dc-ease);
+}
+
+body.dc-on .dc-wl-person span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+/* Shortcuts: tiles with a coloured icon. */
+body.dc-on .dc-wl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 8px;
+}
+
+body.dc-on .dc-wl-action {
+    --dc-wl-color: var(--dc-blurple);
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--dc-line);
+    border-radius: 12px;
+    background: var(--dc-bg-raised);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s var(--dc-ease);
+}
+
+body.dc-on .dc-wl-action:active {
+    transform: scale(0.98);
+}
+
+body.dc-on .dc-wl-action-icon {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--dc-wl-color) 18%, transparent);
+    color: var(--dc-wl-color);
+    font-size: 17px;
+}
+
+body.dc-on .dc-wl-action-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+body.dc-on .dc-wl-action-text b {
+    font-size: 14.5px;
+    color: var(--dc-text);
+}
+
+body.dc-on .dc-wl-action-text small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on .dc-wl-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 4px;
+    font-size: 12px;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on .dc-wl-classic {
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--dc-text-muted);
+    font-size: 12px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    body.dc-on .dc-wl-continue:hover {
+        background: var(--dc-bg-card);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    body.dc-on .dc-wl-continue:hover .dc-wl-continue-go {
+        transform: translateX(3px);
+    }
+
+    body.dc-on .dc-wl-person:hover {
+        background: var(--dc-bg-raised);
+    }
+
+    body.dc-on .dc-wl-person:hover img {
+        border-radius: 16px;
+    }
+
+    body.dc-on .dc-wl-action:hover {
+        background: var(--dc-bg-card);
+        border-color: color-mix(in srgb, var(--dc-wl-color) 40%, transparent);
+    }
+
+    body.dc-on .dc-wl-classic:hover {
+        color: var(--dc-text);
+    }
+}
+
+/* Phone: tighter, two shortcut tiles per row. */
+@media (max-width: 600px) {
+    body.dc-on .dc-welcome {
+        padding: 20px 14px;
+        gap: 22px;
+    }
+
+    body.dc-on .dc-wl-hero h2 {
+        font-size: 20px;
+    }
+
+    body.dc-on .dc-wl-me {
+        width: 52px;
+        height: 52px;
+        flex-basis: 52px;
+    }
+
+    body.dc-on .dc-wl-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* Recent people as one swipeable strip, like Discord's "active now". */
+    body.dc-on .dc-wl-people {
+        display: flex;
+        gap: 2px;
+        margin: 0 -14px;
+        padding: 0 10px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        overscroll-behavior-x: contain;
+    }
+
+    body.dc-on .dc-wl-people::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.dc-on .dc-wl-person {
+        flex: 0 0 72px;
+        width: 72px;
+    }
+
+    body.dc-on .dc-wl-action {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    body.dc-on .dc-wl-action-text small {
+        white-space: normal;
+    }
+}
+
+/* Call/video/search act on a chat; on the home page there is none. */
+html:not([data-dc-welcome="classic"]) body.dc-on .dc-chat-header.dc-peer-home .dc-chat-slot {
+    display: none;
+}

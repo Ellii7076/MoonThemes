@@ -1,0 +1,1012 @@
+/* ── "Персонажи" server: SillyTavern's character panel ─────────────────
+ *
+ * Two screens:
+ *
+ *   character list   → like Discord's DM list: favourites (HotSwaps) as a
+ *                      row of round avatars on top, round action buttons,
+ *                      a search bar, tag filters as chips, then rows with
+ *                      a round avatar, name and one muted line.
+ *   one character    → a profile card like the persona one: banner from
+ *                      the avatar (src/character.js), big avatar in a ring
+ *                      (tap = pick a new image, ST's own label), the name
+ *                      field as the display name, round buttons, tags;
+ *                      then creator's notes, description and first message
+ *                      as sections.
+ *
+ * Switches, sliders, textareas and collapsible tiles come from the shared
+ * rules in panel-preset.css (#right-nav-panel is in that list).
+ */
+
+body.dc-on #right-nav-panel {
+    --dc-tile: var(--dc-bg-float);
+    --dc-tile-line: rgba(255, 255, 255, 0.06);
+    --dc-field: var(--dc-bg-field);
+    font-family: var(--dc-font);
+}
+
+/* Drag grip and the pin are pointless full screen. */
+body.dc-on #right-nav-panel #right-nav-panelheader,
+body.dc-on #right-nav-panel #rm_button_panel_pin_div {
+    display: none;
+}
+
+body.dc-on #right-nav-panel #rm_button_panel_pin {
+    display: none !important;
+}
+
+body.dc-on #right-nav-panel .scrollableInner {
+    padding: 0 2px 32px;
+}
+
+/* ── Shared bits ──────────────────────────────────────────────────── */
+
+body.dc-on #right-nav-panel :is(select:not([multiple]), input.text_pole, input[type="search"], input[type="text"], input[type="number"]) {
+    min-height: 40px;
+    margin: 0;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background-color: var(--dc-field);
+    color: var(--dc-text);
+    font-family: var(--dc-font);
+    font-size: 14px;
+    box-shadow: none;
+}
+
+body.dc-on #right-nav-panel :is(select, input, textarea):focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1.5px var(--dc-blurple);
+}
+
+body.dc-on #right-nav-panel :is(i, div).menu_button.fa-solid {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    font-size: 14px;
+    filter: none;
+    opacity: 1;
+    transition: transform 0.15s var(--dc-ease), background-color 0.15s ease;
+}
+
+body.dc-on #right-nav-panel :is(i, div, label).menu_button.fa-solid:active {
+    transform: scale(0.9);
+    background: var(--dc-bg-press);
+}
+
+body.dc-on #right-nav-panel .menu_button.red_button,
+body.dc-on #right-nav-panel #rm_group_delete {
+    color: var(--dc-red);
+}
+
+body.dc-on #right-nav-panel .extension_token_counter {
+    align-self: flex-end;
+    margin: 6px 0 0;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: var(--dc-bg-card);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #right-nav-panel .paginationjs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #right-nav-panel .paginationjs-pages ul {
+    display: flex;
+    gap: 4px;
+}
+
+body.dc-on #right-nav-panel .paginationjs-pages li > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+}
+
+body.dc-on #right-nav-panel .paginationjs-pages li.disabled > a {
+    opacity: 0.4;
+}
+
+body.dc-on #right-nav-panel .paginationjs select {
+    min-height: 30px;
+    padding: 0 24px 0 10px;
+    border-radius: 15px;
+    background-color: var(--dc-bg-card);
+    font-size: 13px;
+}
+
+/* ── Top: favourites row + current character chip ─────────────────── */
+
+body.dc-on #right-nav-panel #CharListButtonAndHotSwaps {
+    align-items: center;
+    gap: 10px;
+    margin: 4px 0 10px;
+}
+
+/* "All characters" list button. */
+body.dc-on #right-nav-panel #rm_button_characters {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    font-size: 17px;
+    opacity: 1;
+}
+
+body.dc-on #right-nav-panel #rm_button_characters:active {
+    transform: scale(0.92);
+}
+
+body.dc-on #right-nav-panel #HotSwapWrapper {
+    min-width: 0;
+    margin: 0;
+}
+
+body.dc-on #right-nav-panel .hotswap {
+    gap: 8px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    scrollbar-width: none;
+}
+
+body.dc-on #right-nav-panel .hotswap > small {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #right-nav-panel .hotswap .avatar {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--dc-bg), 0 0 0 4px color-mix(in srgb, var(--dc-blurple) 55%, transparent);
+    margin: 4px;
+}
+
+body.dc-on #right-nav-panel .hotswap .avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Name of the open character + token count: a chip row. */
+body.dc-on #right-nav-panel #right-nav-panel-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+body.dc-on #right-nav-panel #rm_button_selected_ch h2 {
+    margin: 0;
+    font-family: var(--dc-font-name);
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--dc-text);
+}
+
+body.dc-on #right-nav-panel #result_info {
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+body.dc-on #right-nav-panel #result_info_text {
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: var(--dc-bg-card);
+    font-size: 12px;
+    line-height: 1.25;
+    text-align: right;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #right-nav-panel #result_info_text strong {
+    color: var(--dc-text);
+}
+
+body.dc-on #right-nav-panel #result_info .right_menu_button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-icon);
+    font-size: 13px;
+    opacity: 1;
+}
+
+/* ── Character list ───────────────────────────────────────────────── */
+
+body.dc-on #right-nav-panel #charListFixedTop {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 0 8px;
+    background: none;
+}
+
+body.dc-on #right-nav-panel #rm_button_bar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+}
+
+body.dc-on #right-nav-panel #rm_button_bar .menu_button {
+    flex: 0 0 38px;
+}
+
+body.dc-on #right-nav-panel #rm_button_create {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #right-nav-panel #rm_buttons_container:empty {
+    display: none;
+}
+
+body.dc-on #right-nav-panel #character_sort_order {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 38px;
+    border-radius: 19px;
+    background-color: var(--dc-bg-card);
+    font-weight: 700;
+}
+
+body.dc-on #right-nav-panel #rm_button_search {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    opacity: 1;
+}
+
+body.dc-on #right-nav-panel #character_search_bar {
+    min-height: 40px;
+    padding-left: 38px;
+    background:
+        no-repeat 13px 50% / 15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2380848e' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"),
+        var(--dc-field);
+}
+
+/* Tag filters: Discord chips. ST colours them inline; keep the colour
+   only as a soft ring so the row stays calm. */
+body.dc-on #right-nav-panel .rm_tag_controls {
+    gap: 6px;
+    margin: 0;
+}
+
+body.dc-on #right-nav-panel .rm_tag_filter {
+    gap: 6px;
+}
+
+body.dc-on #right-nav-panel .rm_tag_filter .tag {
+    min-height: 30px;
+    margin: 0;
+    padding: 0 11px;
+    border: 0;
+    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--dc-bg-card) !important;
+    color: var(--dc-text);
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 1;
+    filter: none;
+}
+
+body.dc-on #right-nav-panel .rm_tag_filter .tag[data-toggle-state="SELECTED"] {
+    background-color: var(--dc-blurple) !important;
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #right-nav-panel .rm_tag_filter .tag[data-toggle-state="EXCLUDED"] {
+    background-color: rgba(242, 63, 67, 0.22) !important;
+    box-shadow: inset 0 0 0 1.5px rgba(242, 63, 67, 0.6);
+    text-decoration: line-through;
+}
+
+body.dc-on #right-nav-panel .rm_tag_filter .tag.filterByFavorites .tag_name {
+    color: var(--dc-yellow);
+}
+
+body.dc-on #right-nav-panel .rm_tag_filter .tag.filterByFavorites[data-toggle-state="SELECTED"] .tag_name {
+    color: #fff;
+}
+
+body.dc-on #right-nav-panel .rm_tag_controls .tag_remove {
+    display: none !important;
+}
+
+/* Pagination + grid / bulk edit. */
+body.dc-on #right-nav-panel #rm_print_characters_pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 2px 0 10px;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_pagination > .menu_button {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 13px;
+}
+
+body.dc-on #right-nav-panel #bulkEditButton.bulk_edit_active,
+body.dc-on #right-nav-panel #bulkEditButton.active {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+/* The list card. */
+body.dc-on:not(.charListGrid) #right-nav-panel #rm_print_characters_block {
+    gap: 2px;
+    padding: 6px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on:not(.charListGrid) #right-nav-panel #rm_print_characters_block > :is(.character_select, .group_select, .bogus_folder_select) {
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 12px;
+    outline: 0;
+    transition: background-color 0.15s ease;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block > :is(.character_select, .group_select, .bogus_folder_select):active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dc-on:not(.charListGrid) #right-nav-panel #rm_print_characters_block .avatar {
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    margin: 0;
+    border-radius: 50%;
+    outline: 0;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .avatar img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block :is(.character_select_container, .group_select_container) {
+    min-width: 0;
+    gap: 2px;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .character_name_block {
+    align-items: baseline;
+    gap: 6px;
+    margin: 0;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .ch_name {
+    overflow: hidden;
+    font-family: var(--dc-font);
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--dc-text);
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .ch_add_placeholder {
+    display: none;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .ch_additional_info {
+    font-size: 12px;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on:not(.charListGrid) #right-nav-panel #rm_print_characters_block .ch_description {
+    overflow: hidden;
+    width: 100%;
+    font-size: 13px;
+    line-height: 1.35;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .character_name_block_sub_line {
+    font-size: 12px;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block :is(.ch_fav_icon, .group_fav_icon) {
+    color: var(--dc-yellow);
+    font-size: 12px;
+}
+
+/* Favourites get a gold ring on the avatar. */
+body.dc-on #right-nav-panel #rm_print_characters_block .is_fav .avatar {
+    box-shadow: 0 0 0 2px var(--dc-tile), 0 0 0 4px rgba(240, 178, 50, 0.75);
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .tags_inline {
+    gap: 4px;
+    margin: 3px 0 0;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block .tags_inline .tag {
+    margin: 0;
+    padding: 1px 8px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Folders ("bogus folders") read as channel categories. */
+body.dc-on #right-nav-panel #rm_print_characters_block .bogus_folder_select .avatar {
+    border-radius: 14px;
+}
+
+/* Grid view: rounded tiles. */
+body.dc-on.charListGrid #right-nav-panel #rm_print_characters_block {
+    gap: 10px;
+    padding: 10px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on.charListGrid #right-nav-panel #rm_print_characters_block > * {
+    border: 0;
+    border-radius: 14px;
+    outline: 0;
+}
+
+body.dc-on.charListGrid #right-nav-panel #rm_print_characters_block .avatar {
+    border-radius: 14px;
+}
+
+body.dc-on.charListGrid #right-nav-panel #rm_print_characters_block .avatar img {
+    border-radius: 14px;
+}
+
+/* ── One character: the profile card ──────────────────────────────── */
+
+body.dc-on #right-nav-panel #form_create {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+body.dc-on #right-nav-panel #avatar-and-name-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 14px 16px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+    overflow: hidden;
+}
+
+/* Flatten ST's wrappers so the pieces can be ordered:
+ *   banner · avatar · name · buttons · tags                             */
+body.dc-on #right-nav-panel #avatar-and-name-block > .flex-container,
+body.dc-on #right-nav-panel #avatar-and-name-block #avatar_div {
+    display: contents;
+}
+
+body.dc-on #right-nav-panel .dc-char-banner {
+    order: 0;
+    position: relative;
+    height: 112px;
+    margin: 0 -14px;
+    overflow: hidden;
+    /* Dark while the picture loads (blurple flashed). */
+    background-color: var(--dc-bg-card);
+    background-size: cover;
+    background-position: center 25%;
+}
+
+body.dc-on #right-nav-panel .dc-char-banner::before {
+    content: '';
+    position: absolute;
+    inset: -40px;
+    background: inherit;
+    filter: blur(18px) saturate(1.4) brightness(0.8);
+}
+
+body.dc-on #right-nav-panel .dc-char-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent 45%, color-mix(in srgb, var(--dc-bg-float) 55%, transparent));
+}
+
+/* The avatar: ST's own <label> (tap = choose a new image). */
+body.dc-on #right-nav-panel #avatar_div_div {
+    order: 1;
+    position: relative;
+    align-self: flex-start;
+    flex: 0 0 auto;
+    width: 96px;
+    height: 96px;
+    margin: -50px 0 0;
+    padding: 0;
+    border: 6px solid var(--dc-tile);
+    border-radius: 50%;
+    background: var(--dc-tile);
+    cursor: pointer;
+    overflow: visible;
+}
+
+body.dc-on #right-nav-panel #avatar_div_div img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+body.dc-on #right-nav-panel #avatar_div_div::after {
+    content: '\f304';
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 3px solid var(--dc-tile);
+    border-radius: 50%;
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 10px;
+}
+
+/* Name: the input reads as the display name. */
+body.dc-on #right-nav-panel #name_div {
+    order: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 0;
+}
+
+body.dc-on #right-nav-panel #character_name_pole {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 10px;
+    border-radius: 10px;
+    background-color: transparent;
+    font-family: var(--dc-font-name);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dc-text);
+}
+
+body.dc-on #right-nav-panel #character_name_pole:hover,
+body.dc-on #right-nav-panel #character_name_pole:focus {
+    background-color: var(--dc-field);
+}
+
+body.dc-on #right-nav-panel #name_div .extension_token_counter {
+    flex: 0 0 auto;
+    align-self: center;
+    margin: 0;
+}
+
+/* Buttons: a wrapping row of round icons, "More…" as a pill under them. */
+body.dc-on #right-nav-panel #avatar_controls {
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin: 12px 0 0;
+}
+
+body.dc-on #right-nav-panel #avatar_controls .form_create_bottom_buttons_block {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+body.dc-on #right-nav-panel #avatar_controls .menu_button.fa-solid {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 15px;
+}
+
+body.dc-on #right-nav-panel #create_button_label {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #right-nav-panel #create_button_label input {
+    display: none;
+}
+
+body.dc-on #right-nav-panel #favorite_button.fav_on {
+    background: rgba(240, 178, 50, 0.18);
+    box-shadow: inset 0 0 0 1.5px rgba(240, 178, 50, 0.6);
+    color: var(--dc-yellow);
+}
+
+body.dc-on #right-nav-panel #avatar_controls > label {
+    margin: 0;
+}
+
+body.dc-on #right-nav-panel #char-management-dropdown {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 30px 0 14px;
+    border-radius: 20px;
+    background-color: var(--dc-bg-card);
+    font-weight: 700;
+}
+
+/* Tags. */
+body.dc-on #right-nav-panel #tags_div {
+    order: 4;
+    margin: 12px 0 0;
+}
+
+body.dc-on #right-nav-panel #tags_div .tag_controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+body.dc-on #right-nav-panel #tagInput {
+    flex: 1 1 auto;
+}
+
+body.dc-on #right-nav-panel #tagList,
+body.dc-on #right-nav-panel #groupTagList {
+    gap: 6px;
+    margin-top: 8px;
+}
+
+body.dc-on #right-nav-panel :is(#tagList, #groupTagList) .tag {
+    min-height: 28px;
+    margin: 0;
+    padding: 0 6px 0 11px;
+    border: 0;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ── Sections under the card ──────────────────────────────────────── */
+
+body.dc-on #right-nav-panel #spoiler_free_desc {
+    margin: 0;
+}
+
+body.dc-on #right-nav-panel #spoiler_free_desc .inline-drawer-header {
+    gap: 8px;
+    background: none;
+    border: 0;
+}
+
+body.dc-on #right-nav-panel #creators_notes_div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+body.dc-on #right-nav-panel #creators_notes_div .menu_button {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 12px;
+}
+
+body.dc-on #right-nav-panel #creator_notes_spoiler,
+body.dc-on #right-nav-panel #creator_notes_empty {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--dc-text-normal);
+}
+
+body.dc-on #right-nav-panel #creators_note_desc_hidden {
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--dc-tile);
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #right-nav-panel :is(#descriptionWrapper, #firstMessageWrapper) {
+    gap: 0;
+    padding: 12px 14px 14px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on #right-nav-panel :is(#description_div, #first_message_div) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 8px;
+}
+
+body.dc-on #right-nav-panel :is(#description_div, #first_message_div) > .flex-container {
+    align-items: center;
+    gap: 8px;
+}
+
+body.dc-on #right-nav-panel .mdhotkey_location {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #right-nav-panel :is(#description_div, #first_message_div) .editor_maximize,
+body.dc-on #right-nav-panel :is(#description_div, #first_message_div) .note-link-span {
+    font-size: 12px;
+    color: var(--dc-text-dim);
+    opacity: 1;
+}
+
+body.dc-on #right-nav-panel :is(.open_media_overrides, .open_alternate_greetings) {
+    min-height: 32px;
+    margin: 0;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    filter: none;
+}
+
+body.dc-on #right-nav-panel :is(#description_textarea, #firstmessage_textarea) {
+    width: 100%;
+    min-height: 180px;
+    padding: 12px 14px;
+    font-size: 14.5px;
+}
+
+/* ── Group editor: light touches ──────────────────────────────────── */
+
+body.dc-on #right-nav-panel #rm_group_chats_block .inline-drawer-header {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+body.dc-on #right-nav-panel #GroupFavDelOkBack {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+body.dc-on #right-nav-panel #rm_group_submit {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #right-nav-panel #group_favorite_button.fav_on {
+    color: var(--dc-yellow);
+}
+
+body.dc-on #right-nav-panel #group_avatar_preview .avatar,
+body.dc-on #right-nav-panel #group_avatar_preview img {
+    border-radius: 50%;
+}
+
+body.dc-on #right-nav-panel :is(#rm_group_members, #rm_group_add_members) .group_member {
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border: 0;
+    border-radius: 12px;
+}
+
+body.dc-on #right-nav-panel :is(#rm_group_members, #rm_group_add_members) .avatar img {
+    border-radius: 50%;
+}
+
+/* ── Fixes after a look on the phone ─────────────────────────────── */
+
+/* ST's .alignitemsflexstart is !important; centre name next to avatar. */
+body.dc-on:not(.charListGrid) #right-nav-panel #rm_print_characters_block > :is(.character_select, .group_select, .bogus_folder_select) {
+    align-items: center !important;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_block :is(.character_select_container, .group_select_container) {
+    align-self: center;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_pagination {
+    justify-content: space-between;
+}
+
+/* ST's form is a fixed-height flex column and the name block wraps: keep
+   every section at its own height and let the form scroll. */
+body.dc-on #right-nav-panel #form_create > * {
+    flex-shrink: 0;
+}
+
+body.dc-on #right-nav-panel #avatar-and-name-block {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+body.dc-on #right-nav-panel #avatar-and-name-block > :is(.dc-char-banner, #name_div, #avatar_controls, #tags_div, .dc-char-name) {
+    align-self: stretch;
+}
+
+body.dc-on #right-nav-panel #avatar-and-name-block .expander {
+    flex: 0 0 auto;
+}
+
+/* Existing character: ST hides the name field, our mirror shows instead. */
+body.dc-on #right-nav-panel .dc-char-name {
+    order: 2;
+    overflow: hidden;
+    margin: 10px 2px 0;
+    font-family: var(--dc-font-name);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--dc-text);
+}
+
+body.dc-on #right-nav-panel #avatar-and-name-block:has(#name_div:not(.displayNone)) .dc-char-name,
+body.dc-on #right-nav-panel .dc-char-name:empty {
+    display: none;
+}
+
+/* Its name is in the card now; the line above keeps just the tokens. */
+body.dc-on #right-nav-panel:has(#rm_ch_create_block[style*="block"]) #rm_button_selected_ch {
+    display: none;
+}
+
+body.dc-on #right-nav-panel :is(#descriptionWrapper, #firstMessageWrapper) .extension_token_counter {
+    align-self: flex-end;
+    width: fit-content;
+    margin-left: auto;
+}
+
+/* ST's .buttons_block forces display: flex. */
+body.dc-on #right-nav-panel #avatar-and-name-block #avatar_div {
+    display: contents !important;
+}
+
+body.dc-on #right-nav-panel #avatar-and-name-block > *,
+body.dc-on #right-nav-panel #avatar-and-name-block #avatar_div > * {
+    flex-shrink: 0;
+}
+
+body.dc-on #right-nav-panel #avatar_div_div {
+    align-self: flex-start !important;
+    margin-left: 0 !important;
+}
+
+body.dc-on #right-nav-panel #avatar_controls,
+body.dc-on #right-nav-panel #avatar_controls > label {
+    height: auto !important;
+    flex: 0 0 auto;
+}
+
+/* Eight buttons on an existing character: one even row on a phone. */
+body.dc-on #right-nav-panel #avatar_controls .form_create_bottom_buttons_block {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    justify-items: center;
+    gap: 6px 4px;
+}
+
+body.dc-on #right-nav-panel #avatar_controls .menu_button.fa-solid {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    font-size: 14px;
+}
+
+body.dc-on #right-nav-panel #avatar_controls .form_create_bottom_buttons_block > :is([style*="display: none"], .displayNone) {
+    display: none !important;
+}
+
+body.dc-on #right-nav-panel #avatar_controls .form_create_bottom_buttons_block {
+    grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+    gap: 6px 2px;
+}
+
+body.dc-on #right-nav-panel #avatar_controls .menu_button.fa-solid {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+}
+
+body.dc-on #right-nav-panel #rm_print_characters_pagination {
+    justify-content: flex-start;
+}
+
+/* List mode: the open character as a chip that leads back to its card. */
+body.dc-on #right-nav-panel #rm_button_selected_ch h2:not(:empty) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 0 12px 0 14px;
+    border-radius: 17px;
+    background: var(--dc-bg-card);
+    font-family: var(--dc-font);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+body.dc-on #right-nav-panel #rm_button_selected_ch h2:not(:empty)::after {
+    content: '\f054';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 11px;
+    color: var(--dc-text-muted);
+}
+
+/* Outside the Discord skin: no pencil badge on the picture (see the persona
+   card in panel-persona.css). */
+html:not([data-dc-skin="discord"]) body.dc-on #right-nav-panel #avatar_div_div::after {
+    display: none !important;
+}

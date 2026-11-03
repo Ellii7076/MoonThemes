@@ -1,0 +1,166 @@
+/* Theme "Bubble зелёная" (signal, signal-dark) — a green gadget: pale green-grey metal casings
+ * on a dark grid, LCD screens in deep green with lime text, pink LEDs,
+ * a monospace "device" font.
+ *
+ * Bubble's arrangement and stylesheet underneath (family y2k,
+ * styles/themes/y2k.css): tabs over the chat, the dock of round buttons,
+ * cards under name bars. Bubble draws everything from --y-* variables;
+ * this redefines them — pills become LCD strips, orbs metal knobs and LEDs
+ * — and adds the device details. One more id-level :not() than Bubble's
+ * prefix, so these win wherever both set something. */
+
+html:is([data-dc-skin="signal"], [data-dc-skin="signal-dark"]) body.dc-on:not(#y2k-a):not(#y2k-b):not(#y2k-c) {
+    --s-grid: #222a36;
+    --s-lcd: linear-gradient(180deg, #2e4a27 0%, #1d3219 100%);
+    --s-lcd-ink: #c8f59a;
+    --s-metal: linear-gradient(180deg, #f4f6ee 0%, #d5dbc9 55%, #b9c1ad 100%);
+    --s-led: #ff3d97;
+    --s-glow: 0 0 6px color-mix(in srgb, var(--s-lcd-ink) 45%, transparent);
+    --s-screw: #9aa48f;
+
+    --y-page:
+        linear-gradient(var(--s-grid) 1px, transparent 1px) 0 0 / 26px 26px,
+        linear-gradient(90deg, var(--s-grid) 1px, transparent 1px) 0 0 / 26px 26px,
+        #141922;
+    --y-page-solid: #141922;
+    --y-window: #e3e7d6;
+    --y-card: #f1f3e8;
+    --y-card2: #e8ecdb;
+    --y-field: #f7f8f0;
+    --y-line: #7e8a74;
+    --y-line-soft: #bcc5ae;
+    --y-accent: #3d6b2f;
+    --y-accent2: #9fb08f;
+    --y-pink: var(--s-led);
+    --y-ink: #1e291b;
+    --y-text: #2a3526;
+    --y-muted: #5c6856;
+    --y-dim: #8a9483;
+    --y-pill: var(--s-lcd);
+    --y-pill-ink: var(--s-lcd-ink);
+    --y-pill-off: var(--s-metal);
+    --y-pill-off-ink: #2a3526;
+    --y-bar: linear-gradient(90deg, #1d3219, #3d6b2f);
+    --y-bar-you: linear-gradient(90deg, #c2236f, #ff5aa5);
+    --y-orb-pink: radial-gradient(circle at 50% 45%, #ff9ccb 0%, #ff3d97 55%, #b3125e 100%);
+    --y-orb-violet: radial-gradient(circle at 50% 35%, #8d9886 0%, #4f5a49 60%, #2f382c 100%);
+    --y-orb-blue: radial-gradient(circle at 50% 45%, #e6ff9c 0%, #8fd14a 55%, #4f8a1f 100%);
+    --y-orb-deep: radial-gradient(circle at 50% 35%, #7c8775 0%, #434d3e 60%, #262d23 100%);
+    --y-gloss: radial-gradient(ellipse 55% 30% at 50% 20%, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 100%);
+    --y-glow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    --y-shadow: 0 2px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.35);
+    --y-font: 'IBM Plex Mono', 'Noto Sans Mono', monospace;
+    --y-font-text: 'Exo 2', 'Noto Sans', sans-serif;
+    --y-font-name: 'Tektur', 'IBM Plex Mono', sans-serif;
+    --dc-link: #2d6b9a;
+    --dc-red: #d4246f;
+    --dc-green: #3d8b2f;
+
+    /* LCD text: lime on the deep green strips, small caps of a device. */
+    & :is(.y2k-pill, .dc-chat-header .dc-chat-peer, .dc-server-head, #dc-deskhead, .y2k-tab.active) {
+        color: var(--s-lcd-ink) !important;
+        text-shadow: var(--s-glow) !important;
+        letter-spacing: 0.06em;
+    }
+
+    & :is(.y2k-title-text, .dc-chat-name, .dc-server-title, .dc-server-head i, .y2k-tab.active span) {
+        color: var(--s-lcd-ink) !important;
+        text-transform: uppercase;
+    }
+
+    & .y2k-tab {
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 12px;
+    }
+
+    /* The message's name bar is an LCD readout too. */
+    & #chat .name_text {
+        color: var(--s-lcd-ink) !important;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 13px !important;
+    }
+
+    & #chat .mes[is_user="true"] .name_text {
+        color: #fff !important;
+    }
+
+    /* Casings: metal frames with a screw-like dot in the corner. */
+    & :is(#chat, .dc-panel, .y2k-dock) {
+        border-width: 3px !important;
+        background-clip: padding-box;
+    }
+
+    & .y2k-dock {
+        background: var(--s-metal) !important;
+    }
+
+    & #chat {
+        background:
+            radial-gradient(circle, var(--s-screw) 2px, transparent 2.5px) top 6px right 8px / 8px 8px no-repeat,
+            var(--y-window) !important;
+    }
+
+    /* The open panel's orb: a lit pink LED. */
+    & .y2k-dock .y2k-orb.active {
+        border-color: #ffd1e6 !important;
+        box-shadow: 0 0 10px var(--s-led), 0 0 0 2px rgba(255, 61, 151, 0.35) !important;
+    }
+
+    & .y2k-led.on {
+        background: radial-gradient(circle at 35% 30%, #fff 0 15%, #c8f59a 45%, #4f8a1f 100%);
+        box-shadow: 0 0 6px #c8f59a;
+    }
+
+    /* Selected text and quotes in the device's pink. */
+    & ::selection {
+        background: var(--s-led);
+        color: #fff;
+    }
+
+    & #chat .mes_text q {
+        color: #c2236f;
+    }
+}
+
+/* Dark: the gadget turned round — dark casings and a dark chat, the LCD
+   screens lit lime with dark letters. */
+html[data-dc-skin="signal-dark"] body.dc-on:not(#y2k-a):not(#y2k-b):not(#y2k-c) {
+    --s-grid: #1a2118;
+    --s-lcd: linear-gradient(180deg, #d6ffa8 0%, #a6dc6e 100%);
+    --s-lcd-ink: #142410;
+    --s-metal: linear-gradient(180deg, #4b5546 0%, #363e32 55%, #272d24 100%);
+    --s-glow: none;
+    --s-screw: #4b5546;
+
+    --y-page:
+        linear-gradient(var(--s-grid) 1px, transparent 1px) 0 0 / 26px 26px,
+        linear-gradient(90deg, var(--s-grid) 1px, transparent 1px) 0 0 / 26px 26px,
+        #0b0f0b;
+    --y-page-solid: #0b0f0b;
+    --y-window: #161d16;
+    --y-card: #1c251b;
+    --y-card2: #222d21;
+    --y-field: #111711;
+    --y-line: #5d7052;
+    --y-line-soft: #2f3b2b;
+    --y-accent: #a6dc6e;
+    --y-accent2: #6f8a5c;
+    --y-ink: #e6f5d6;
+    --y-text: #d6e8c4;
+    --y-muted: #9db08c;
+    --y-dim: #6f7f63;
+    --y-pill-off-ink: #d6e8c4;
+    --y-bar: linear-gradient(90deg, #a6dc6e, #d6ffa8);
+    --y-glow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    --y-shadow: 0 2px 0 rgba(0, 0, 0, 0.5), 0 8px 18px rgba(0, 0, 0, 0.5);
+    --dc-link: #8ec8ff;
+    --dc-red: #ff6eb4;
+    --dc-green: #a6dc6e;
+    --dc-on-accent: var(--s-lcd-ink);
+
+    & #chat .mes_text q {
+        color: #ff6eb4;
+    }
+}

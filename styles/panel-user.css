@@ -1,0 +1,535 @@
+/* ── "Настройки" server: SillyTavern's User Settings ────────────────────
+ *
+ * CSS only. Like Discord's "App Settings":
+ *
+ *   header           → small caps title, language picker, version,
+ *                      Account / Admin / Logout pills, a search bar
+ *   three columns    → stacked cards (UI theme, customisation, power user)
+ *   h4               → small caps section headers
+ *   "Label: [select]"→ a row: label on the left, picker on the right
+ *   checkboxes       → switch rows with hairlines between them
+ *   sliders          → label + number over a full-width slider
+ *
+ * Fields, round buttons, switches, sliders and collapsibles come from the
+ * shared rules (panel-preset.css, panel-forms.css).
+ */
+
+body.dc-on #user-settings-block {
+    padding-bottom: 32px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+
+body.dc-on #user-settings-block > .flex-container:first-child {
+    gap: 10px;
+    margin: 2px 0 14px;
+}
+
+body.dc-on #user-settings-block [name="userSettingsRowOne"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 10px;
+}
+
+body.dc-on #user-settings-block [name="userSettingsRowOne"] > .flex-container:first-child {
+    grid-column: 1;
+}
+
+body.dc-on #user-settings-block #version_display {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 11px;
+    line-height: 1.3;
+    text-align: right;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #user-settings-block #UI-language-block {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 52px;
+    padding: 0 8px 0 14px;
+    border-radius: 16px;
+    background: var(--dc-tile);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on #user-settings-block #ui_language_select {
+    flex: 0 1 55%;
+}
+
+body.dc-on #user-settings-block [name="UserSettingsRowTwo"] {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+body.dc-on #user-settings-block #account_controls {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+body.dc-on #user-settings-block #account_controls .menu_button {
+    flex: 1 1 auto;
+}
+
+body.dc-on #user-settings-block #logout_button {
+    color: var(--dc-red);
+}
+
+body.dc-on #user-settings-block #settingsSearch {
+    flex: 1 1 100%;
+    min-height: 40px;
+    height: 40px;
+    padding: 10px 12px 0 38px;
+    border: 0;
+    border-radius: 10px;
+    resize: none;
+    background:
+        no-repeat 13px 50% / 15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2380848e' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"),
+        var(--dc-field);
+    font-family: var(--dc-font);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* ── Column cards ─────────────────────────────────────────────────── */
+
+body.dc-on #user-settings-block #user-settings-block-content {
+    flex-direction: column;
+    gap: 12px;
+}
+
+body.dc-on #user-settings-block :is(#UI-Theme-Block, #UI-Customization, #power-user-options-block) {
+    flex: 1 1 auto;
+    width: 100%;
+    padding: 4px 14px 14px;
+    border-radius: 18px;
+    background: var(--dc-tile);
+}
+
+body.dc-on #user-settings-block #UI-Theme-Block {
+    background:
+        radial-gradient(120% 90px at 0% 0%, color-mix(in srgb, var(--dc-blurple) 20%, transparent), transparent 70%),
+        var(--dc-tile);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dc-blurple) 14%, transparent);
+}
+
+body.dc-on #user-settings-block #power-user-option-checkboxes {
+    width: 100%;
+}
+
+body.dc-on #user-settings-block hr {
+    height: 1px;
+    margin: 10px 0;
+    border: 0;
+    background: var(--dc-tile-line);
+}
+
+/* Section headers. */
+body.dc-on #user-settings-block h4 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 14px 2px 6px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--dc-font);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #user-settings-block #UI-presets-block > h4 {
+    color: var(--dc-accent-text);
+}
+
+body.dc-on #user-settings-block h4 .flex-container {
+    gap: 6px;
+}
+
+/* Theme picker: picker + save / save-as. */
+body.dc-on #user-settings-block #UI-presets-block > .flex-container {
+    gap: 8px;
+}
+
+body.dc-on #user-settings-block #themes {
+    flex: 1 1 auto;
+    min-height: 46px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+body.dc-on #user-settings-block :is(#ui-preset-update-button, #ui-preset-save-button, #ui-preset-delete-button, #ui_preset_import_button, #ui_preset_export_button) {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dc-bg-card);
+    color: var(--dc-text-normal);
+    filter: none;
+    opacity: 1;
+}
+
+body.dc-on #user-settings-block #ui-preset-update-button {
+    background: var(--dc-blurple);
+    color: var(--dc-on-accent, #fff);
+}
+
+body.dc-on #user-settings-block #ui-preset-delete-button {
+    color: var(--dc-red);
+}
+
+/* "Label: [select]" rows → settings rows. */
+body.dc-on #user-settings-block .flex-container:has(> span:first-child + select),
+body.dc-on #user-settings-block .flex-container:has(> span:first-child + label > select) {
+    flex-wrap: nowrap;
+    align-items: center !important;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 50px;
+    margin: 0;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #user-settings-block .flex-container:has(> span:first-child + select) > span:first-child {
+    flex: 1 1 auto;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--dc-text);
+}
+
+body.dc-on #user-settings-block .flex-container:has(> span:first-child + select) > select {
+    flex: 0 1 55%;
+    min-height: 38px;
+}
+
+/* Small "label over field" blocks (Example Messages Behavior…). */
+body.dc-on #user-settings-block :is(div, label):not(.checkbox_label):not(.checkbox_label *):not(.menu_button) > small:not(.fa-solid):only-child,
+body.dc-on #user-settings-block .range-block-title,
+body.dc-on #user-settings-block .range-block-title small {
+    font-family: var(--dc-font);
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dc-text-muted);
+}
+
+body.dc-on #user-settings-block select:not([multiple]) {
+    width: auto;
+}
+
+body.dc-on #user-settings-block .range-block select,
+body.dc-on #user-settings-block .flex-container.flexFlowColumn > select {
+    width: 100%;
+}
+
+/* ── Switch rows ──────────────────────────────────────────────────── */
+
+body.dc-on #user-settings-block .checkbox_label {
+    min-height: 46px;
+    margin: 0;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #user-settings-block .checkbox_label > input {
+    order: -2;
+}
+
+body.dc-on #user-settings-block .checkbox_label > :not(input):not(small):not(span) {
+    order: -1;
+    margin-right: auto;
+    font-size: 12px;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #user-settings-block .checkbox_label > :is(small, span) {
+    flex: 0 1 auto;
+    font-size: 14.5px;
+    font-weight: 600;
+    text-align: left;
+    color: var(--dc-text);
+}
+
+body.dc-on #user-settings-block .checkbox_label:not(:has(> :not(input):not(small):not(span))) > :is(small, span) {
+    flex: 1 1 auto;
+}
+
+/* A checkbox row that carries its own field (Auto-swipe delay, MovingUI…). */
+body.dc-on #user-settings-block .checkbox_label :is(input[type="number"], input.text_pole) {
+    order: -1;
+    width: 72px;
+    min-height: 34px;
+    text-align: center;
+}
+
+/* ── Sliders: "LABEL ……… [num]" over the slider ───────────────────── */
+
+body.dc-on #user-settings-block .flex-container:has(> .neo-range-slider) {
+    flex-direction: column;
+    gap: 8px;
+}
+
+body.dc-on #user-settings-block div:has(> .neo-range-slider + .neo-range-input) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 74px;
+    grid-template-areas: 'label num' 'range range';
+    align-items: center;
+    gap: 2px 10px;
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #user-settings-block div:has(> .neo-range-slider + .neo-range-input) > small {
+    grid-area: label;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dc-text);
+}
+
+body.dc-on #user-settings-block div:has(> .neo-range-slider + .neo-range-input) > small .fa-solid {
+    font-size: 11px;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #user-settings-block .neo-range-slider {
+    grid-area: range;
+    height: 28px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: none;
+}
+
+body.dc-on #user-settings-block .neo-range-input {
+    grid-area: num;
+    height: 34px;
+    min-height: 34px;
+    padding: 0 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────── */
+
+/* Text buttons (Reload Chat, Debug Menu, Clean-Up, Reset…). */
+body.dc-on #user-settings-block .menu_button:not(.fa-solid):not(.menu_button_icon):not(:has(> i:only-child)) {
+    min-height: 36px;
+    margin: 0;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--dc-bg-card);
+    color: var(--dc-text);
+    font-size: 13.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    filter: none;
+    opacity: 1;
+}
+
+body.dc-on #user-settings-block .flex-container:has(> .menu_button:not(.fa-solid)) {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Theme colour pickers: a row each, swatch on the right. */
+body.dc-on #user-settings-block #color-picker-block > .flex-container {
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    border-bottom: 1px solid var(--dc-tile-line);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+body.dc-on #user-settings-block #color-picker-block > .flex-container:last-child {
+    border-bottom: 0;
+}
+
+/* Custom CSS editor. */
+body.dc-on #user-settings-block #customCSS {
+    min-height: 140px;
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+}
+
+/* Collapsibles inside the cards sit a shade lighter. */
+body.dc-on #user-settings-block :is(#UI-Theme-Block, #UI-Customization, #power-user-options-block) .inline-drawer {
+    margin: 8px 0;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+/* ST's search hides non-matching rows; keep dividers off hidden ones. */
+body.dc-on #user-settings-block .checkbox_label[style*="display: none"] {
+    border: 0;
+}
+
+/* ── Fixes after a look on the phone ─────────────────────────────── */
+
+body.dc-on #user-settings-block #ui_language_select {
+    flex: 0 1 55% !important;
+    min-width: 0;
+    max-width: 60%;
+}
+
+/* Sliders one per row (ST pairs them with flexBasis48p). */
+body.dc-on #user-settings-block div:has(> .neo-range-slider + .neo-range-input) {
+    flex: 1 1 100% !important;
+}
+
+body.dc-on #user-settings-block .flex-container:has(> div > .neo-range-slider) {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0;
+}
+
+/* Switch labels wrapped in an extra div/span (Smooth Streaming, Message
+   Sound): same text style as the rest. */
+body.dc-on #user-settings-block .checkbox_label > :is(div, span) {
+    order: 0;
+    flex: 1 1 auto;
+    margin-right: 0;
+}
+
+body.dc-on #user-settings-block .checkbox_label small {
+    font-family: var(--dc-font);
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--dc-text);
+}
+
+body.dc-on #user-settings-block .checkbox_label > audio {
+    display: none;
+}
+
+/* ── Fixes from the phone (round 2) ──────────────────────────────── */
+
+/* Hint under a slider ("(0 = All)") gets its own line instead of
+   landing on top of the label. */
+body.dc-on #user-settings-block div:has(> .neo-range-slider + .neo-range-input) {
+    grid-template-areas: 'label num' 'range range' 'hint hint';
+}
+
+body.dc-on #user-settings-block div:has(> .neo-range-slider + .neo-range-input) > small:not(:first-child) {
+    grid-area: hint;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--dc-text-dim);
+}
+
+body.dc-on #user-settings-block div:has(> .neo-range-slider + .neo-range-input) > small:first-child > span {
+    min-width: 0;
+}
+
+/* Collapsibles: ST adds its own bordered box (.userSettingsInnerExpandable)
+   inside our tile — drop it. */
+body.dc-on #user-settings-block .userSettingsInnerExpandable {
+    min-height: 50px;
+    margin: 0;
+    padding: 0 14px !important;
+    border: 0;
+    border-radius: 0;
+    background: none;
+}
+
+body.dc-on #user-settings-block .inline-drawer-content {
+    padding: 0 14px 14px;
+}
+
+body.dc-on #user-settings-block .inline-drawer-content > small {
+    margin: 8px 2px 0;
+}
+
+/* Label-over-picker blocks: full-width pickers. */
+body.dc-on #user-settings-block :is(#examples-behavior-block, div:has(> label[for="image_overswipe"])) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #user-settings-block :is(#example_messages_behavior, #image_overswipe) {
+    width: 100%;
+}
+
+/* "Enter to Send: [picker]" → same row as the other pickers. */
+body.dc-on #user-settings-block .flex-container:has(> small:first-child + select) {
+    flex-wrap: nowrap;
+    align-items: center !important;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 50px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--dc-tile-line);
+}
+
+body.dc-on #user-settings-block .flex-container:has(> small:first-child + select) > small {
+    flex: 1 1 auto;
+    font-family: var(--dc-font);
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--dc-text);
+}
+
+body.dc-on #user-settings-block .flex-container:has(> small:first-child + select) > select {
+    flex: 0 1 55% !important;
+    min-height: 38px;
+}
+
+/* Icons after a switch's text sit right next to it; the switch is pushed
+   to the far edge instead. */
+body.dc-on #user-settings-block .checkbox_label > :not(input):not(small):not(span):not(div) {
+    margin: 0 0 0 2px;
+}
+
+body.dc-on #user-settings-block .checkbox_label > input {
+    margin-left: auto;
+}
+
+body.dc-on #user-settings-block .checkbox_label:has(> :not(input):not(small):not(span):not(div)) > :is(small, span) {
+    flex: 0 1 auto;
+}
+
+/* Swipes + Gestures share a wrapper: one row each. */
+body.dc-on #user-settings-block .checkbox-container {
+    flex-direction: column;
+    gap: 0;
+}
