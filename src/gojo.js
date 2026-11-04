@@ -12,8 +12,8 @@
  *     theme, dark for the dark), kept per chat; "Другие обои" in the menu
  *     deals the next one once there are several. */
 
-import { getContext, isDesk } from './boot.js?v=0.5.3';
-import { HEADER_SLOTS, actionInfo, collectServers, faClass, runAction, slotAction } from './actions.js?v=0.5.3';
+import { getContext, isDesk } from './boot.js?v=0.5.4';
+import { HEADER_SLOTS, actionInfo, collectServers, faClass, runAction, slotAction } from './actions.js?v=0.5.4';
 
 const ART_BASE = new URL('../assets/gojo/', import.meta.url).href;
 

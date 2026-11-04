@@ -5,7 +5,7 @@
  * styles/gallery.css, and each theme only fills the colours below. Loaded
  * from the settings panel, so it works with the extension switched off too. */
 
-import { DC_SKINS, DC_VERSION, dcOption } from './boot.js?v=0.5.3';
+import { DC_SKINS, DC_VERSION, dcOption } from './boot.js?v=0.5.4';
 
 const GROUPS = [
     { title: 'Discord', ids: ['discord'] },

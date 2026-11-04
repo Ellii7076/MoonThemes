@@ -9,8 +9,8 @@
  * No top-level await: some WebViews never finish a module that awaits at
  * the top level. */
 
-import { DC_ENABLED, DC_VERSION } from './src/boot.js?v=0.5.3';
-import './src/settings.js?v=0.5.3';
+import { DC_ENABLED, DC_VERSION } from './src/boot.js?v=0.5.4';
+import './src/settings.js?v=0.5.4';
 
 if (DC_ENABLED) {
     Promise.all([

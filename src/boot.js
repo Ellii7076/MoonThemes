@@ -5,9 +5,9 @@
  * The layout lives in a <link> we own, never in custom_css: disabling the
  * extension must leave a working, unmodified SillyTavern behind. */
 
-const DC_VERSION = '0.5.3';
+const DC_VERSION = '0.5.4';
 /* Bump on every CSS change — it is the cache-bust key. */
-const DC_STYLE_BUILD = '0.5.3';
+const DC_STYLE_BUILD = '0.5.4';
 
 const DC_BASE = new URL('../', import.meta.url).href;
 const DC_PREFIX = 'st-discord:';

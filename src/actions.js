@@ -12,7 +12,7 @@
  *   wand:<id>         a wand item with an id
  *   wandtext:<label>  a wand item without one, matched by its text */
 
-import { dcOption, dcRead, dcWrite } from './boot.js?v=0.5.3';
+import { dcOption, dcRead, dcWrite } from './boot.js?v=0.5.4';
 
 export const KNOWN_SERVERS = [
     { drawer: 'ai-config-button', panel: 'left-nav-panel', icon: 'fa-sliders', title: 'Пресет' },

@@ -471,7 +471,7 @@ html[data-dc-skin^="icq-pink"] body.dc-on:not(#icq-a):not(#icq-b):not(#icq-c) {
         box-decoration-break: clone;
     }
 
-    & #chat .mes_text q :is(i, em, b, strong, u, a, span, font) {
+    & #chat .mes_text q :is(i, em, b, strong, u, a, span, font:not([color])) {
         background: transparent !important;
         box-shadow: none !important;
         color: var(--icq-sel-ink) !important;

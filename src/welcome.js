@@ -11,8 +11,8 @@
  * ST empties #chat on every chat change, which takes this card with it, so
  * it is re-added whenever the welcome panel shows up again. */
 
-import { dcOption, dcSetOption, getContext } from './boot.js?v=0.5.3';
-import { personaAvatarUrl } from './persona.js?v=0.5.3';
+import { dcOption, dcSetOption, getContext } from './boot.js?v=0.5.4';
+import { personaAvatarUrl } from './persona.js?v=0.5.4';
 
 let api = null;
 

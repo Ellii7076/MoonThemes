@@ -11,9 +11,9 @@
  *
  * Every element is re-added if SillyTavern or the shell rebuilds its host. */
 
-import { getContext } from './boot.js?v=0.5.3';
-import { ICQ_SLOTS, actionInfo, collectServers, faClass, runAction, slotAction } from './actions.js?v=0.5.3';
-import { openSheet } from './sheet.js?v=0.5.3';
+import { getContext } from './boot.js?v=0.5.4';
+import { ICQ_SLOTS, actionInfo, collectServers, faClass, runAction, slotAction } from './actions.js?v=0.5.4';
+import { openSheet } from './sheet.js?v=0.5.4';
 
 export function icqOn() {
     return document.documentElement.dataset.dcFamily === 'icq';

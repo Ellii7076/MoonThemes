@@ -10,8 +10,8 @@
  * The observer never disconnects around our writes (that drops ST's pending
  * records); it drains its own records with takeRecords() instead. */
 
-import { getContext } from './boot.js?v=0.5.3';
-import { openSheet } from './sheet.js?v=0.5.3';
+import { getContext } from './boot.js?v=0.5.4';
+import { openSheet } from './sheet.js?v=0.5.4';
 
 const GROUP_WINDOW_MS = 7 * 60 * 1000;
 

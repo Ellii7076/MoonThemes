@@ -12,7 +12,7 @@
  * This module adds the drag handles on the column borders and keeps an open
  * panel open while the user clicks around the chat next to it. */
 
-import { dcOption, dcRoot, dcWrite, isDesk } from './boot.js?v=0.5.3';
+import { dcOption, dcRoot, dcWrite, isDesk } from './boot.js?v=0.5.4';
 
 const SIZES = {
     /* Dragging the list narrower than `hide` collapses it, like VS Code. */

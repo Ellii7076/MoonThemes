@@ -9,7 +9,7 @@
  * Each skin's theme is put on once by itself (autoInstallTheme); after that
  * the user's own choice of ST theme is left alone. */
 
-import { DC_SKINS, dcOption, dcRead, dcWrite, getContext } from './boot.js?v=0.5.3';
+import { DC_SKINS, dcOption, dcRead, dcWrite, getContext } from './boot.js?v=0.5.4';
 import { saveSettings } from '../../../../../script.js';
 
 function skinOf(id = dcOption('skin')) {

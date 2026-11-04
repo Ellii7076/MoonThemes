@@ -7,7 +7,7 @@
  * gets an attribute; a generated stylesheet puts that attribute's slot in the
  * tray. Extensions that wipe a button's inline style can't undo that. */
 
-import { DC_ENABLED, dcOption, dcRead, dcWrite } from './boot.js?v=0.5.3';
+import { DC_ENABLED, dcOption, dcRead, dcWrite } from './boot.js?v=0.5.4';
 
 const NAMES = {
     'moodtube-fab': 'MoodTube',

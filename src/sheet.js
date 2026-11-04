@@ -5,7 +5,7 @@
  * Rows close the sheet first and run their action on the next macrotask, so
  * the tap that chose the action has finished before SillyTavern sees it. */
 
-import { isDesk } from './boot.js?v=0.5.3';
+import { isDesk } from './boot.js?v=0.5.4';
 
 let root = null;
 let onClosed = null;

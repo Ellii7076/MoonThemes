@@ -21,8 +21,8 @@
  *
  * Every element is re-added if SillyTavern or the shell rebuilds its host. */
 
-import { getContext, isDesk } from './boot.js?v=0.5.3';
-import { HEADER_SLOTS, actionInfo, collectServers, faClass, runAction, slotAction } from './actions.js?v=0.5.3';
+import { getContext, isDesk } from './boot.js?v=0.5.4';
+import { HEADER_SLOTS, actionInfo, collectServers, faClass, runAction, slotAction } from './actions.js?v=0.5.4';
 
 let api = null;
 

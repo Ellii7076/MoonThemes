@@ -15,19 +15,19 @@
  *     macrotask so ST's html-level outside-click closer doesn't eat it;
  *   - never remember "already built" — check the DOM and rebuild. */
 
-import { dcOption, dcRead, dcSetOption, dcWrite, getContext, isDesk } from './boot.js?v=0.5.3';
-import { initDesktop, listShown, setListShown, toggleList } from './desktop.js?v=0.5.3';
-import { initWelcome, refreshWelcome, welcomeShown } from './welcome.js?v=0.5.3';
-import { initIcq } from './icq.js?v=0.5.3';
-import { initY2k } from './y2k.js?v=0.5.3';
-import { initSage } from './sage.js?v=0.5.3';
-import { initGojo } from './gojo.js?v=0.5.3';
-import { openSheet, wireDragDown } from './sheet.js?v=0.5.3';
-import { initPanels, paintRanges } from './panels.js?v=0.5.3';
-import { initPersonaPanel, personaAvatarUrl } from './persona.js?v=0.5.3';
-import { initCharacterPanel } from './character.js?v=0.5.3';
-import { autoInstallTheme, syncThemePalette } from './theme.js?v=0.5.3';
-import { HEADER_SLOTS, actionIcon, actionLabel, collectServers, faClass, runAction, slotAction, toggleMenu } from './actions.js?v=0.5.3';
+import { dcOption, dcRead, dcSetOption, dcWrite, getContext, isDesk } from './boot.js?v=0.5.4';
+import { initDesktop, listShown, setListShown, toggleList } from './desktop.js?v=0.5.4';
+import { initWelcome, refreshWelcome, welcomeShown } from './welcome.js?v=0.5.4';
+import { initIcq } from './icq.js?v=0.5.4';
+import { initY2k } from './y2k.js?v=0.5.4';
+import { initSage } from './sage.js?v=0.5.4';
+import { initGojo } from './gojo.js?v=0.5.4';
+import { openSheet, wireDragDown } from './sheet.js?v=0.5.4';
+import { initPanels, paintRanges } from './panels.js?v=0.5.4';
+import { initPersonaPanel, personaAvatarUrl } from './persona.js?v=0.5.4';
+import { initCharacterPanel } from './character.js?v=0.5.4';
+import { autoInstallTheme, syncThemePalette } from './theme.js?v=0.5.4';
+import { HEADER_SLOTS, actionIcon, actionLabel, collectServers, faClass, runAction, slotAction, toggleMenu } from './actions.js?v=0.5.4';
 import { user_avatar } from '../../../../personas.js';
 import { deleteGroupChatByName, openGroupById } from '../../../../group-chats.js';
 import { deleteCharacterChatByName } from '../../../../../script.js';

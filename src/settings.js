@@ -1,10 +1,10 @@
 /* The extension's block in the Extensions panel. Always loaded, so the theme
  * can be switched back on after being disabled. */
 
-import { DC_ENABLED, DC_SKINS, DC_VERSION, dcOption, dcSetOption, dcWrite } from './boot.js?v=0.5.3';
-import { openThemeGallery, themeMock } from './gallery.js?v=0.5.3';
-import { HEADER_SLOTS, ICQ_SLOTS, actionCatalog, slotAction } from './actions.js?v=0.5.3';
-import { bindCatchList } from './catcher.js?v=0.5.3';
+import { DC_ENABLED, DC_SKINS, DC_VERSION, dcOption, dcSetOption, dcWrite } from './boot.js?v=0.5.4';
+import { openThemeGallery, themeMock } from './gallery.js?v=0.5.4';
+import { HEADER_SLOTS, ICQ_SLOTS, actionCatalog, slotAction } from './actions.js?v=0.5.4';
+import { bindCatchList } from './catcher.js?v=0.5.4';
 
 const CHECKS = [
     ['motion', 'Анимации'],

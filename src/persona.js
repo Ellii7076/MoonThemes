@@ -10,7 +10,7 @@
  * Kept fresh from PERSONA_CHANGED / SETTINGS_UPDATED and from watching the
  * name ST writes into #your_name (rename, sync). */
 
-import { getContext } from './boot.js?v=0.5.3';
+import { getContext } from './boot.js?v=0.5.4';
 import { user_avatar } from '../../../../personas.js';
 
 let hero = null;

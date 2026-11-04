@@ -886,7 +886,7 @@ html[data-dc-family="icq"] body.dc-on:not(#icq-a):not(#icq-b) {
         box-decoration-break: clone;
     }
 
-    & #chat .mes_text q :is(i, em, b, strong, u, a, span, font) {
+    & #chat .mes_text q :is(i, em, b, strong, u, a, span, font:not([color])) {
         color: var(--icq-on-navy) !important;
     }
 

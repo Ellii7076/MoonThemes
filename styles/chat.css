@@ -273,6 +273,34 @@ body.dc-on #chat .mes_text b {
     color: inherit;
 }
 
+/* <font color> from a preset or regex (a colour per speaker) wins over the
+   theme's quote and action colours, as in plain SillyTavern. A layer's
+   !important beats every unlayered one, so the themes' own !important rules
+   give way too. A coloured quote drops Retro's highlight band, which the
+   colour would clash with. */
+@layer dc-font-colour {
+    body.dc-on #chat :is(.mes_text, .mes_reasoning) font[color] :is(q, em, i:not([class*="fa-"]), u, b, strong, del, s, span, .dc-quote) {
+        color: inherit !important;
+    }
+
+    body.dc-on #chat :is(.mes_text, .mes_reasoning) font[color] q {
+        background: none !important;
+        box-shadow: none !important;
+    }
+
+    /* The quote marks are in the text itself (ST blanks these), so Retro
+       Pink's selection handles go back to nothing. */
+    body.dc-on #chat :is(.mes_text, .mes_reasoning) font[color] q::before,
+    body.dc-on #chat :is(.mes_text, .mes_reasoning) font[color] q::after {
+        content: '' !important;
+        display: inline !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 0 !important;
+        background: none !important;
+    }
+}
+
 body.dc-on #chat .mes_text u {
     text-decoration-color: var(--SmartThemeUnderlineColor);
     text-underline-offset: 3px;

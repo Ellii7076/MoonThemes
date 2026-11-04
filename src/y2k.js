@@ -13,9 +13,9 @@
  * Tabs are remembered in localStorage. Every element is re-added if
  * SillyTavern or the shell rebuilds its host. */
 
-import { dcOption, dcRead, dcWrite, getContext, isDesk } from './boot.js?v=0.5.3';
-import { collectServers, faClass } from './actions.js?v=0.5.3';
-import { openSheet } from './sheet.js?v=0.5.3';
+import { dcOption, dcRead, dcWrite, getContext, isDesk } from './boot.js?v=0.5.4';
+import { collectServers, faClass } from './actions.js?v=0.5.4';
+import { openSheet } from './sheet.js?v=0.5.4';
 
 const MAX_TABS = 8;
 /* Panels on the dock itself; every other one is under "Ещё". */

@@ -147,9 +147,17 @@ body.dc-on .drawer-content .sysHR {
    Discord shows both as sheets rising from the bottom edge. Popper writes
    inline coordinates, hence the !important. */
 /* Popper's transform on #options would become the containing block of the
-   fixed sheet inside it. */
+   fixed sheet inside it, and so would ST's blur: WebKit (iPhone, Tauri on
+   iOS) reads the -webkit- one, and the sheet shrinks to #options' box. */
 body.dc-on #options {
     transform: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    will-change: auto !important;
+    contain: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 body.dc-on #options .options-content,
@@ -169,6 +177,7 @@ body.dc-on #extensionsMenu {
     background: var(--dc-bg-float) !important;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     z-index: 4500 !important;
     animation: dc-sheet-up 0.3s var(--dc-ease);
 }
